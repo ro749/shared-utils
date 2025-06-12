@@ -10,5 +10,6 @@ enum ColumnModifier: string
     case DOLARS = 'dolars';
     case PERCENT = 'percent';
     case DATE = 'date';
+    case ENUM = 'enum';
 }
 ?>

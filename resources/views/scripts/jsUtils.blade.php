@@ -1,3 +1,4 @@
+@push('scripts')
 <script>
 function formatNumber(value) {
     if (typeof value !== 'number') return value;
@@ -14,3 +15,4 @@ function hide(id) {
     if (el) el.style.display = 'none';
 }
 </script>
+@endpush
