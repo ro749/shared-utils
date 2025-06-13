@@ -102,7 +102,7 @@
                                 buttons += '<button type=\"button\" class=\"btn delete-btn\"><i class=\"fadeIn animated bx bx-trash\" style=\"color: white;\"></i></button>';
                                 @endif
                                 @if($table->is_editable)
-                                buttons = '<div class=\"normalbuttons\" style=\"display:flex; flex-direction:row\">' + buttons + '</div><div style=\"display:none\"> <button type=\"button\" class=\"btn save-btn\"><i class=\"fadeIn animated bx bx-save\" style=\"color: white; margin:auto\"></i></button> <button type=\"button\" class=\"btn cancel-btn\" ><i class=\"fadeIn animated bx bx-x-circle\" style=\"color: white; \"></i></button> </div>";;
+                                buttons = '<div class=\"normalbuttons\" style=\"display:flex; flex-direction:row\">' + buttons + '</div><div style=\"display:none\"> <button type=\"button\" class=\"btn save-btn\"><i class=\"fadeIn animated bx bx-save\" style=\"color: white; margin:auto\"></i></button> <button type=\"button\" class=\"btn cancel-btn\" ><i class=\"fadeIn animated bx bx-x-circle\" style=\"color: white; \"></i></button> </div>';
                                 @endif
                                 return buttons;
                             }
@@ -134,6 +134,39 @@
                 openPopup('delete-popup');
             });
             @endif
+
+            @if($table->is_editable)
+            $("#{{ $table->id }}").on('click', '.edit-btn', function(event) {
+                this.parentElement.style.display = 'none';
+                this.parentElement.parentElement.children[1].style.display = 'flex';
+                this.parentElement.parentElement.children[1].style.justifyContent = 'left';
+                var table = $("#{{ $table->id }}").DataTable();
+                var row = table.row($(this).parents('tr'));
+            $col_num = 0;
+                @foreach($table->columns as $key=>$column)
+                    @if($column->editable)
+                    
+                    @endif
+                @endforeach
+            foreach($input["columns"] as $key=>$column){
+                if(isset($column["editable"])){
+                    if(isset($column["options"])){
+                        $ans .= "table_editor({row:row,col:".$col_num.",create:create_selector,options:".json_encode($column["options"])."});";
+                    }
+                    else if(isset($column["column"])){
+                        $ans .= "table_editor({row:row,col:".$col_num.",create:create_selector,options:".$key."s,values:".$key."s_values,db:'true'});";
+                    }
+                    else if(isset($column["modifier"]) && $column["modifier"] == ColumnModifier::Date){
+                        $ans .= "table_editor({row:row,col:".$col_num.",create:create_date_editor,date:true});";
+                    }
+                    else{
+                        $ans .= "table_editor({row:row,col:".$col_num.",create:".((isset($column["modifier"])) ? "create_input_number" : "create_input_text")."});";
+                    }
+                
+                }
+                $col_num++;
+            }    
+            @endif
         });
 
         @if($table->delete)
@@ -156,52 +189,7 @@
         }
         @endif
 
-        @if($table->is_editable)
-        $("#{{ $table->id }}").on('click', '.edit-btn', function(event) {
-            this.parentElement.style.display = 'none';
-            this.parentElement.parentElement.children[1].style.display = 'flex';
-            this.parentElement.parentElement.children[1].style.justifyContent = 'left';
-            var table = $("#{{ $table->id }}").DataTable();
-            var row = table.row($(this).parents('tr'));";
-        $col_num = 0;
-            @foreach($table->columns as $key=>$column)
-                @if($column->editable)
-                
-                @endif
-            @endforeach
-        foreach($input["columns"] as $key=>$column){
-            if(isset($column["editable"])){
-                if(isset($column["options"])){
-                    $ans .= "table_editor({row:row,col:".$col_num.",create:create_selector,options:".json_encode($column["options"])."});";
-                }
-                else if(isset($column["column"])){
-                    $ans .= "table_editor({row:row,col:".$col_num.",create:create_selector,options:".$key."s,values:".$key."s_values,db:'true'});";
-                }
-                else if(isset($column["modifier"]) && $column["modifier"] == ColumnModifier::Date){
-                    $ans .= "table_editor({row:row,col:".$col_num.",create:create_date_editor,date:true});";
-                }
-                else{
-                    $ans .= "table_editor({row:row,col:".$col_num.",create:".((isset($column["modifier"])) ? "create_input_number" : "create_input_text")."});";
-                }
+        
 
-            }
-            $col_num++;
-        }    
-        $ans.="console.log('selector to bootstrap');";
-        $ans.="$('select.db-select').select2({theme: 'bootstrap4'});";
-        $ans.="$('input.date-editor').bootstrapMaterialDatePicker({
-	    				format: 'MM/YYYY', 
-	    				clearButton: true, 
-	    				time: false,       
-	    				date: true,        
-	    				currentDate:null, 
-	    				minDate: null,     
-	    				maxDate: null,     
-	    				year: true,        
-	    				monthPicker: true, 
-	    				day: false         
-	    			});";
-        $ans.="});";
-        @endif
     </script>
 @endpush

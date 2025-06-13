@@ -21,7 +21,12 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         $package
             ->name('shared-utils')
             ->hasConfigFile()
-            ->hasAssets(['resources/css/base.css'])
+            ->hasAssets([
+                'resources/css/base.css',
+                'resources/js/utils.js',
+                'resources/js/modal.js',
+                'resources/js/tableEditor.js',
+                ])
             ->hasViews()
             ->hasMigration('create_shared_utils_table')
             ->hasCommand(SharedUtilsCommand::class);
@@ -30,10 +35,10 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sharedutils');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'sharedutils');
         // Register your component: <x-sharedutils::modal />
         Blade::component('sharedutils::components.modal', 'sharedutils::modal');
-        //Blade::component('sharedutils::components.inputs.select', 'sharedutils::select');
+        Blade::component('sharedutils::components.inputs.selector', 'sharedutils::selector');
+        Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
         //Blade::component('sharedutils::components.inputs.db-select', 'sharedutils::db-select');
     }
 }

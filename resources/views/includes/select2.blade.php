@@ -6,7 +6,7 @@
 @endpush
 
 @push('scripts')
-<script src="https://blixdev.com/ListingEngine/assets/js/jquery.min.js"></script>
+
 <script src="https://blixdev.com/ListingEngine/assets/plugins/select2/js/select2.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 
