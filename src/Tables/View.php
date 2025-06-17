@@ -4,7 +4,7 @@ namespace Ro749\SharedUtils\Tables;
 
 class View
 {
-
+    public string $url;
     //the parameter to pass to the url
     public string $param;
 

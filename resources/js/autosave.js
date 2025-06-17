@@ -19,6 +19,7 @@
                         method: 'POST',
                         data: {
                             param: value,
+                            _token:t('meta[name="csrf-token"]').attr("content")
                         }
                     });
                 }, debounceTime);

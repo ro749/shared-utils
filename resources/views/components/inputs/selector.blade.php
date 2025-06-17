@@ -5,6 +5,7 @@
         'w-auto',
         $selector->search ? 'select2' : '',
     ]) }}>
+    <option disabled selected value>select</option>
     @foreach ($selector->options as $k=>$v)
         @if($k==$selector->value)
             <option value="{{ $k }}" selected>{{ $v }}</option> 
