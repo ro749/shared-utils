@@ -19,17 +19,17 @@ class BaseTableDefinition
 
     public bool $needs_buttons = false;
     public bool $is_editable = false;
-    //public Filters $filters = [];
+    public ?Filters $filters;
 
 
-    public function __construct(string $id, string $table, array $columns, View $view = null, Delete $delete = null)
+    public function __construct(string $id, string $table, array $columns, View $view = null, Delete $delete = null, Filters $filters = null)
     {
         $this->id = $id;
         $this->table = $table;
         $this->columns = $columns;
         $this->view = $view;
         $this->delete = $delete;
-        //$this->filters = $filters;
+        $this->filters = $filters;
         $this->is_editable = $this->has_edit();
         $this->needs_buttons = $this->needsButtons();
     }
@@ -49,7 +49,7 @@ class BaseTableDefinition
         return $this->view || $this->delete || $this->is_editable;
     }
 
-    public function get($start = 0, $length = 10, $search = '',$order = []): mixed
+    public function get($start = 0, $length = 10, $search = '',$order = [],$filter=""): mixed
     {
         $query = DB::table($this->table)->select($this->table.'.id');
         $joins = [];
@@ -68,6 +68,12 @@ class BaseTableDefinition
                         $ans["selectors"][$key][$foreign_column_value->id] = $foreign_column_value->{$column->column};
                     }
                     $query->addSelect($this->table . '.' . $key);
+                    if ($search) {
+                        if(!in_array($column, $joins)){
+                            $joins[] = $column;
+                            $query->leftJoin($column->table, $column->table . '.id', '=', $this->table . '.' . $key);
+                        }
+                    }
                 }
             }
             else {
@@ -75,8 +81,9 @@ class BaseTableDefinition
             }
         }
         $ans['recordsTotal'] = $query->count();
+        
         if ($search) {
-            $query->where(function ($query) use ($search) {
+            $query->where(function ($query) use ($search,$filter) {
                 foreach ($this->columns as $key => $column) {
                     if ($column->is_foreign()) {
                         $query->orWhere($column->table . '.' . $column->column, 'like', '%' . $search . '%');
@@ -85,7 +92,11 @@ class BaseTableDefinition
                         $query->orWhere($this->table . '.' . $key, 'like', '%' . $search . '%');
                     }
                 }
+                
             });
+        }
+        if($filter!=""){
+            ($this->filters->filters[$filter]->filter)($query);
         }
         $ans['recordsFiltered'] = $query->count();
         $ans['data'] = $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir'])->offset($start)->limit($length)->get();

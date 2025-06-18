@@ -29,7 +29,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 ])
             ->hasViews()
             ->hasMigration('create_shared_utils_table')
-            ->hasCommand(SharedUtilsCommand::class);
+            ->hasCommand(SharedUtilsCommand::class)
+            ->hasRoutes('web');
     }
 
     public function packageBooted(): void
