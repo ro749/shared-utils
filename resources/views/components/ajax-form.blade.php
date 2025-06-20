@@ -18,7 +18,7 @@
         @endforeach
 
         <button type="submit">
-            Submit
+            {{ $form->submit_text=="" ? 'Enviar': $form->submit_text }}
         </button>
     </form>
 </div>

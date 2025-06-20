@@ -4,40 +4,46 @@ namespace Ro749\SharedUtils\FormRequests;
 
 class FormField
 {
+    public InputType $type;
     public string $label;
-
     public string $placeholder;
-
-    public array $rule;
+    public array $rules;
 
     public string $message;
 
-    public function __construct(string $label="", string $placeholder="", array $rule=[], string $message="")
+    public function __construct(InputType $type, string $label="", string $placeholder="", array $rules=[], string $message="")
     {
+        $this->type = $type;
         $this->label = $label;
         $this->placeholder = $placeholder;
-        $this->rule = $rule;
+        $this->rules = $rules;
         $this->message = $message;
     }
 
     public function is_required(): bool
     {
-        return in_array('required', $this->rule);
+        return in_array('required', $this->rules);
     }
 
-    public function get_type(): string
+    public function get_rules(): array
     {
-        if (in_array('string', $this->rule)) {
-            return 'text';
-        } elseif (in_array('integer', $this->rule) || in_array('numeric', $this->rule)) {
-            return 'number';
-        } elseif (in_array('boolean', $this->rule)) {
-            return 'checkbox';
-        } elseif (in_array('email', $this->rule)) {
-            return 'email';
-        } elseif (in_array('phone', $this->rule)) {
-            return 'tel';
+        $rules = $this->rules;
+        switch ($this->type) {
+            case InputType::EMAIL:
+                $rules[] = 'email';
+                break;
+            case InputType::PHONE:
+                $rules[] = 'phone:MX';
+                break;
         }
-        return 'text'; // default type
+        if (empty($rules)) {
+            return ['nullable'];
+        }
+        return $rules;
+    }
+
+    public function get_type(): InputType
+    {
+        return $this->type; // default type
     }
 }
