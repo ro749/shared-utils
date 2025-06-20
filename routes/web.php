@@ -37,3 +37,14 @@ Route::post('/table/{table}/save', function (Request $request,string $table) {
     $table->save($request->input('id'),$request->input('args'));
     return response()->json(['success' => true]);
 });
+
+Route::post('/form/{form}', function (Request $request,$form) {
+    $ans = [];
+    $formClass = "App\\Http\\Requests\\".$form;
+    $formRequest = $formClass::instanciate();
+    $url = $formRequest->prosses($request);
+    if($url!="") {  
+        $ans = ["url" => $url];
+    }
+    return response()->json($ans);
+});

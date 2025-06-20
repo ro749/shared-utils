@@ -99,6 +99,7 @@ class BaseTableDefinition
             ($this->filters->filters[$filter]->filter)($query);
         }
         $ans['recordsFiltered'] = $query->count();
+        
         $ans['data'] = $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir'])->offset($start)->limit($length)->get();
         
         

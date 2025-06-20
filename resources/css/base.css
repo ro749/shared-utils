@@ -43,3 +43,8 @@ input[type=number] {
   -moz-appearance: textfield; 
 }
 
+.form-error {
+  color: red;
+  margin-bottom: 0px;
+}
+

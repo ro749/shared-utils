@@ -14,7 +14,7 @@ class Column
 
     //if the column is a foreign key, the column is the column of the other table to use here
     public string $column;
-
+    //if this column can be edited
     public bool $editable;
 
     public function __construct(string $display, ColumnModifier $modifier = null, string $table = "", string $column = "", bool $editable = false)

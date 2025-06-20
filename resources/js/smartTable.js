@@ -225,7 +225,6 @@
                 $('.filter-button').on('click', function () {
                     const clickedButton = $(this);
                     var buttons = document.getElementsByClassName('filter-button');
-                    console.log(this.classList);
                     var is_on = clickedButton.hasClass("filter-on");
                     $('.filter-button').removeClass('filter-on');
                     if(!is_on){
@@ -235,8 +234,7 @@
                     else{
                         filter = '';
                     }
-                    console.log(filter);
-                    //table.ajax.reload(null, false);
+                    table.ajax.reload(null, false);
                 });
             }
         });
