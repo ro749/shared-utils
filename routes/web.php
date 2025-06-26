@@ -20,7 +20,7 @@ Route::get('/table/{table}/get', function (Request $request,string $table) {
         $request->get('length'),
         $request->get('search')['value'],
         $request->get('order')[0],
-        $request->get('filter')
+        $request->get('filters')?? []
     ));
 });
 
@@ -42,9 +42,18 @@ Route::post('/form/{form}', function (Request $request,$form) {
     $ans = [];
     $formClass = "App\\Http\\Requests\\".$form;
     $formRequest = $formClass::instanciate();
-    $url = $formRequest->prosses($request);
-    if($url!="") {  
-        $ans = ["url" => $url];
+    $redirect = $formRequest->prosses($request);
+    if($redirect!="") {  
+        $ans = ["redirect" => $redirect];
     }
     return response()->json($ans);
+});
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout(); // Logs out the current user
+
+    $request->session()->invalidate(); // Prevent session reuse
+    $request->session()->regenerateToken(); // CSRF protection
+
+    return response()->json(['redirect' => '/']);
 });

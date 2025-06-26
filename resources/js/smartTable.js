@@ -58,9 +58,15 @@
                     }
                 });
             }
-
+            var filters = [];
             var table = $table.DataTable({
-                ajax: "/table/"+options.id+"/get",
+                ajax: {
+                    url: '/table/'+options.id+'/get',
+                    type: 'GET',
+                    data: function (d) {
+                        d.filters = filters; 
+                    }
+                },
                 columns: columns,
                 serverSide: true
             });
@@ -91,6 +97,7 @@
                             type: 'POST',
                             data: {
                                 id: row.id,
+                                filters: filters,
                                 _token: $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(response) {
@@ -214,25 +221,39 @@
                 });
                 
                 table.on('xhr', function (e, settings, json, xhr) {
-                    console.log(json);
                     if(json["selectors"]){
                         selectors = json["selectors"];
                     }
                 });
             }
             
-            if(options.filters){
+            if(options.filters!=[]){
                 $('.filter-button').on('click', function () {
                     const clickedButton = $(this);
-                    var buttons = document.getElementsByClassName('filter-button');
                     var is_on = clickedButton.hasClass("filter-on");
                     $('.filter-button').removeClass('filter-on');
                     if(!is_on){
                         clickedButton.addClass("filter-on");
-                        filter = this.id.substring(11);
+                        filters[this.parentElement.id] = this.id.substring(11);
                     }
                     else{
-                        filter = '';
+                        delete filters[this.parentElement.id];
+                    }
+                    table.ajax.reload(null, false);
+                });
+                $('.category-filter').on('change', function () {
+                    if (this.value == "") {
+                        delete filters[this.id];
+                    } else {
+                        filters[this.id] = this.value;
+                    }
+                    table.ajax.reload(null, false);
+                });
+                $('.date-filter').on('change', function () {
+                    if (this.value == "") {
+                        delete filters[this.id];
+                    } else {
+                        filters[this.id] = this.value;
                     }
                     table.ajax.reload(null, false);
                 });

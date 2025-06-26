@@ -1,3 +1,7 @@
+@foreach ($table->filter as $filter)
+    {{ $filter->render() }}
+
+@endforeach
 <table id="{{ $table->id }}" class="table table-striped table-bordered">
     <thead>
         <tr>

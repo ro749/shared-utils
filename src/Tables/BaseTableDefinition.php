@@ -19,10 +19,10 @@ class BaseTableDefinition
 
     public bool $needs_buttons = false;
     public bool $is_editable = false;
-    public ?Filters $filters;
+    public array $filters;
 
 
-    public function __construct(string $id, string $table, array $columns, View $view = null, Delete $delete = null, Filters $filters = null)
+    public function __construct(string $id, string $table, array $columns, View $view = null, Delete $delete = null, array $filters = [])
     {
         $this->id = $id;
         $this->table = $table;
@@ -49,7 +49,7 @@ class BaseTableDefinition
         return $this->view || $this->delete || $this->is_editable;
     }
 
-    public function get($start = 0, $length = 10, $search = '',$order = [],$filter=""): mixed
+    public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
     {
         $query = DB::table($this->table)->select($this->table.'.id');
         $joins = [];
@@ -83,7 +83,7 @@ class BaseTableDefinition
         $ans['recordsTotal'] = $query->count();
         
         if ($search) {
-            $query->where(function ($query) use ($search,$filter) {
+            $query->where(function ($query) use ($search) {
                 foreach ($this->columns as $key => $column) {
                     if ($column->is_foreign()) {
                         $query->orWhere($column->table . '.' . $column->column, 'like', '%' . $search . '%');
@@ -95,8 +95,8 @@ class BaseTableDefinition
                 
             });
         }
-        if($filter!=""){
-            ($this->filters->filters[$filter]->filter)($query);
+       foreach ($this->filters as $filter) {
+            $filter->filter($query, $filters);
         }
         $ans['recordsFiltered'] = $query->count();
         

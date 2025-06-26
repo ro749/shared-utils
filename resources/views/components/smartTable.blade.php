@@ -1,11 +1,6 @@
-@if($table->filters)
-<div style="display:flex; flex-direction:row; justify-content:flex-start; gap:8px; margin-left:8px; align-items:center">
-    <p style="margin:0">{{ $table->filters->display }}</p>
-    @foreach($table->filters->filters as $key=>$column)
-        <button id="btn_filter_{{ $key }}" class="btn btn-dark filter-button">{{ $column->display }}</button>
-    @endforeach
-</div>
-@endif
+@foreach ($table->filters as $filter)
+{!! $filter->render() !!}
+@endforeach
 
 <table id="{{ $table->id }}" class="table table-striped table-bordered">
     <thead>

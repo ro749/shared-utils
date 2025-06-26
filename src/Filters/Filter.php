@@ -1,6 +1,6 @@
 <?php
 
-namespace Ro749\SharedUtils\Tables;
+namespace Ro749\SharedUtils\Filters;
 
 use Closure;
 

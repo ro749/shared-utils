@@ -22,7 +22,7 @@
         </button>
     </form>
 </div>
-@if($form->url=="" && $form->popup=="")
+@if($form->redirect=="" && $form->popup=="")
 @once('form-popup')
     <x-sharedutils::modal  id="form-success-popup" title="Datos guardados correctamente.">
         <p>Datos guardados correctamente.</p>
@@ -38,12 +38,12 @@
             errors: {},
             submit() {
                 $.ajax({
-                    url: '/form/{{ $form->id }}',
+                    url: '{{ $form->submit_url==""? '/form/'.$form->id : $form->submit_url }}',
                     method: 'POST',
                     data: this.form,
                     success: (response) => {
-                        @if($form->url)
-                        window.location.href = response.url;
+                        @if($form->redirect)
+                        window.location.href = response.redirect;
                         @elseif($form->popup)
                         openPopup("{{ $form->popup }}",2500);
                         @else
