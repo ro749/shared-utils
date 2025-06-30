@@ -25,7 +25,7 @@ abstract class LoginFormRequest extends BaseFormRequest
             ]);
         }
         RateLimiter::clear($key);
-        Auth::login($user);
+        //Auth::login($user);
         $rawRequest->session()->regenerate();
         return $this->redirect;
     }

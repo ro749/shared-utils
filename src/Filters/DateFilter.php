@@ -17,8 +17,8 @@ class DateFilter extends BaseFilter
 
     public function filter(Builder $query,array $filters)
     {
-        if(isset($filters[$this->id])){
-            $query->where($this->column, "=", $filters[$this->id] ?? null);
+        if(isset($filters["df-".$this->id])){
+            $query->where($this->column, "=", $filters["df-".$this->id] ?? null);
         }
     }
     public function render(): string

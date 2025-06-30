@@ -15,8 +15,8 @@ class CategoryFilter extends BaseFilter
 
     public function filter(Builder $query,array $filters)
     {
-        if(isset($filters[$this->selector->id])){
-            $query->where($this->selector->get_column(), "=", $filters[$this->selector->id] ?? null);
+        if(isset($filters["cf-".$this->id])){
+            $query->where($this->selector->get_column(), "=", $filters["cf-".$this->id] ?? null);
         }
     }
 

@@ -14,9 +14,11 @@ class BaseFilter
 
     public function filter(Builder $query,array $filters)
     {
-        // This method should be overridden in subclasses
-        // to apply the filter logic to the query.
-        // For now, it does nothing.
-        return $query;
+
+    }
+
+    public function render(): string
+    {
+        return "";
     }
 }

@@ -22,7 +22,14 @@ class BaseTableDefinition
     public array $filters;
 
 
-    public function __construct(string $id, string $table, array $columns, View $view = null, Delete $delete = null, array $filters = [])
+    public function __construct(
+        string $id, 
+        string $table, 
+        array $columns, 
+        View $view = null, 
+        Delete $delete = null, 
+        array $filters = []
+    )
     {
         $this->id = $id;
         $this->table = $table;

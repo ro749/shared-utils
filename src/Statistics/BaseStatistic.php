@@ -20,9 +20,11 @@ class BaseStatistic
     public float $row_height;
 
     public ?Collection $data = null;
+
+    public bool $debug;
     
 
-    public function __construct(string $id, string $category_table, string $category_column, StatisticType $type, string $data_table="", string $data_column="", bool $show_zeroes = false, string $label ="",$row_height = 100)
+    public function __construct(string $id, string $category_table, string $category_column, StatisticType $type, string $data_table="", string $data_column="", bool $show_zeroes = false, string $label ="",$row_height = 100, $debug = false)
     {
         $this->id = $id;
         $this->category_table = $category_table;
@@ -33,20 +35,20 @@ class BaseStatistic
         $this->show_zeroes = $show_zeroes;
         $this->label = $label;
         $this->row_height = $row_height;
+        $this->debug = $debug;
     }
 
-    public function get(): mixed
-    {
-        if($this->data!=null){
-            return $this->data;
-        }
-        $query = DB::table($this->category_table)
-        ->select($this->category_column);
+    public function get_query(){
+        $query = DB::table($this->category_table);
         if($this->data_table == "" || $this->data_table == $this->category_table){
+            $query->select($this->category_column);
+            $query->groupBy($this->category_column);
             $other_column = $this->data_column;
         }
         else{
-            $query->join($this->data_table, "{$this->category_table}.id", '=', "{$this->data_table}.{$this->category_column}");
+            $query->select($this->category_table.".".$this->category_column);
+            $query->groupBy($this->category_table.".".$this->category_column);
+            $query->join($this->data_table, "{$this->category_table}.id", '=', "{$this->data_table}.{$this->data_column}");
             $other_column = "{$this->data_table}.{$this->data_column}";
         }
         if($this->type == StatisticType::COUNT){
@@ -58,10 +60,22 @@ class BaseStatistic
         else if($this->type == StatisticType::TOTAL){
             $query->selectRaw("sum({$other_column}) as {$this->data_column}");
         }
-        $query->groupBy($this->category_column);
+        
         if(!$this->show_zeroes){
             //$query->having($this->data_column, " >", "0");
         }
+        if($this->debug){
+            echo "query: " . $query->toSql() . "\n";
+        }
+        return $query;
+    }
+
+    public function get(): mixed
+    {
+        if($this->data!=null){
+            return $this->data;
+        }
+        $query=$this->get_query();
         $this->data = $query->get();
         return $this->data;//$this->data;
     }
