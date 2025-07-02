@@ -14,7 +14,8 @@ class StatisticTable extends BaseTableDefinition
         Column $data_column_desc,
         View $view = null, 
         Delete $delete = null, 
-        array $filters = []
+        array $filters = [],
+        array $backend_filters = []
     ){
         $this->statistic = $statistic;
         parent::__construct(
@@ -26,15 +27,18 @@ class StatisticTable extends BaseTableDefinition
             ],
             view: $view,
             delete: $delete,
-            filters: $filters
-
+            filters: $filters,
+            backend_filters: $backend_filters
         );
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
     {
         $query = $this->statistic->get_query();
-        $ans['recordsTotal'] = $query->count();
+        foreach ($this->backend_filters as $filter) {
+            $filter->filter($query, $filters);
+        }
+        $ans['recordsTotal'] = DB::query()->fromSub($query, 'grouped')->count();
         
         if ($search) {
             $query->where(function ($query) use ($search) {
@@ -49,12 +53,12 @@ class StatisticTable extends BaseTableDefinition
                 
             });
         }
-       foreach ($this->filters as $filter) {
+        foreach ($this->filters as $filter) {
             $filter->filter($query, $filters);
         }
-        $ans['recordsFiltered'] = $query->count();
+        $ans['recordsFiltered'] = DB::query()->fromSub($query, 'grouped')->count();
         
-        $ans['data'] = $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir'])->offset($start)->limit($length)->get();
+        $ans['data'] = $query->get(); //$query->orderBy(array_keys($this->columns)[$order['column']], $order['dir'])->offset($start)->limit($length)->get();
         
         
         return $ans;

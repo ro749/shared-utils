@@ -20,6 +20,7 @@ class BaseTableDefinition
     public bool $needs_buttons = false;
     public bool $is_editable = false;
     public array $filters;
+    public array $backend_filters;
 
 
     public function __construct(
@@ -28,7 +29,8 @@ class BaseTableDefinition
         array $columns, 
         View $view = null, 
         Delete $delete = null, 
-        array $filters = []
+        array $filters = [],
+        array $backend_filters = []
     )
     {
         $this->id = $id;
@@ -37,6 +39,7 @@ class BaseTableDefinition
         $this->view = $view;
         $this->delete = $delete;
         $this->filters = $filters;
+        $this->backend_filters = $backend_filters;
         $this->is_editable = $this->has_edit();
         $this->needs_buttons = $this->needsButtons();
     }
@@ -87,6 +90,9 @@ class BaseTableDefinition
                 $query->addSelect($this->table . '.' . $key);
             }
         }
+        foreach ($this->backend_filters as $filter) {
+            $filter->filter($query, $filters);
+        }
         $ans['recordsTotal'] = $query->count();
         
         if ($search) {
@@ -102,7 +108,7 @@ class BaseTableDefinition
                 
             });
         }
-       foreach ($this->filters as $filter) {
+        foreach ($this->filters as $filter) {
             $filter->filter($query, $filters);
         }
         $ans['recordsFiltered'] = $query->count();
