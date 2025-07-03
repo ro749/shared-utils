@@ -1,23 +1,34 @@
 <div x-data="dynamicForm()">
-    <form @submit.prevent="submit">
+    <form @submit.prevent="submit" style="{{ $style ?? '' }}">
         @csrf
 
         @foreach ($form->formFields as $name => $field)
             <div class="mb-4">
-                <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
+                @if($field->icon)
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="{{ $field->icon }}"></i>
+                    </span>
+                @endif
+                {{--<label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>--}}
                 <input
                     type="{{ $field->get_type() }}"
+                    class="form-control"
                     name="{{ $name }}"
                     x-model="form.{{ $name }}"
+                    placeholder="{{ $field->placeholder }}{{ $field->is_required() ? '*' : '' }}"
                     
                 >
+                @if($field->icon)
+                </div>
+                @endif
                 <template x-if="errors['{{ $name }}']">
                     <p class="form-error" x-text="errors['{{ $name }}']"></p>
                 </template>
             </div>
         @endforeach
 
-        <button type="submit">
+        <button type="submit" class="btn btn-light">
             {{ $form->submit_text=="" ? 'Enviar': $form->submit_text }}
         </button>
     </form>

@@ -7,15 +7,16 @@ class FormField
     public InputType $type;
     public string $label;
     public string $placeholder;
+    public string $icon;
     public array $rules;
-
     public string $message;
 
-    public function __construct(InputType $type, string $label="", string $placeholder="", array $rules=[], string $message="")
+    public function __construct(InputType $type, string $label="", string $placeholder="", string $icon="", array $rules=[], string $message="")
     {
         $this->type = $type;
         $this->label = $label;
         $this->placeholder = $placeholder;
+        $this->icon = $icon;
         $this->rules = $rules;
         $this->message = $message;
     }
