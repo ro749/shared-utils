@@ -21,7 +21,6 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         $package
             ->name('shared-utils')
             ->hasConfigFile()
-            ->hasConfigFile('fortify')
             ->hasAssets([
                 'resources/css/base.css',
                 'resources/js/utils.js',
