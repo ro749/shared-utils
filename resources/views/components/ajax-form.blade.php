@@ -1,6 +1,5 @@
 <div x-data="dynamicForm()">
     <form @submit.prevent="submit" style="{{ $style ?? '' }}">
-        @csrf
 
         @foreach ($form->formFields as $name => $field)
             <div class="mb-4">
@@ -57,6 +56,8 @@
                         window.location.href = response.redirect;
                         @elseif($form->popup)
                         openPopup("{{ $form->popup }}",2500);
+                        @elseif($form->callback)
+                        {!! $form->callback !!}
                         @else
                         openPopup("form-success-popup",2500);
                         @endif

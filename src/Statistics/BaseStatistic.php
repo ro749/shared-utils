@@ -70,7 +70,7 @@ class BaseStatistic
             $query->groupBy($this->category_table.".".$this->category_column);
             //$joins = 
             for($i = 0; $i < count($this->joins)-1; $i++){
-                $query->join($this->joins[$i+1]['table'], "{$this->joins[$i]["table"]}.id", '=', "{$this->joins[$i+1]['table']}.{$this->joins[$i+1]["column"]}");
+                $query->leftJoin($this->joins[$i+1]['table'], "{$this->joins[$i]["table"]}.id", '=', "{$this->joins[$i+1]['table']}.{$this->joins[$i+1]["column"]}");
             }
             $other_column = "{$this->data_table}.{$this->value_column}";
         }
@@ -81,7 +81,7 @@ class BaseStatistic
             $query->selectRaw("avg({$other_column}) as {$this->data_column}");
         }
         else if($this->type == StatisticType::TOTAL){
-            $query->selectRaw("sum({$other_column}) as {$this->data_column}");
+            $query->selectRaw("COALESCE(sum({$other_column}),0) as {$this->data_column}");
         }
         if(!($this->data_table == "" || $this->data_table == $this->category_table)){
             $query->selectRaw($this->category_table.".id as id");

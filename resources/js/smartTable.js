@@ -157,8 +157,7 @@
                                     cell.innerHTML = hidden+'<input id="'+key+'" type="date" class="form-control date-editor" value="'+row.data()[key]+'" >';
                                     has_date = true;
                                 }
-                                else{
-                                    //number input
+                                else if(col.modifier == 'number'){
                                     cell.innerHTML = hidden+'<input id="'+key+'" type="number" class="form-control" value="'+row.data()[key]+'" >';
                                 }
                             }
