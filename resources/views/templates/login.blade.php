@@ -17,7 +17,7 @@
             <img src="/Images/Logos/logo.png" id="logo" style="margin-bottom:1.5rem;">
             @include('shared-utils::components.ajax-form', [
                 'form' => $form,
-                'style' => 'display: flex; flex-direction: column; align-items: center;'
+                'style' => 'display: flex; flex-direction: column; align-items: center; gap: 6px;'
             ])
         </div>
     </div>

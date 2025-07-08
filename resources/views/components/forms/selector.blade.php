@@ -1,10 +1,12 @@
 @props(['selector'])
 <select 
+    name="{{ $name }}"
     {{ $attributes->class([
         'form-select',
         'w-auto',
         $selector->search ? 'select2' : '',
-    ]) }}>
+    ]) }}
+>
     <option disabled selected value>select</option>
     @foreach ($selector->options as $k=>$v)
         @if($k==$selector->value)

@@ -10,8 +10,17 @@ class FormField
     public string $icon;
     public array $rules;
     public string $message;
+    public string $value;
 
-    public function __construct(InputType $type, string $label="", string $placeholder="", string $icon="", array $rules=[], string $message="")
+    public function __construct(
+        InputType $type, 
+        string $label="", 
+        string $placeholder="", 
+        string $icon="", 
+        array $rules=[], 
+        string $message="", 
+        string $value = ""
+    )
     {
         $this->type = $type;
         $this->label = $label;
@@ -19,6 +28,7 @@ class FormField
         $this->icon = $icon;
         $this->rules = $rules;
         $this->message = $message;
+        $this->value = $value;
     }
 
     public function is_required(): bool
@@ -46,5 +56,10 @@ class FormField
     public function get_type(): InputType
     {
         return $this->type; // default type
+    }
+
+    public function render(string $name)
+    {
+        return view('shared-utils::components.forms.field', ["field"=>$this,"name"=>$name]);
     }
 }

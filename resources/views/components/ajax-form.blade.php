@@ -2,22 +2,17 @@
     <form @submit.prevent="submit" style="{{ $style ?? '' }}">
 
         @foreach ($form->formFields as $name => $field)
-            <div class="mb-4">
+            <div>
                 @if($field->icon)
                 <div class="input-group">
                     <span class="input-group-text">
                         <i class="{{ $field->icon }}"></i>
                     </span>
                 @endif
-                {{--<label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>--}}
-                <input
-                    type="{{ $field->get_type() }}"
-                    class="form-control"
-                    name="{{ $name }}"
-                    x-model="form.{{ $name }}"
-                    placeholder="{{ $field->placeholder }}{{ $field->is_required() ? '*' : '' }}"
-                    
-                >
+                @if($field->label!="")
+                <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
+                @endif
+                {!! $field->render($name) !!}
                 @if($field->icon)
                 </div>
                 @endif
@@ -47,6 +42,10 @@
             form: {},
             errors: {},
             submit() {
+                const urlParams = new URLSearchParams(window.location.search);
+                for (const key of urlParams.keys()) {
+                    this.form[key] = urlParams.get(key);
+                }
                 $.ajax({
                     url: '{{ $form->submit_url==""? '/form/'.$form->id : $form->submit_url }}',
                     method: 'POST',
