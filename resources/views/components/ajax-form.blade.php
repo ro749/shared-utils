@@ -1,31 +1,27 @@
-<div x-data="{{$form->id}}_submit()">
-    <form @submit.prevent="submit" style="{{ $style ?? '' }}">
-
-        @foreach ($form->formFields as $name => $field)
-            <div>
-                @if($field->icon)
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="{{ $field->icon }}"></i>
-                    </span>
-                @endif
-                @if($field->label!="")
-                <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
-                @endif
-                {!! $field->render($name) !!}
-                @if($field->icon)
-                </div>
-                @endif
-                <template x-if="errors['{{ $name }}']">
-                    <p class="form-error" x-text="errors['{{ $name }}']"></p>
-                </template>
+<div x-data="{{$form->id}}_submit()" style="{{ isset($style)?$style:"" }}">
+    @foreach ($form->formFields as $name => $field)
+        <div>
+            @if($field->icon)
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="{{ $field->icon }}"></i>
+                </span>
+            @endif
+            @if($field->label!="")
+            <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
+            @endif
+            {!! $field->render($name) !!}
+            @if($field->icon)
             </div>
-        @endforeach
-
-        <button type="submit" class="btn btn-light">
-            {{ $form->submit_text=="" ? 'Enviar': $form->submit_text }}
-        </button>
-    </form>
+            @endif
+            <template x-if="errors['{{ $name }}']">
+                <p class="form-error" x-text="errors['{{ $name }}']"></p>
+            </template>
+        </div>
+    @endforeach
+    <button class="btn btn-light" @click="submit">
+        {{ $form->submit_text=="" ? 'Enviar': $form->submit_text }}
+    </button>
 </div>
 @if($form->redirect=="" && $form->popup=="")
 @once('form-popup')

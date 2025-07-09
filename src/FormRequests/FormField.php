@@ -4,7 +4,6 @@ namespace Ro749\SharedUtils\FormRequests;
 
 class FormField
 {
-    public string $id;
     public InputType $type;
     public string $label;
     public string $placeholder;
@@ -14,7 +13,6 @@ class FormField
     public string $value;
 
     public function __construct(
-        string $id,
         InputType $type, 
         string $label="", 
         string $placeholder="", 
@@ -24,7 +22,6 @@ class FormField
         string $value = ""
     )
     {
-        $this->id = $id;
         $this->type = $type;
         $this->label = $label;
         $this->placeholder = $placeholder;

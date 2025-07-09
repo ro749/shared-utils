@@ -10,7 +10,6 @@ use function Laravel\Prompts\search;
 
 class Selector extends FormField
 {
-    public string $id;
     public array $options;
     public string $table;
 
@@ -37,11 +36,10 @@ class Selector extends FormField
     )    
     {
         parent::__construct(
-            id: $id,
             type: InputType::SELECTOR,
             label:$label, 
             placeholder:$placeholder, 
-            icon:$icon="",
+            icon:$icon,
             rules:$rules, 
             message:$message, 
             value:$value 

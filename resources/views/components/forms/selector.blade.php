@@ -1,6 +1,7 @@
 @props(['selector'])
 <select 
     name="{{ $name }}"
+    x-model="form.{{ $name }}"
     {{ $attributes->class([
         'form-select',
         'w-auto',
