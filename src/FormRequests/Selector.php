@@ -22,14 +22,13 @@ class Selector extends FormField
     
 
     public function __construct(
+        string $id, 
         string $label="", 
         string $placeholder="", 
         string $icon="", 
         array $rules=[], 
         string $message="", 
         string $value = "",
-
-        string $id, 
         array $options, 
         bool $search = false,
         string $table = "", 
@@ -38,6 +37,7 @@ class Selector extends FormField
     )    
     {
         parent::__construct(
+            id: $id,
             type: InputType::SELECTOR,
             label:$label, 
             placeholder:$placeholder, 

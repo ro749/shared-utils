@@ -1,4 +1,4 @@
-<div x-data="dynamicForm()">
+<div x-data="{{$form->id}}_submit()">
     <form @submit.prevent="submit" style="{{ $style ?? '' }}">
 
         @foreach ($form->formFields as $name => $field)
@@ -35,14 +35,19 @@
 @endonce
 @endif
 
-
+@push('scripts')
 <script>
-    function dynamicForm() {
+    function {{$form->id}}_submit() {
         return {
             form: {},
             errors: {},
             submit() {
                 const urlParams = new URLSearchParams(window.location.search);
+console.log('Form Data:', this.form);
+for (const key in this.form) {
+    console.log(`${key}: ${this.form[key]}`);
+}
+
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
                 }
@@ -78,3 +83,4 @@
         }
     }
 </script>
+@endpush
