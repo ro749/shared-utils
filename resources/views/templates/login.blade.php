@@ -13,7 +13,7 @@
 
 <body>
     <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div class="card" style="padding:1.5rem;">
+        <div class="card login-card" style="padding:1.5rem;">
             <img src="/Images/Logos/logo.png" id="logo" style="margin-bottom:1.5rem;">
             @include('shared-utils::components.ajax-form', [
                 'form' => $form,

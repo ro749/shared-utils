@@ -1,6 +1,6 @@
 <div x-data="{{$form->id}}_submit()" style="{{ isset($style)?$style:"" }}">
     @foreach ($form->formFields as $name => $field)
-        <div>
+        <div class="form-field">
             @if($field->icon)
             <div class="input-group">
                 <span class="input-group-text">
