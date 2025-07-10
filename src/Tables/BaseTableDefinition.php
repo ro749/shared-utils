@@ -2,56 +2,45 @@
 namespace Ro749\SharedUtils\Tables;
 
 use Illuminate\Support\Facades\DB;
+use Ro749\SharedUtils\Getters\BaseGetter;
 
 class BaseTableDefinition
 {
     //the id the table is going to have
     public string $id;
 
-    //the table name
-    public string $table;
-
-    /** var array<string, Column> */
-    public array $columns = [];
+    public BaseGetter $getter;
 
     public ?View $view = null;
     public ?Delete $delete = null;
 
     public bool $needs_buttons = false;
     public bool $is_editable = false;
-    public array $filters;
-    public array $backend_filters;
 
 
     public function __construct(
         string $id, 
-        string $table, 
-        array $columns, 
+        BaseGetter $getter,
         View $view = null, 
-        Delete $delete = null, 
-        array $filters = [],
-        array $backend_filters = []
+        Delete $delete = null
     )
     {
         $this->id = $id;
-        $this->table = $table;
-        $this->columns = $columns;
+        $this->getter = $getter;
         $this->view = $view;
         $this->delete = $delete;
-        $this->filters = $filters;
-        $this->backend_filters = $backend_filters;
         $this->is_editable = $this->has_edit();
         $this->needs_buttons = $this->needsButtons();
     }
 
     public function getColumn(string $key): ?Column
     {
-        return $this->columns[$key] ?? null;
+        return $this->getter->columns[$key] ?? null;
     }
 
     public function getColumnKeys(): array
     {
-        return array_keys($this->columns);
+        return array_keys($this->getter->columns);
     }
 
     public function needsButtons(): bool
@@ -61,80 +50,43 @@ class BaseTableDefinition
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
     {
-        $query = DB::table($this->table)->select($this->table.'.id');
-        $joins = [];
-        foreach ($this->columns as $key => $column) {
-            if ($column->is_foreign()) {
-                if(!$column->editable){
-                    if(!in_array($column, $joins)){
-                        $joins[] = $column;
-                        $query->leftJoin($column->table, $column->table . '.id', '=', $this->table . '.' . $key);
-                    }
-                    $query->addSelect($column->table . '.' . $column->column . ' as ' . $key);
-                }
-                else{
-                    $foreign_column = DB::table($column->table)->select('id',$column->column)->get();
-                    foreach($foreign_column as $foreign_column_key => $foreign_column_value) {
-                        $ans["selectors"][$key][$foreign_column_value->id] = $foreign_column_value->{$column->column};
-                    }
-                    $query->addSelect($this->table . '.' . $key);
-                    if ($search) {
-                        if(!in_array($column, $joins)){
-                            $joins[] = $column;
-                            $query->leftJoin($column->table, $column->table . '.id', '=', $this->table . '.' . $key);
-                        }
-                    }
-                }
-            }
-            else {
-                $query->addSelect($this->table . '.' . $key);
-            }
-        }
-        foreach ($this->backend_filters as $filter) {
-            $filter->filter($query, $filters);
-        }
-        $ans['recordsTotal'] = $query->count();
-        
-        if ($search) {
-            $query->where(function ($query) use ($search) {
-                foreach ($this->columns as $key => $column) {
-                    if ($column->is_foreign()) {
-                        $query->orWhere($column->table . '.' . $column->column, 'like', '%' . $search . '%');
-                    }
-                    else {
-                        $query->orWhere($this->table . '.' . $key, 'like', '%' . $search . '%');
-                    }
-                }
-                
-            });
-        }
-        foreach ($this->filters as $filter) {
-            $filter->filter($query, $filters);
-        }
-        $ans['recordsFiltered'] = $query->count();
-        
-        $ans['data'] = $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir'])->offset($start)->limit($length)->get();
-        
-        
-        return $ans;
+        return $this->getter->get($start, $length, $search,$order,$filters);
     }
 
     function save($id,$args) {
-        DB::table($this->table)->where('id', $id)->update($args);
+        DB::table($this->getter->table)->where('id', $id)->update($args);
     }
 
     public function delete(int $id): void
     {
-        DB::table($this->table)->where('id', $id)->delete();
+        DB::table($this->getter->table)->where('id', $id)->delete();
     }
 
     public function has_edit(): bool
     {
-        foreach ($this->columns as $key => $column) {
+        foreach ($this->getter->columns as $key => $column) {
             if ($column->editable) {
                 return true;
             }
         }
         return false;
+    }
+
+    function get_columns(): array {
+        return $this->getter->columns;
+    }
+
+    function get_info(){
+        return [
+            'id' => $this->id,
+            'table' => $this->getter->table,
+            'columns' => $this->getter->columns,
+            'filters' => $this->getter->filters,
+            'backend_filters' => $this->getter->backend_filters,
+            'view' => $this->view,
+            'delete' => $this->delete,
+            'needs_buttons' => $this->needs_buttons,
+            'is_editable' => $this->is_editable,
+        ];
     }
 }

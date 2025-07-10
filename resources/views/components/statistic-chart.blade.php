@@ -1,12 +1,12 @@
-<div style="height:{{ $statistics->get_height() }}px">
-<canvas id="{{ $statistics->id }}" style="width:100px;height:100px"></canvas>
+<div style="{{ $style }}">
+<canvas id="{{ $statistics->id }}" ></canvas>
 </div>
 @push('scripts')
 <script>
 	var {{ $statistics->id }} = null;
 	$( document ).ready(function() {
     {{ $statistics->id }} = new Chart(document.getElementById('{{ $statistics->id }}'), {
-		type: 'horizontalBar',
+		type: '{{ $type }}',
 		data: {
 			labels: @json($statistics->get_labels()),
 			datasets: [{
@@ -24,22 +24,22 @@
 			scales: {
 				xAxes: [{
 					ticks: {
-						beginAtZero: true,
-						fontColor: '#fff',
+						autoSkip: false,
+						fontColor: 'rgba(128, 128, 128, 1)',
 					},
 					gridLines: {
 						display: true,
-						color: 'rgba(255, 255, 255, 0.24)'
+						color: 'rgba(128, 128, 128, 0.5)'
 					},
 				}],
 				yAxes: [{
 					ticks: {
 						beginAtZero: true,
-						fontColor: 'rgba(255, 255, 255, 0.64)',
+						fontColor: 'rgba(128, 128, 128, 1)',
 					},
 					gridLines: {
 						display: true,
-						color: 'rgba(255, 255, 255, 0.24)'
+						color: 'rgba(128, 128, 128, 0.5)'
 					},
 				}],
 			}
@@ -48,4 +48,4 @@
 
 	});
     </script>
-@endpush
+@endpush 

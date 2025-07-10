@@ -1,11 +1,11 @@
-@foreach ($table->filters as $filter)
+@foreach ($table->getter->filters as $filter)
 {!! $filter->render() !!}
 @endforeach
 
 <table id="{{ $table->id }}" class="table table-striped table-bordered">
     <thead>
         <tr>
-            @foreach($table->columns as $key=>$column)
+            @foreach($table->get_columns() as $key=>$column)
                 <th>{{ $column->display }}</th>
             @endforeach
             @if($table->needsButtons())
@@ -15,7 +15,7 @@
     </thead>
     <tfoot>
         <tr>
-            @foreach($table->columns as $key=>$column)
+            @foreach($table->get_columns() as $key=>$column)
                 <th>{{ $column->display }}</th>
             @endforeach
             @if($table->needsButtons())
@@ -37,6 +37,6 @@
 
 @push('scripts')
 <script>
-    $('#{{ $table->id }}').smartTable(@json($table));
+    $('#{{ $table->id }}').smartTable(@json($table->get_info()));
 </script>
 @endpush
