@@ -1,0 +1,20 @@
+<?php
+
+namespace {{ namespace }};
+
+class {{ class }} extends BaseTableDefinition
+{
+    parent::__construct(
+        id: 'InventaryTable',
+    );
+
+    protected static ?BaseTableDefinition $instance = null;
+
+    public static function instance(): BaseTableDefinition
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+}
