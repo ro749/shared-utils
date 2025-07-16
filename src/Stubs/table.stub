@@ -2,11 +2,22 @@
 
 namespace {{ namespace }};
 
+use Ro749\SharedUtils\Tables\BaseTableDefinition;
+use Ro749\SharedUtils\Getters\ArrayGetter;
+
 class {{ class }} extends BaseTableDefinition
 {
-    parent::__construct(
-        id: 'InventaryTable',
-    );
+    public function __construct(){
+        parent::__construct(
+            id: '{{ class }}',
+            getter: new ArrayGetter(
+                table: '',
+                columns : [],
+                filters: [],
+                backend_filters: []
+            )
+        );
+    }
 
     protected static ?BaseTableDefinition $instance = null;
 

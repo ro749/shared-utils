@@ -22,12 +22,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         $package
             ->name('shared-utils')
             ->hasConfigFile()
-            ->hasAssets([
-                'resources/css/base.css',
-                'resources/js/utils.js',
-                'resources/js/modal.js',
-                'resources/js/tableEditor.js',
-                ])
+            ->hasAssets()
             ->hasViews()
             ->hasMigration('create_shared_utils_table')
             ->hasCommands([

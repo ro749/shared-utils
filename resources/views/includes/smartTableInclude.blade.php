@@ -1,5 +1,6 @@
 @include('shared-utils::includes.datatables')
 
 @push('scripts')
-<script src="https://blixdev.com/ListingEngine/assets/plugins/ro749/smartTable.js"></script>
+
+<script src="{{ asset('vendor/shared-utils/js/smartTable.js') }}"></script>
 @endpush

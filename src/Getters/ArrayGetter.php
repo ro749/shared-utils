@@ -8,13 +8,14 @@ use Illuminate\Database\Query\Builder;
 
 class ArrayGetter extends BaseGetter{
 
-    public function __construct(string $table, array $columns, array $filters = [], array $backend_filters = [])
+    public function __construct(string $table, array $columns, array $filters = [], array $backend_filters = [],$debug = false)
     {
         parent::__construct(
             filters:$filters, 
             backend_filters:$backend_filters,
             columns:$columns,
-            table: $table
+            table: $table,
+            debug: $debug
         );
     }
 
@@ -36,12 +37,6 @@ class ArrayGetter extends BaseGetter{
                 }
                 //if column needs data from other table and its editable
                 else{
-                    //if column needs data from other table and its editable gets all the column of the other table for the selector
-                    //and saves it in $ans["selectors"]
-                    $foreign_column = DB::table($column->table)->select('id',$column->column)->get();
-                    foreach($foreign_column as $foreign_column_key => $foreign_column_value) {
-                        $ans["selectors"][$key][$foreign_column_value->id] = $foreign_column_value->{$column->column};
-                    }
                     //if column needs data from other table and its editable it does not joins, as the join is going to be done manualy, the data 
                     //is already collected
                     $query->addSelect($this->table . '.' . $key);
@@ -62,19 +57,30 @@ class ArrayGetter extends BaseGetter{
         return $query;
     }
 
-    public function search(Builder $query,string $search){
-        if ($search!='') {
-            $query->where(function ($query) use ($search) {
-                foreach ($this->columns as $key => $column) {
-                    if ($column->is_foreign()) {
-                        $query->orWhere($column->table . '.' . $column->column, 'like', '%' . $search . '%');
-                    }
-                    else {
-                        $query->orWhere($this->table . '.' . $key, 'like', '%' . $search . '%');
-                    }
+    function get_selectors(){
+        $ans = [];
+        foreach ($this->columns as $key => $column){
+            if ($column->is_foreign()) {
+                $foreign_column = DB::table($column->table)->select('id',$column->column)->get();
+                foreach($foreign_column as $foreign_column_key => $foreign_column_value) {
+                    $ans[$key][$foreign_column_value->id] = $foreign_column_value->{$column->column};
                 }
-                
-            });
+            }
         }
+        return $ans;
+    }
+
+    public function search(Builder $query,string $search): Builder{
+        $query->where(function ($query) use ($search) {
+            foreach ($this->columns as $key => $column) {
+                if ($column->is_foreign()) {
+                    $query->orWhere($column->table . '.' . $column->column, 'like', '%' . $search . '%');
+                }
+                else {
+                    $query->orWhere($this->table . '.' . $key, 'like', '%' . $search . '%');
+                }
+            }
+        });
+        return $query;
     }
 }

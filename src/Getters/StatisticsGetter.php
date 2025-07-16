@@ -49,7 +49,8 @@ class StatisticsGetter extends BaseGetter
                 $category_column => $category_column_desc,
                 $data_column => $data_column_desc
             ],
-            table: $category_table
+            table: $category_table,
+            debug: $debug
         );
         $this->category_column = $category_column;
         $this->type = $type;
@@ -57,7 +58,6 @@ class StatisticsGetter extends BaseGetter
         $this->data_column = $data_column;
         $this->value_column = $value_column;
         $this->show_zeroes = $show_zeroes;
-        $this->debug = $debug;
         $this->joins = [];
         if($data_table != ""){
             $this->joins[] = ["table" => $category_table, "column" => $category_column];
@@ -100,9 +100,14 @@ class StatisticsGetter extends BaseGetter
         if(!$this->show_zeroes){
             //$query->having($this->data_column, " >", "0");
         }
-        if($this->debug){
-            echo "query: " . $query->toSql() . "\n";
-        }
         return $query;
+    }
+
+    public function search(Builder $query,string $search): Builder{
+        $sub = DB::query()->fromSub($query, 'search');
+        foreach ($this->columns as $key => $column) {
+            $sub->orWhere( $key, 'like', '%' . $search . '%');
+        }
+        return $sub;
     }
 }

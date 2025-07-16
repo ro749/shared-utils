@@ -24,6 +24,12 @@ Route::middleware('web')->group(function () {
             $request->get('filters')?? []
         ));
     });
+
+    Route::get('/table/{table}/selectors', function (Request $request,string $table) {
+        $fullClass = 'App\\Tables\\' . $table;
+        $table = $fullClass::instance();
+        return response()->json($table->get_selectors());
+    });
     
     Route::post('/table/{table}/delete', function (Request $request,string $table) {
         $fullClass = 'App\\Tables\\' . $table;

@@ -53,6 +53,11 @@ class BaseTableDefinition
         return $this->getter->get($start, $length, $search,$order,$filters);
     }
 
+    public function get_selectors()
+    {
+        return $this->getter->get_selectors();
+    }
+
     function save($id,$args) {
         DB::table($this->getter->table)->where('id', $id)->update($args);
     }

@@ -58,7 +58,18 @@
                     }
                 });
             }
-            var filters = [];
+            var filters = {};
+            var params = new URLSearchParams(window.location.search);
+            params.forEach((value, key) => {
+                filters[key] = value;
+            });
+            $.ajax({
+                url: '/table/'+options.id+'/selectors',
+                type: 'GET',
+                success: function(response) {
+                    selectors = response;
+                }
+            })
             var table = $table.DataTable({
                 ajax: {
                     url: '/table/'+options.id+'/get',
@@ -130,35 +141,36 @@
                         if(col.editable){
                             var cell = row.node().getElementsByTagName('td')[colnum];
                             var hidden = "<span style='display:none' class='edit-cancel-recover'>"+cell.innerHTML+"</span>";
-                            if(col.table && col.column){
-                                hidden = hidden+'<select class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
-                                for(var option in selectors[key]){
-                                    hidden += row.data()[key] == option ?
-                                        '<option value=' + option + ' selected>' + selectors[key][option] + '</option>' :
-                                        '<option value=' + option + '>' + selectors[key][option] + '</option>';
-                                }
-                                hidden += '</select>';
-                                cell.innerHTML = hidden;
-                                has_selector = true;
-                            }
-                            else if(col.modifier){
-                                if(col.modifier == 'enum'){
-                                    hidden = hidden+'<select class="form-select" id="'+key+'">';
-                                    for(var option in window[key]){
-                                        hidden += row.data()[key] == option ?
-                                            '<option value=' + option + ' selected>' + window[key][option] + '</option>' :
-                                            '<option value=' + option + '>' + window[key][option] + '</option>';
-                                    }
-                                    hidden += '</select>';
-                                    cell.innerHTML = hidden;
-                                }
-                                else if(col.modifier == 'date'){
-                                    //date input
-                                    cell.innerHTML = hidden+'<input id="'+key+'" type="date" class="form-control date-editor" value="'+row.data()[key]+'" >';
-                                    has_date = true;
-                                }
-                                else if(col.modifier == 'number'){
-                                    cell.innerHTML = hidden+'<input id="'+key+'" type="number" class="form-control" value="'+row.data()[key]+'" >';
+                            if(col.modifier != null){
+                                switch(col.modifier){
+                                    case 'foreign_key':
+                                        hidden = hidden+'<select class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
+                                        for(var option in selectors[key]){
+                                            hidden += row.data()[key] == option ?
+                                                '<option value=' + option + ' selected>' + selectors[key][option] + '</option>' :
+                                                '<option value=' + option + '>' + selectors[key][option] + '</option>';
+                                        }
+                                        hidden += '</select>';
+                                        cell.innerHTML = hidden;
+                                        has_selector = true;
+                                        break;
+                                    case 'enum':
+                                        hidden = hidden+'<select class="form-select" id="'+key+'">';
+                                        for(var option in window[key]){
+                                            hidden += row.data()[key] == option ?
+                                                '<option value=' + option + ' selected>' + window[col.options][option] + '</option>' :
+                                                '<option value=' + option + '>' + window[col.options][option] + '</option>';
+                                        }
+                                        hidden += '</select>';
+                                        cell.innerHTML = hidden;
+                                        break;
+                                    case 'date':
+                                        cell.innerHTML = hidden+'<input id="'+key+'" type="date" class="form-control date-editor" value="'+row.data()[key]+'" >';
+                                        has_date = true;
+                                        break;
+                                    case 'number':
+                                        cell.innerHTML = hidden+'<input id="'+key+'" type="number" class="form-control" value="'+row.data()[key]+'" >';
+                                        break;
                                 }
                             }
                             else{
@@ -201,7 +213,6 @@
                             else{
                                 to_save[key] = document.getElementById(key).value;
                             }
-                            
                         }
                     }
                     
@@ -217,12 +228,6 @@
                             table.ajax.reload(null, false);
                         },
                     });
-                });
-                
-                table.on('xhr', function (e, settings, json, xhr) {
-                    if(json["selectors"]){
-                        selectors = json["selectors"];
-                    }
                 });
             }
             

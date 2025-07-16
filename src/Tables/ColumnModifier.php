@@ -12,5 +12,6 @@ enum ColumnModifier: string
     case DATE = 'date';
     case ENUM = 'enum';
     case NUMBER = 'number';
+    case FOREING_KEY = 'foreign_key';
 }
 ?>

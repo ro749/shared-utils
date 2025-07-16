@@ -12,12 +12,15 @@ abstract class BaseGetter
     public array $backend_filters;
     public array $columns;
 
-    function __construct(array $filters = [], array $backend_filters = [],array $columns = [],string $table = '')
+    public bool $debug;
+
+    function __construct(array $filters = [], array $backend_filters = [],array $columns = [],string $table = '',$debug = false)
     {
         $this->filters = $filters;
         $this->backend_filters = $backend_filters;
         $this->columns = $columns;
         $this->table = $table;
+        $this->debug = $debug;
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
@@ -28,25 +31,32 @@ abstract class BaseGetter
         foreach ($this->backend_filters as $filter) {
             $filter->filter($query, $filters);
         }
-        $ans['recordsTotal'] = DB::query()->fromSub($query, 'grouped')->count();;
-        
-        if ($search!="") {
-            $this->search($query,$search);
-        }
+        $ans['recordsTotal'] = DB::query()->fromSub($query, 'grouped')->count();
+
         foreach ($this->filters as $filter) {
             $filter->filter($query, $filters);
+        }
+        if ($search!="") {
+            //echo "search";
+            $query = $this->search($query,$search);
         }
         $ans['recordsFiltered'] = DB::query()->fromSub($query, 'grouped')->count();
         $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         $query->offset($start);
         $query->limit($length);
+        
+        if($this->debug){
+            echo "query: " . $query->toSql() . "\n";
+        }
         $ans['data'] = $query->get();
-        
-        
         return $ans;
     }
 
     abstract function get_query(array &$ans,string $search): Builder;
 
-    public function search(Builder $query,string $search){}
+    abstract function search(Builder $query,string $search): Builder;
+
+    public function get_selectors(){
+        return [];
+    }
 }
