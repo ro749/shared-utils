@@ -1,7 +1,7 @@
 <?php
 
 namespace Ro749\SharedUtils\Tables;
-
+use Ro749\SharedUtils\Tables\ColumnModifiers\LogicModifier;
 class Column
 {
     //what is going to display in the frontend table

@@ -6,6 +6,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Ro749\SharedUtils\Commands\SharedUtilsCommand;
 use Ro749\SharedUtils\Commands\MakeTable;
+use Ro749\SharedUtils\Commands\MakeLogin;
 use Illuminate\Support\Facades\Blade;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
@@ -27,7 +28,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
             ->hasMigration('create_shared_utils_table')
             ->hasCommands([
                 SharedUtilsCommand::class,
-                MakeTable::class
+                MakeTable::class,
+                MakeLogin::class
             ])
             ->hasRoutes('web');
     }

@@ -1,0 +1,43 @@
+<?php
+
+namespace {{ namespace }};
+
+use Ro749\SharedUtils\FormRequests\LoginFormRequest;
+use Ro749\SharedUtils\FormRequests\FormField;
+use Ro749\SharedUtils\FormRequests\InputType;
+use App\Models\User;
+use App\Models\Client;
+
+class {{ class }} extends LoginFormRequest
+{
+    public function __construct()
+    {
+        parent::__construct(
+            id: "{{ class }}",
+            table: "users",
+            submit_text: "Entrar",
+            redirect: "/",
+            formFields: [
+                "name" => new FormField(
+                    placeholder:"Usuario", 
+                    type: InputType::PASSWORD,
+                    icon: "bx bx-user"
+                ),
+                "password" => new FormField(
+                    placeholder:"Contraseña",
+                    type: InputType::PASSWORD,
+                    icon: "bx bx-lock-alt"
+                ),
+            ],
+        );
+    }
+    protected static ?{{ class }} $instance = null;
+
+    public static function instanciate(): {{ class }}
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+}

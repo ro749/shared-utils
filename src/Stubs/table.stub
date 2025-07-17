@@ -4,6 +4,7 @@ namespace {{ namespace }};
 
 use Ro749\SharedUtils\Tables\BaseTableDefinition;
 use Ro749\SharedUtils\Getters\ArrayGetter;
+use Ro749\SharedUtils\Tables\Column;
 
 class {{ class }} extends BaseTableDefinition
 {
