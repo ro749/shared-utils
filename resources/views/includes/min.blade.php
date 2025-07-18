@@ -5,7 +5,7 @@
 <link href="https://blixdev.com/ListingEngine/assets/plugins/ro749/main.css" rel="stylesheet">
 @endpush
 
-@push('scripts')
+@push('script-includes')
 <script src="https://blixdev.com/ListingEngine/assets/js/jquery.min.js"></script>
 @endpush
 @endonce
