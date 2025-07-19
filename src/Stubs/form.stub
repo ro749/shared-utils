@@ -1,0 +1,33 @@
+<?php
+
+namespace {{ namespace }};
+
+use Ro749\SharedUtils\FormRequests\BaseFormRequest;
+use Ro749\SharedUtils\FormRequests\FormField;
+use Ro749\SharedUtils\FormRequests\InputType;
+use App\Models\User;
+use App\Models\Client;
+
+class {{ class }} extends BaseFormRequest
+{
+    public function __construct()
+    {
+        parent::__construct(
+            id: "{{ class }}",
+            table: "",
+            submit_text: "",
+            formFields: [
+                
+            ],
+        );
+    }
+    protected static ?{{ class }} $instance = null;
+
+    public static function instanciate(): {{ class }}
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+}

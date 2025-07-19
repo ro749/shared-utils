@@ -7,6 +7,8 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Ro749\SharedUtils\Commands\SharedUtilsCommand;
 use Ro749\SharedUtils\Commands\MakeTable;
 use Ro749\SharedUtils\Commands\MakeLogin;
+use Ro749\SharedUtils\Commands\MakeForm;
+use Ro749\SharedUtils\Commands\Options;
 use Illuminate\Support\Facades\Blade;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
@@ -29,7 +31,9 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 SharedUtilsCommand::class,
                 MakeTable::class,
-                MakeLogin::class
+                MakeLogin::class,
+                MakeForm::class,
+                Options::class,
             ])
             ->hasRoutes('web');
     }
@@ -41,6 +45,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.modal', 'sharedutils::modal');
         Blade::component('sharedutils::components.inputs.selector', 'sharedutils::selector');
         Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
+        //Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
         //Blade::component('sharedutils::components.inputs.db-select', 'sharedutils::db-select');
     }
 }

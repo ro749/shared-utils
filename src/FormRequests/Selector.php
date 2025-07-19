@@ -10,25 +10,22 @@ use function Laravel\Prompts\search;
 
 class Selector extends FormField
 {
-    public array $options;
+    public $options;
     public string $table;
-
     public string $label_column;
-
     public string $value_column;
-
     public bool $search = false;
     
 
     public function __construct(
-        string $id, 
+        $options, 
+        string $id="", 
         string $label="", 
         string $placeholder="", 
         string $icon="", 
         array $rules=[], 
         string $message="", 
         string $value = "",
-        array $options, 
         bool $search = false,
         string $table = "", 
         string $label_column = "", 
@@ -46,13 +43,16 @@ class Selector extends FormField
         );
 
         $this->id = $id;
-        $this->options = $options;
+        if(is_array($options)){
+            $this->options = $options;
+        }
+        else{
+            $this->options = config("options.{$options->value}") ?? [];
+        }
         $this->search = $search;
         $this->table = $table;
         $this->label_column = $label_column;
         $this->value_column = $value_column;
-
-
     }
 
     public static function fromDB(
