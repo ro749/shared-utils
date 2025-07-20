@@ -1,14 +1,14 @@
 <?php
 
-namespace Ro749\SharedUtils\Filters;
+namespace Ro749\SharedUtils\Filters\BackendFilters;
 use \Illuminate\Database\Query\Builder; 
 use Closure;
-class BasicFilter extends BaseFilter
+class BasicFilter extends BackendFilter
 {
     public Closure $filter;
     public function __construct(string $id,Closure $filter)
     {
-        parent::__construct("", $id);
+        parent::__construct( $id);
         $this->filter = $filter;
     }
 

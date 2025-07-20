@@ -43,8 +43,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sharedutils');
         // Register your component: <x-sharedutils::modal />
         Blade::component('sharedutils::components.modal', 'sharedutils::modal');
-        Blade::component('sharedutils::components.inputs.selector', 'sharedutils::selector');
-        Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
+        Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
+        //Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
         //Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
         //Blade::component('sharedutils::components.inputs.db-select', 'sharedutils::db-select');
     }

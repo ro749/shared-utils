@@ -2,6 +2,7 @@
 
 namespace Ro749\SharedUtils\Filters;
 use \Illuminate\Database\Query\Builder; 
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 class Filters extends BaseFilter
 {
@@ -19,7 +20,7 @@ class Filters extends BaseFilter
         }
     }
 
-    public function render(): string
+    public function render(): View
     {
         return view('shared-utils::components.filters.filters')->with('filter', $this);
     }

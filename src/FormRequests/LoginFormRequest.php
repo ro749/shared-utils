@@ -20,7 +20,7 @@ abstract class LoginFormRequest extends BaseFormRequest
         $credentials = $rawRequest->validate($this->rules());
         $user = array_values($credentials)[0];
         $key = "login-attempts:".$this->guard.$user;
-        if (RateLimiter::tooManyAttempts($key, 1)) {
+        if (RateLimiter::tooManyAttempts($key, 6)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
                 'password' => ['Demasiados intentos de inicio de sesión. Inténtalo en ' . $seconds . ' segundos.'],

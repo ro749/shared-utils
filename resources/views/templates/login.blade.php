@@ -21,6 +21,7 @@
             ])
         </div>
     </div>
+    @stack('script-includes')
     @stack('scripts')
 </body>
 </html>

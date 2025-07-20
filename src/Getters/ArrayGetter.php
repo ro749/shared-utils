@@ -34,9 +34,9 @@ class ArrayGetter extends BaseGetter{
                         $joins[] = $modifier->table;
                         $query->leftJoin(
                             $modifier->table, 
-                            $column->table . '.id', '=', $this->table . '.' . $key);
+                            $modifier->table . '.id', '=', $this->table . '.' . $key);
                     }
-                    $query->addSelectRaw($modifier->get_value($key) . ' as ' . $key);
+                    $query->addSelect($modifier->get_value($key) . ' as ' . $key);
                 }
                 //if column needs data from other table and its editable
                 else{

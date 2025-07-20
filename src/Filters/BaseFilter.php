@@ -2,7 +2,8 @@
 
 namespace Ro749\SharedUtils\Filters;
 use \Illuminate\Database\Query\Builder; 
-class BaseFilter
+use Illuminate\View\View;
+abstract class BaseFilter
 {
     public string $id;
     public string $display;
@@ -12,13 +13,7 @@ class BaseFilter
         $this->id = $id;
     }
 
-    public function filter(Builder $query,array $filters)
-    {
+    abstract function filter(Builder $query,array $filters);
 
-    }
-
-    public function render(): string
-    {
-        return "";
-    }
+    abstract function render(): View;
 }
