@@ -11,7 +11,6 @@ abstract class BaseGetter
     public array $filters;
     public array $backend_filters;
     public array $columns;
-
     public bool $debug;
 
     function __construct(array $filters = [], array $backend_filters = [],array $columns = [],string $table = '',$debug = false)
@@ -27,17 +26,14 @@ abstract class BaseGetter
     {
         $search = $search==null?"":$search;
         $ans = [];
-        $query = $this->get_query($ans,$search);
+        $query = $this->get_query($ans,$search,$filters);
         foreach ($this->backend_filters as $filter) {
             $filter->filter($query, $filters);
         }
         $ans['recordsTotal'] = DB::query()->fromSub($query, 'grouped')->count();
-
-        foreach ($this->filters as $filter) {
-            $filter->filter($query, $filters);
-        }
+        $this->apply_filters($query, $filters);
+        
         if ($search!="") {
-            //echo "search";
             $query = $this->search($query,$search);
         }
         $ans['recordsFiltered'] = DB::query()->fromSub($query, 'grouped')->count();
@@ -46,17 +42,19 @@ abstract class BaseGetter
         $query->limit($length);
         
         if($this->debug){
-            echo "query: " . $query->toSql() . "\n";
+            $ans['query'] = $query->toSql();
         }
         $ans['data'] = $query->get();
         return $ans;
     }
 
-    abstract function get_query(array &$ans,string $search): Builder;
+    abstract function get_query(array &$ans,string $search,array $filters): Builder;
 
     abstract function search(Builder $query,string $search): Builder;
 
     public function get_selectors(){
         return [];
     }
+
+    abstract function apply_filters($query, $filters);
 }

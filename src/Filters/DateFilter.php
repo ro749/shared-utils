@@ -9,9 +9,9 @@ class DateFilter extends BaseFilter
     public string $table;
     public string $column;
 
-    public function __construct(string $display, string $id, string $table, string $column)
+    public function __construct(string $display, string $id, string $table, string $column, string $session = '')
     {
-        parent::__construct($display, $id);
+        parent::__construct($display, $id, $session);
         $this->table = $table;
         $this->column = $column;
     }

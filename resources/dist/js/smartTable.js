@@ -63,6 +63,12 @@
             params.forEach((value, key) => {
                 filters[key] = value;
             });
+            for (const [key, filter] of Object.entries(options.filters)){
+                if (filter.session) {
+                    const sessionValue = sessionStorage.getItem(filter.session)??1;
+                    filters["cf-"+key] = sessionValue;
+                } 
+            }
             $.ajax({
                 url: '/table/'+options.id+'/selectors',
                 type: 'GET',
@@ -79,7 +85,85 @@
                     }
                 },
                 columns: columns,
-                serverSide: true
+                serverSide: true,
+                initComplete: function () {
+                    for (const [key, filter] of Object.entries(options.filters)) {
+                        const selector = document.createElement('div');
+                        selector.classList.add('filter');
+                        selector.style.display = 'flex';
+                        selector.style.flexDirection = 'row';
+                        selector.style.justifyContent = 'flex-end';
+                        selector.style.gap = '8px';
+                        selector.style.marginLeft = '8px';
+                        selector.style.alignItems = 'center';
+
+                        const p = document.createElement('p');
+                        p.style.margin = '0';
+                        p.textContent = filter.display;
+                        selector.appendChild(p);
+
+                        const select = document.createElement('select');
+                        select.id = "cf-"+key;
+                        select.classList.add(filter.class);
+                        select.classList.add('form-select');
+                        select.classList.add('w-auto');
+                        select.classList.add('category-filter');
+                        for (const [option_key, option] of Object.entries(filter.selector.options)) {
+                            const optionElement = document.createElement('option');
+                            optionElement.value = option_key;
+                            optionElement.textContent = option;
+                            select.appendChild(optionElement);
+                        }
+                        selector.appendChild(select);
+                        if(filter.session!=""){
+                            const sessionValue = sessionStorage.getItem(filter.session)??1;
+                            if (sessionValue) {
+                                select.value = sessionValue;
+                                filters[select.id] = sessionValue;
+                            }
+                            select.addEventListener('change', function () {
+                                sessionStorage.setItem(filter.session, this.value);
+                            });
+                        }
+                        
+                        $("#"+options.id+"_filter").prepend(selector);
+                    }
+                    $("#"+options.id+"_filter").css("display", "flex").css("flex-direction", "row").css("gap", "6px");
+                    setTimeout(function() {
+                        if(options.filters!=[]){
+                            $('.filter-button').on('click', function () {
+                                const clickedButton = $(this);
+                                var is_on = clickedButton.hasClass("filter-on");
+                                $('.filter-button').removeClass('filter-on');
+                                if(!is_on){
+                                    clickedButton.addClass("filter-on");
+                                    filters[this.parentElement.id] = this.id.substring(11);
+                                }
+                                else{
+                                    delete filters[this.parentElement.id];
+                                }
+                                table.ajax.reload(null, false);
+                            });
+                            $('.category-filter').on('change', function () {
+                                if (this.value == "") {
+                                    delete filters[this.id];
+                                } else {
+                                    filters[this.id] = this.value;
+                                }
+                                table.ajax.reload(null, false);
+                            });
+                            $('.date-filter').on('change', function () {
+                                if (this.value == "") {
+                                    delete filters[this.id];
+                                } else {
+                                    filters[this.id] = this.value;
+                                }
+                                table.ajax.reload(null, false);
+                            });
+                        }
+                    }, 0);
+                    
+                }
             });
             
             
@@ -228,38 +312,6 @@
                             table.ajax.reload(null, false);
                         },
                     });
-                });
-            }
-            
-            if(options.filters!=[]){
-                $('.filter-button').on('click', function () {
-                    const clickedButton = $(this);
-                    var is_on = clickedButton.hasClass("filter-on");
-                    $('.filter-button').removeClass('filter-on');
-                    if(!is_on){
-                        clickedButton.addClass("filter-on");
-                        filters[this.parentElement.id] = this.id.substring(11);
-                    }
-                    else{
-                        delete filters[this.parentElement.id];
-                    }
-                    table.ajax.reload(null, false);
-                });
-                $('.category-filter').on('change', function () {
-                    if (this.value == "") {
-                        delete filters[this.id];
-                    } else {
-                        filters[this.id] = this.value;
-                    }
-                    table.ajax.reload(null, false);
-                });
-                $('.date-filter').on('change', function () {
-                    if (this.value == "") {
-                        delete filters[this.id];
-                    } else {
-                        filters[this.id] = this.value;
-                    }
-                    table.ajax.reload(null, false);
                 });
             }
         });

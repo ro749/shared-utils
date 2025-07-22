@@ -68,7 +68,7 @@ class StatisticsGetter extends BaseGetter
         }
     }
 
-    public function get_query(array &$ans,string $search)  :Builder{
+    public function get_query(array &$ans,string $search,array $filters)  :Builder{
         $query = DB::table($this->table);
         if($this->data_table == "" || $this->data_table == $this->table){
             $query->select("id");
@@ -79,9 +79,25 @@ class StatisticsGetter extends BaseGetter
         else{
             $query->select($this->table.".".$this->category_column);
             $query->groupBy($this->table.".".$this->category_column);
-            for($i = 0; $i < count($this->joins)-1; $i++){
-                $query->leftJoin($this->joins[$i+1]['table'], "{$this->joins[$i]["table"]}.id", '=', "{$this->joins[$i+1]['table']}.{$this->joins[$i+1]["column"]}");
+            for($i = 0; $i < count($this->joins)-2; $i++){
+                $query->leftJoin(
+                    $this->joins[$i+1]['table'], 
+                    "{$this->joins[$i]["table"]}.id", 
+                    '=', 
+                    "{$this->joins[$i+1]['table']}.{$this->joins[$i+1]["column"]}"
+                );
             }
+            $query->leftJoin(
+                $this->joins[$i+1]['table'], 
+                function ($join) use ($i,$filters)  {
+                    $join->on(
+                        "{$this->joins[$i]["table"]}.id",
+                        '=',
+                        "{$this->joins[$i+1]['table']}.{$this->joins[$i+1]["column"]}");
+                    foreach ($this->filters as $filter) {
+                        $filter->filter($join, $filters);
+                    }
+                });
             $other_column = "{$this->data_table}.{$this->value_column}";
         }
         if($this->type == StatisticType::COUNT){
@@ -110,4 +126,6 @@ class StatisticsGetter extends BaseGetter
         }
         return $sub;
     }
+
+    public function apply_filters($query, $filters){}
 }

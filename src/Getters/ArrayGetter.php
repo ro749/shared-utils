@@ -20,7 +20,7 @@ class ArrayGetter extends BaseGetter{
         );
     }
 
-    function get_query(array &$ans,string $search): Builder{
+    function get_query(array &$ans,string $search,array $filters): Builder{
         $query = DB::table($this->table)->select($this->table.'.id');
         $joins = [];
         foreach ($this->columns as $key => $column) {
@@ -87,5 +87,11 @@ class ArrayGetter extends BaseGetter{
             }
         });
         return $query;
+    }
+
+    public function apply_filters($query, $filters){
+        foreach ($this->filters as $filter) {
+            $filter->filter($query, $filters);
+        }
     }
 }

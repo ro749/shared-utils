@@ -9,7 +9,7 @@ class Filters extends BaseFilter
     public array $filters = [];
     public function __construct(string $display,string $id, array $filters)
     {
-        parent::__construct($display, $id);
+        parent::__construct($display, $id,'');
         $this->filters = $filters;
     }
 
