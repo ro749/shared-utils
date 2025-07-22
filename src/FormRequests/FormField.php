@@ -42,6 +42,9 @@ class FormField
     public function get_rules(): array
     {
         $rules = $this->rules;
+        if($this->max_length!=0){
+            $rules[] = 'max:' . $this->max_length;
+        }
         switch ($this->type) {
             case InputType::EMAIL:
                 $rules[] = 'email';
@@ -53,6 +56,7 @@ class FormField
                 $rules[] = 'regex:/^\d+$/'; // ID_NUMBER should only contain digits
                 break;
         }
+        
         if (empty($rules)) {
             return ['nullable'];
         }

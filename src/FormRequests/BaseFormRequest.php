@@ -25,6 +25,16 @@ class BaseFormRequest
         $this->submit_text = $submit_text;
         $this->submit_url = $submit_url;
         $this->callback = $callback;
+        foreach ($this->formFields as $key => $field) {
+            if (in_array('unique', $field->rules)) {
+                foreach ($field->rules as $index => $rule) {
+                    if ($rule === 'unique') {
+                        $field->rules[$index] = "unique:{$this->table},{$key}";
+                    }
+                }
+            }
+
+        }
     }
 
     public function rules(): array
