@@ -6,6 +6,13 @@
             const columns = [];
             for (let col in options.columns){
                 let column = { data: col };
+                if(options.columns[col].logic_modifier) {
+                    switch (options.columns[col].logic_modifier.type) {
+                        case 'enum':
+                            column.render = (data) => window[options.columns[col].logic_modifier.options][data];
+                            break;
+                    }
+                }
                 switch (options.columns[col].modifier) {
                     case 'money':
                         column.render = (data) => `$${Number(data).toLocaleString('es-MX')}`;
@@ -16,10 +23,6 @@
                     case 'date':
                         column.render = (data) => new Date(data).toLocaleDateString();
                         break;
-                    case 'enum':
-                        column.render = (data) => window[col][data];
-                        break;
-                    // add more modifiers as needed
                 }
                 if(options.columns[col].table && options.columns[col].column && options.columns[col].editable){
                     column.render = (data) => data==0?"":selectors[col][data];
@@ -225,8 +228,8 @@
                         if(col.editable){
                             var cell = row.node().getElementsByTagName('td')[colnum];
                             var hidden = "<span style='display:none' class='edit-cancel-recover'>"+cell.innerHTML+"</span>";
-                            if(col.modifier != null){
-                                switch(col.modifier){
+                            if(col.logic_modifier != null){
+                                switch(col.logic_modifier.type){
                                     case 'foreign_key':
                                         hidden = hidden+'<select class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
                                         for(var option in selectors[key]){
@@ -240,14 +243,18 @@
                                         break;
                                     case 'enum':
                                         hidden = hidden+'<select class="form-select" id="'+key+'">';
-                                        for(var option in window[key]){
+                                        for(var option in window[col.logic_modifier.options]){
                                             hidden += row.data()[key] == option ?
-                                                '<option value=' + option + ' selected>' + window[col.options][option] + '</option>' :
-                                                '<option value=' + option + '>' + window[col.options][option] + '</option>';
+                                                '<option value=' + option + ' selected>' + window[col.logic_modifier.options][option] + '</option>' :
+                                                '<option value=' + option + '>' + window[col.logic_modifier.options][option] + '</option>';
                                         }
                                         hidden += '</select>';
                                         cell.innerHTML = hidden;
                                         break;
+                                }
+                            }
+                            else if(col.modifier != null){
+                                switch(col.modifier){
                                     case 'date':
                                         cell.innerHTML = hidden+'<input id="'+key+'" type="date" class="form-control date-editor" value="'+row.data()[key]+'" >';
                                         has_date = true;

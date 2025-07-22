@@ -3,7 +3,7 @@
         @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
         @continue
         @endif
-        <div class="form-field" style="width: auto;">
+        <div id="form-field-{{ $name }}" class="form-field" style="width: auto;">
             @if($field->icon)
             <div class="input-group">
                 <span class="input-group-text">

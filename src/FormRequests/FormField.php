@@ -49,6 +49,9 @@ class FormField
             case InputType::PHONE:
                 $rules[] = 'phone:MX';
                 break;
+            case InputType::ID_NUMBER:
+                $rules[] = 'regex:/^\d+$/'; // ID_NUMBER should only contain digits
+                break;
         }
         if (empty($rules)) {
             return ['nullable'];
@@ -58,6 +61,9 @@ class FormField
 
     public function get_type(): InputType
     {
+        if ($this->type === InputType::ID_NUMBER) {
+            return InputType::TEXT; // ID_NUMBER is treated as TEXT for input purposes
+        }
         return $this->type; // default type
     }
 

@@ -8,6 +8,8 @@ class MultiForeignKey extends LogicModifier
     public string $table;
     public array $columns;
 
+    public string $type = 'multi_foreign_key';
+
     public function __construct(string $key_column, string $table, array $columns)
     {
         $this->key_column = $key_column;

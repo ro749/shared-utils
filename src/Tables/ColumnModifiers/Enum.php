@@ -3,9 +3,10 @@
 namespace Ro749\SharedUtils\Tables\ColumnModifiers;
 class Enum extends LogicModifier
 {
-    public string $options;
+    public $options;
 
-    public function __construct(string $options)
+    public string $type = 'enum';
+    public function __construct($options)
     {
         $this->options = $options;
     }
