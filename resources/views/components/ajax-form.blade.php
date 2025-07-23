@@ -42,11 +42,6 @@
             errors: {},
             submit() {
                 const urlParams = new URLSearchParams(window.location.search);
-console.log('Form Data:', this.form);
-for (const key in this.form) {
-    console.log(`${key}: ${this.form[key]}`);
-}
-
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
                 }

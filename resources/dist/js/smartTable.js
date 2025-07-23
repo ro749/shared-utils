@@ -1,5 +1,12 @@
 (function ($) {
     $.fn.smartTable = function (options = {}) {
+        function cancer_edit(){
+            $('.editbuttons').css('display', 'none');
+            $('.normalbuttons').css('display', 'flex');
+            $('.edit-cancel-recover').each(function(){
+                $(this).parent().html($(this).html());
+            });
+        }
         return this.each(function () {
             const $table = $(this);
             var selectors = [];
@@ -50,7 +57,7 @@
                         if (options.is_editable) {
                             buttons = `
                                 <div class="normalbuttons" style="display:flex">`+buttons+`</div>
-                                <div style="display:none">
+                                <div class="editbuttons" style="display:none">
                                     <button type="button" class="btn save-btn"><i class="bx bx-save"></i></button>
                                     <button type="button" class="btn cancel-btn"><i class="bx bx-x-circle"></i></button>
                                 </div>
@@ -216,6 +223,7 @@
             
             if(options.is_editable){
                 $table.on('click', '.edit-btn', function(event) {
+                    cancer_edit();
                     this.parentElement.style.display = 'none';
                     this.parentElement.parentElement.children[1].style.display = 'flex';
                     this.parentElement.parentElement.children[1].style.justifyContent = 'left';
@@ -282,12 +290,7 @@
                 });
                 
                 $table.on('click', '.cancel-btn', function(event) {
-                    this.parentElement.style.display = 'none';
-                    this.parentElement.parentElement.children[0].style.display = 'flex';
-                    var elements = document.querySelectorAll('.edit-cancel-recover');
-                    for (var i = 0; i < elements.length; i++) {
-                        elements[i].parentElement.innerHTML = elements[i].innerHTML;
-                    }
+                    cancer_edit();
                 });
                 
                 $table.on('click', '.save-btn', function(event) {
