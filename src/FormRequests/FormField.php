@@ -13,6 +13,8 @@ class FormField
     public string $value;
     public int $max_length;
 
+    public bool $encrypt = false;
+
     public function __construct(
         InputType $type, 
         string $label="", 
@@ -21,7 +23,8 @@ class FormField
         array $rules=[], 
         string $message="", 
         string $value = "",
-        int $max_length = 0
+        int $max_length = 0,
+        bool $encrypt = false
     )
     {
         $this->type = $type;
@@ -32,6 +35,7 @@ class FormField
         $this->message = $message;
         $this->value = $value;
         $this->max_length = $max_length;
+        $this->encrypt = $encrypt;
     }
 
     public function is_required(): bool

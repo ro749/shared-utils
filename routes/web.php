@@ -41,7 +41,7 @@ Route::middleware('web')->group(function () {
     Route::post('/table/{table}/save', function (Request $request,string $table) {
         $fullClass = 'App\\Tables\\' . $table;
         $table = $fullClass::instance();
-        $table->save($request->input('id'),$request->input('args'));
+        $table->save($request);
         return response()->json(['success' => true]);
     });
     

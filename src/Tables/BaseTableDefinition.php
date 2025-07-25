@@ -1,9 +1,12 @@
 <?php
 namespace Ro749\SharedUtils\Tables;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
+use Ro749\SharedUtils\FormRequests\FormField;
 use Ro749\SharedUtils\Getters\BaseGetter;
-
+use Ro749\SharedUtils\FormRequests\BaseFormRequest;
+use Ro749\SharedUtils\FormRequests\InputType;
 class BaseTableDefinition
 {
     //the id the table is going to have
@@ -13,24 +16,47 @@ class BaseTableDefinition
 
     public ?View $view = null;
     public ?Delete $delete = null;
+    public ?BaseFormRequest $form;
 
     public bool $needs_buttons = false;
     public bool $is_editable = false;
+
+    
 
 
     public function __construct(
         string $id, 
         BaseGetter $getter,
         View $view = null, 
-        Delete $delete = null
+        Delete $delete = null,
+        BaseFormRequest $form = null
     )
     {
         $this->id = $id;
         $this->getter = $getter;
         $this->view = $view;
         $this->delete = $delete;
+        $this->form = $form;
         $this->is_editable = $this->has_edit();
         $this->needs_buttons = $this->needsButtons();
+        if($this->form != null){
+            foreach ($this->form->formFields as $key => $field) {
+                if(isset($this->getter->columns[$key])) {
+                    $this->getter->columns[$key]->editable = true;
+                }
+                if(in_array('unique:' . $this->getter->table . ',' . $key, $field->rules)){
+                    $field->rules = array_diff($field->rules, ['unique:' . $this->getter->table . ',' . $key]);
+                }
+            }
+            $form->formFields["id"] = new FormField(
+                type: InputType::TEXT,
+                rules: ['required', 'integer', 'exists:' . $this->getter->table . ',id'],
+            );
+            $this->form->formFields = array_filter($this->form->formFields, function ($field) {
+                return $field->type != InputType::PASSWORD && !$field->encrypt;
+            });
+        }
+        
     }
 
     public function getColumn(string $key): ?Column
@@ -58,8 +84,8 @@ class BaseTableDefinition
         return $this->getter->get_selectors();
     }
 
-    function save($id,$args) {
-        DB::table($this->getter->table)->where('id', $id)->update($args);
+    function save($request) {
+        $this->form->prosses($request);
     }
 
     public function delete(int $id): void
@@ -69,12 +95,7 @@ class BaseTableDefinition
 
     public function has_edit(): bool
     {
-        foreach ($this->getter->columns as $key => $column) {
-            if ($column->editable) {
-                return true;
-            }
-        }
-        return false;
+        return $this->form !== null;
     }
 
     function get_columns(): array {

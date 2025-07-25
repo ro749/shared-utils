@@ -6,6 +6,7 @@
             $('.edit-cancel-recover').each(function(){
                 $(this).parent().html($(this).html());
             });
+            document.getElementById("editing").removeAttribute("id");
         }
         return this.each(function () {
             const $table = $(this);
@@ -228,6 +229,16 @@
                     this.parentElement.parentElement.children[1].style.display = 'flex';
                     this.parentElement.parentElement.children[1].style.justifyContent = 'left';
                     var row = table.row($(this).parents('tr'));
+                    var initial_data = "";
+                    for(var key in options.columns){
+                        var col = options.columns[key];
+                        if(col.editable){
+                            initial_data += key+": "+"'"+row.data()[key]+"',";
+                        }
+                    }
+                    initial_data = initial_data.slice(0, -1);
+                    this.parentElement.parentElement.parentElement.setAttribute('x-data', '{ form: { '+initial_data+' }}');
+                    
                     var colnum = 0;
                     var has_date = false;
                     var has_selector = false;
@@ -239,22 +250,18 @@
                             if(col.logic_modifier != null){
                                 switch(col.logic_modifier.type){
                                     case 'foreign_key':
-                                        hidden = hidden+'<select class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
+                                        hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
                                         for(var option in selectors[key]){
-                                            hidden += row.data()[key] == option ?
-                                                '<option value=' + option + ' selected>' + selectors[key][option] + '</option>' :
-                                                '<option value=' + option + '>' + selectors[key][option] + '</option>';
+                                            hidden += '<option value=' + option + '>' + selectors[key][option] + '</option>';
                                         }
                                         hidden += '</select>';
                                         cell.innerHTML = hidden;
                                         has_selector = true;
                                         break;
                                     case 'enum':
-                                        hidden = hidden+'<select class="form-select" id="'+key+'">';
+                                        hidden = hidden+'<select x-model="form.'+key+'" class="form-select" id="'+key+'">';
                                         for(var option in window[col.logic_modifier.options]){
-                                            hidden += row.data()[key] == option ?
-                                                '<option value=' + option + ' selected>' + window[col.logic_modifier.options][option] + '</option>' :
-                                                '<option value=' + option + '>' + window[col.logic_modifier.options][option] + '</option>';
+                                            hidden += '<option value=' + option + '>' + window[col.logic_modifier.options][option] + '</option>';
                                         }
                                         hidden += '</select>';
                                         cell.innerHTML = hidden;
@@ -264,19 +271,23 @@
                             else if(col.modifier != null){
                                 switch(col.modifier){
                                     case 'date':
-                                        cell.innerHTML = hidden+'<input id="'+key+'" type="date" class="form-control date-editor" value="'+row.data()[key]+'" >';
+                                        cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="date" class="form-control date-editor" >';
                                         has_date = true;
                                         break;
                                     case 'number':
-                                        cell.innerHTML = hidden+'<input id="'+key+'" type="number" class="form-control" value="'+row.data()[key]+'" >';
+                                        cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="number" class="form-control" >';
                                         break;
                                 }
                             }
                             else{
                                 //text input
-                                cell.innerHTML = hidden+'<input id="'+key+'" type="text" class="form-control" value="'+row.data()[key]+'" >';
+                                cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" value="'+row.data()[key]+'" >';
                             }
                         }
+                        cell.innerHTML += `
+                        <template x-if="errors[`+key+`]">
+                            <p class="form-error" x-text="errors[`+key+`]"></p>
+                        </template>`;
                         colnum+=1;
                     }
                     if(has_date){

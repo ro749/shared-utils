@@ -11,15 +11,13 @@ class Column
 
     public ?LogicModifier $logic_modifier;
 
-    //if this column can be edited
-    public bool $editable;
+    public bool $editable = false;
 
-    public function __construct(string $display, ColumnModifier $modifier = null, LogicModifier $logic_modifier = null, bool $editable = false)
+    public function __construct(string $display, ColumnModifier $modifier = null, LogicModifier $logic_modifier = null)
     {
         $this->display = $display;
         $this->modifier = $modifier;
         $this->logic_modifier = $logic_modifier;
-        $this->editable = $editable;
     }
 
     public function is_foreign(): bool

@@ -33,7 +33,6 @@ class BaseFormRequest
                     }
                 }
             }
-
         }
     }
 
@@ -60,11 +59,15 @@ class BaseFormRequest
     {
         $data = $rawRequest->validate($this->rules());
         foreach ($this->formFields as $key => $field) {
-            if ($field->type == InputType::PASSWORD) {
+            if ($field->type == InputType::PASSWORD || $field->encrypt) {
                 $data[$key] = Hash::make($data[$key]);
             }
         }
-        DB::table($this->table)->insert($data);
+        if(isset($data['id'])) {
+            DB::table($this->table)->where('id', $data['id'])->update($data);
+        } else {
+            DB::table($this->table)->insert($data);
+        }
         return $this->redirect;
     }
 }
