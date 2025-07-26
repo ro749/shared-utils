@@ -12,7 +12,7 @@ class FormField
     public string $message;
     public string $value;
     public int $max_length;
-
+    public int $min_length;
     public bool $encrypt = false;
 
     public function __construct(
@@ -24,6 +24,7 @@ class FormField
         string $message="", 
         string $value = "",
         int $max_length = 0,
+        int $min_length = 0,
         bool $encrypt = false
     )
     {
@@ -35,6 +36,7 @@ class FormField
         $this->message = $message;
         $this->value = $value;
         $this->max_length = $max_length;
+        $this->min_length = $min_length;
         $this->encrypt = $encrypt;
     }
 
@@ -48,6 +50,9 @@ class FormField
         $rules = $this->rules;
         if($this->max_length!=0){
             $rules[] = 'max:' . $this->max_length;
+        }
+        if($this->min_length!=0){
+            $rules[] = 'min:' . $this->min_length;
         }
         switch ($this->type) {
             case InputType::EMAIL:

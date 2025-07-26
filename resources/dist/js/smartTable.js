@@ -6,7 +6,11 @@
             $('.edit-cancel-recover').each(function(){
                 $(this).parent().html($(this).html());
             });
-            document.getElementById("editing").removeAttribute("id");
+            var editing = document.getElementById("editing");
+            if(editing) {
+                editing.removeAttribute("id");
+                editing.removeAttribute("x-data");
+            }
         }
         return this.each(function () {
             const $table = $(this);
@@ -229,7 +233,7 @@
                     this.parentElement.parentElement.children[1].style.display = 'flex';
                     this.parentElement.parentElement.children[1].style.justifyContent = 'left';
                     var row = table.row($(this).parents('tr'));
-                    var initial_data = "";
+                    var initial_data = "id: '"+row.data().id+"',";
                     for(var key in options.columns){
                         var col = options.columns[key];
                         if(col.editable){
@@ -237,8 +241,8 @@
                         }
                     }
                     initial_data = initial_data.slice(0, -1);
-                    this.parentElement.parentElement.parentElement.setAttribute('x-data', '{ form: { '+initial_data+' }}');
-                    
+                    this.parentElement.parentElement.parentElement.setAttribute('x-data', '{ form: { '+initial_data+' },errors: {name: "error"} }');
+                    this.parentElement.parentElement.parentElement.id = "editing";
                     var colnum = 0;
                     var has_date = false;
                     var has_selector = false;
@@ -284,10 +288,7 @@
                                 cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" value="'+row.data()[key]+'" >';
                             }
                         }
-                        cell.innerHTML += `
-                        <template x-if="errors[`+key+`]">
-                            <p class="form-error" x-text="errors[`+key+`]"></p>
-                        </template>`;
+                        cell.innerHTML += '<p class="form-error" x-text="errors[\''+key+'\']"></p>';
                         colnum+=1;
                     }
                     if(has_date){
@@ -305,32 +306,21 @@
                 });
                 
                 $table.on('click', '.save-btn', function(event) {
-                    var to_save = {};
-                    var row = table.row($(this).parents('tr')).data();
-                    for(var key in options.columns){
-                        var col = options.columns[key];
-                        if(col.editable){
-                            if(col.table && col.column){
-                                var val = document.getElementById(key).value;
-                                val = val==""?0:val;
-                                to_save[key] = val;
-                            }
-                            else{
-                                to_save[key] = document.getElementById(key).value;
-                            }
-                        }
-                    }
-                    
+                    var editing = document.getElementById("editing");
+                    const alpine_data = Alpine.$data(editing);
                     $.ajax({
                         url: '/table/'+options.id+'/save',
                         type: 'POST',
-                        data: {
-                            id: row.id,
-                            args: to_save,
-                            _token: $('meta[name="csrf-token"]').attr('content')
-                        },
+                        data: alpine_data.form,
                         success: function(response) {
                             table.ajax.reload(null, false);
+                        },
+                        error: (xhr) => {
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                alpine_data.errors = xhr.responseJSON.errors;
+                            } else {
+                                alpine_data.errors = { general: 'An error occurred. Please try again.' };
+                            }
                         },
                     });
                 });

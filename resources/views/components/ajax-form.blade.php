@@ -65,7 +65,6 @@
                         this.errors = {};
                     },
                     error: (xhr) => {
-                        console.error(xhr);
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             this.errors = xhr.responseJSON.errors;
                         } else {
