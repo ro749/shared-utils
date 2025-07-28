@@ -3,6 +3,8 @@ namespace Ro749\SharedUtils\FormRequests;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 class BaseFormRequest
 {
     public string $id;
@@ -12,10 +14,11 @@ class BaseFormRequest
     public string $redirect;
     public string $popup;
     public string $submit_url;
-
+    //if needs to register the loged user, fill with the column
+    public string $user;
     public string $callback;
     
-    public function __construct(string $id, string $table, array $formFields = [], string $redirect = '', string $popup = '',string $submit_text = 'Submit', string $submit_url = '', string $callback = '')
+    public function __construct(string $id, string $table, array $formFields = [], string $redirect = '', string $popup = '',string $submit_text = 'Submit', string $submit_url = '',string $user = '', string $callback = '')
     {
         $this->id = $id;
         $this->table = $table;
@@ -24,6 +27,7 @@ class BaseFormRequest
         $this->popup = $popup;
         $this->submit_text = $submit_text;
         $this->submit_url = $submit_url;
+        $this->user = $user;
         $this->callback = $callback;
         foreach ($this->formFields as $key => $field) {
             if (in_array('unique', $field->rules)) {
@@ -62,6 +66,9 @@ class BaseFormRequest
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
                 $data[$key] = Hash::make($data[$key]);
             }
+        }
+        if ($this->user !== '') {
+            $data[$this->user] = Auth::guard($this->user)->user()->id;
         }
         if(isset($data['id'])) {
             DB::table($this->table)->where('id', $data['id'])->update($data);
