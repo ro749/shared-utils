@@ -3,10 +3,11 @@ namespace Ro749\SharedUtils\Tables;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
-use Ro749\SharedUtils\FormRequests\FormField;
 use Ro749\SharedUtils\Getters\BaseGetter;
 use Ro749\SharedUtils\FormRequests\BaseFormRequest;
 use Ro749\SharedUtils\FormRequests\InputType;
+use Ro749\SharedUtils\FormRequests\FormField;
+use Ro749\SharedUtils\FormRequests\Selector;
 class BaseTableDefinition
 {
     //the id the table is going to have
@@ -20,8 +21,6 @@ class BaseTableDefinition
 
     public bool $needs_buttons = false;
     public bool $is_editable = false;
-
-    
 
 
     public function __construct(
@@ -37,25 +36,10 @@ class BaseTableDefinition
         $this->view = $view;
         $this->delete = $delete;
         $this->form = $form;
-        $this->is_editable = $this->has_edit();
-        $this->needs_buttons = $this->needsButtons();
         if($this->form != null){
-            foreach ($this->form->formFields as $key => $field) {
-                if(isset($this->getter->columns[$key])) {
-                    $this->getter->columns[$key]->editable = true;
-                }
-                if(in_array('unique:' . $this->getter->table . ',' . $key, $field->rules)){
-                    $field->rules = array_diff($field->rules, ['unique:' . $this->getter->table . ',' . $key]);
-                }
-            }
-            $form->formFields["id"] = new FormField(
-                type: InputType::TEXT,
-                rules: ['required', 'integer', 'exists:' . $this->getter->table . ',id'],
-            );
-            $this->form->formFields = array_filter($this->form->formFields, function ($field) {
-                return $field->type != InputType::PASSWORD && !$field->encrypt;
-            });
+            $this->make_it_modifiable();
         }
+        $this->needs_buttons = $this->needsButtons();
         
     }
 
@@ -114,5 +98,30 @@ class BaseTableDefinition
             'needs_buttons' => $this->needs_buttons,
             'is_editable' => $this->is_editable,
         ];
+    }
+
+    function make_it_modifiable(){
+        $this->is_editable = true;
+        foreach ($this->form->formFields as $key => $field) {
+            if(isset($this->getter->columns[$key])) {
+                $this->getter->columns[$key]->editable = true;
+            }
+            if($field->type == InputType::SELECTOR){
+                $field = new Selector(
+                    options: $this->getter->columns[$key]->logic_modifier->options ?? []
+                );
+            }
+            if(in_array('unique:' . $this->getter->table . ',' . $key, $field->rules)){
+                $field->rules = array_diff($field->rules, ['unique:' . $this->getter->table . ',' . $key]);
+            }
+            
+        }
+        $this->form->formFields["id"] = new FormField(
+            type: InputType::TEXT,
+            rules: ['required', 'integer', 'exists:' . $this->getter->table . ',id'],
+        );
+        $this->form->formFields = array_filter($this->form->formFields, function ($field) {
+            return $field->type != InputType::PASSWORD && !$field->encrypt;
+        });
     }
 }

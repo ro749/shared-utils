@@ -1,8 +1,6 @@
 <?php
-
-namespace Ro749\SharedUtils\Tables;
-
-enum ColumnModifier: string
+namespace Ro749\SharedUtils\Models;
+enum Modifier: string
 {
     case METERS = 'meters';
     case FOOT = 'foot';
@@ -12,5 +10,3 @@ enum ColumnModifier: string
     case DATE = 'date';
     case NUMBER = 'number';
 }
-
-?>

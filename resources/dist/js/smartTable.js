@@ -20,7 +20,7 @@
                 let column = { data: col };
                 if(options.columns[col].logic_modifier) {
                     switch (options.columns[col].logic_modifier.type) {
-                        case 'enum':
+                        case 'options':
                             column.render = (data) => window[options.columns[col].logic_modifier.options][data];
                             break;
                     }
@@ -241,7 +241,7 @@
                         }
                     }
                     initial_data = initial_data.slice(0, -1);
-                    this.parentElement.parentElement.parentElement.setAttribute('x-data', '{ form: { '+initial_data+' },errors: {name: "error"} }');
+                    this.parentElement.parentElement.parentElement.setAttribute('x-data', '{ form: { '+initial_data+' },errors: {} }');
                     this.parentElement.parentElement.parentElement.id = "editing";
                     var colnum = 0;
                     var has_date = false;
@@ -262,7 +262,7 @@
                                         cell.innerHTML = hidden;
                                         has_selector = true;
                                         break;
-                                    case 'enum':
+                                    case 'options':
                                         hidden = hidden+'<select x-model="form.'+key+'" class="form-select" id="'+key+'">';
                                         for(var option in window[col.logic_modifier.options]){
                                             hidden += '<option value=' + option + '>' + window[col.logic_modifier.options][option] + '</option>';

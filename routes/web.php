@@ -15,7 +15,7 @@ Route::middleware('web')->group(function () {
     
     Route::get('/table/{table}/get', function (Request $request,string $table) {
         $fullClass = 'App\\Tables\\' . $table;
-        $table = $fullClass::instance();
+        $table = new $fullClass();
         return response()->json($table->get(
             $request->get('start'), 
             $request->get('length'),
@@ -27,20 +27,20 @@ Route::middleware('web')->group(function () {
 
     Route::get('/table/{table}/selectors', function (Request $request,string $table) {
         $fullClass = 'App\\Tables\\' . $table;
-        $table = $fullClass::instance();
+        $table = new $fullClass();
         return response()->json($table->get_selectors());
     });
     
     Route::post('/table/{table}/delete', function (Request $request,string $table) {
         $fullClass = 'App\\Tables\\' . $table;
-        $table = $fullClass::instance();
+        $table = new $fullClass();
         $table->delete((int) $request->input('id'));
         return response()->json(['success' => true]);
     });
     
     Route::post('/table/{table}/save', function (Request $request,string $table) {
         $fullClass = 'App\\Tables\\' . $table;
-        $table = $fullClass::instance();
+        $table = new $fullClass();
         $table->save($request);
         return response()->json(['success' => true]);
     });
@@ -48,7 +48,7 @@ Route::middleware('web')->group(function () {
     Route::post('/form/{form}', function (Request $request,$form) {
         $ans = [];
         $formClass = "App\\Http\\Requests\\".$form;
-        $formRequest = $formClass::instanciate();
+        $formRequest = new $formClass();
         $redirect = $formRequest->prosses($request);
         if($redirect!="") {  
             $ans = ["redirect" => $redirect];

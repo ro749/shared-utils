@@ -4,7 +4,7 @@ use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Validation\Rule;
 class BaseFormRequest
 {
     public string $id;
@@ -13,7 +13,7 @@ class BaseFormRequest
     public string $submit_text;
     public string $redirect;
     public string $popup;
-    public string $submit_url;
+    public string $submit_url="";
     //if needs to register the loged user, fill with the column
     public string $user;
     public string $callback;
@@ -29,19 +29,33 @@ class BaseFormRequest
         $this->submit_url = $submit_url;
         $this->user = $user;
         $this->callback = $callback;
-        foreach ($this->formFields as $key => $field) {
-            if (in_array('unique', $field->rules)) {
-                foreach ($field->rules as $index => $rule) {
-                    if ($rule === 'unique') {
-                        $field->rules[$index] = "unique:{$this->table},{$key}";
+        
+    }
+
+    public function rules($rawRequest): array
+    {
+        if($rawRequest->filled('id')) {
+            foreach ($this->formFields as $key => $field) {
+                if (in_array('unique', $field->rules)) {
+                    foreach ($field->rules as $index => $rule) {
+                        if ($rule === 'unique') {
+                            $field->rules[$index] = Rule::unique($this->table, $key)->ignore($rawRequest->input('id'));
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($this->formFields as $key => $field) {
+                if (in_array('unique', $field->rules)) {
+                    foreach ($field->rules as $index => $rule) {
+                        if ($rule === 'unique') {
+                            $field->rules[$index] = "unique:{$this->table},{$key}";
+                        }
                     }
                 }
             }
         }
-    }
-
-    public function rules(): array
-    {
+        
         $rules = [];
         foreach ($this->formFields as $key=>$value) {
            $rules[$key] = $value->get_rules();
@@ -61,18 +75,19 @@ class BaseFormRequest
 
     public function prosses(Request $rawRequest): string
     {
-        $data = $rawRequest->validate($this->rules());
+        $data = $rawRequest->validate($this->rules($rawRequest));
         foreach ($this->formFields as $key => $field) {
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
                 $data[$key] = Hash::make($data[$key]);
             }
         }
-        if ($this->user !== '') {
-            $data[$this->user] = Auth::guard($this->user)->user()->id;
-        }
+        
         if(isset($data['id'])) {
             DB::table($this->table)->where('id', $data['id'])->update($data);
         } else {
+            if ($this->user !== '') {
+                $data[$this->user] = Auth::guard($this->user)->user()->id;
+            }
             DB::table($this->table)->insert($data);
         }
         return $this->redirect;

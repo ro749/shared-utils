@@ -1,7 +1,6 @@
 <?php
 
-namespace Ro749\SharedUtils\Tables\ColumnModifiers;
-
+namespace Ro749\SharedUtils\Models\LogicModifiers;
 class MultiForeignKey extends LogicModifier
 {
     public string $key_column;
@@ -16,10 +15,6 @@ class MultiForeignKey extends LogicModifier
         $this->table = $table;
         $this->columns = $columns;
     }
-    public function type(): string
-    {
-        return 'multi_foreign_key';
-    }
 
     public function get_value($key):string{
         $ans = 'CASE ';
@@ -29,4 +24,5 @@ class MultiForeignKey extends LogicModifier
         $ans .= 'END ';
         return $ans;
     }
+    
 }
