@@ -17,7 +17,7 @@ abstract class LoginFormRequest extends BaseFormRequest
 
     public function prosses(Request $rawRequest): string
     {
-        $credentials = $rawRequest->validate($this->rules());
+        $credentials = $rawRequest->validate($this->rules($rawRequest));
         $user = array_values($credentials)[0];
         $key = "login-attempts:".$this->guard.$user;
         if (RateLimiter::tooManyAttempts($key, 6)) {
@@ -26,7 +26,6 @@ abstract class LoginFormRequest extends BaseFormRequest
                 'password' => ['Demasiados intentos de inicio de sesión. Inténtalo en ' . $seconds . ' segundos.'],
             ]);
         }
-        $credentials = $rawRequest->validate($this->rules());
         if (!Auth::guard($this->guard)->attempt($credentials)) {
             RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
