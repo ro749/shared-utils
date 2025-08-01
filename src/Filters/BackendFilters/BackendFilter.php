@@ -10,5 +10,5 @@ abstract class BackendFilter
         $this->id = $id;
     }
 
-    abstract public function filter(Builder $query,array $filters);
+    abstract public function filter(Builder $query);
 }

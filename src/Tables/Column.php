@@ -3,7 +3,6 @@
 namespace Ro749\SharedUtils\Tables;
 use Ro749\SharedUtils\Models\Modifier;
 use Ro749\SharedUtils\Models\LogicModifiers\LogicModifier;
-
 class Column
 {
     //what is going to display in the frontend table
@@ -28,5 +27,10 @@ class Column
         $this->logic_modifier !== null && (
         $this->logic_modifier->type == 'foreign_key' || 
         $this->logic_modifier->type == 'multi_foreign_key');
+    }
+
+    public function is_subquery(): bool
+    {
+        return $this->logic_modifier !== null && $this->logic_modifier->type == 'statistic';
     }
 }

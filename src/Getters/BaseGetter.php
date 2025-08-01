@@ -30,13 +30,13 @@ abstract class BaseGetter
         foreach ($this->backend_filters as $filter) {
             $filter->filter($query, $filters);
         }
-        $ans['recordsTotal'] = DB::query()->fromSub($query, 'grouped')->count();
+        $ans['recordsTotal'] = $query->count();
         $this->apply_filters($query, $filters);
         
         if ($search!="") {
             $query = $this->search($query,$search);
         }
-        $ans['recordsFiltered'] = DB::query()->fromSub($query, 'grouped')->count();
+        $ans['recordsFiltered'] = $query->count();
         $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         $query->offset($start);
         $query->limit($length);
