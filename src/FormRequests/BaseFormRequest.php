@@ -17,8 +17,20 @@ class BaseFormRequest
     //if needs to register the loged user, fill with the column
     public string $user;
     public string $callback;
+    public string $uploading_message;
     
-    public function __construct(string $id, string $table, array $formFields = [], string $redirect = '', string $popup = '',string $submit_text = 'Submit', string $submit_url = '',string $user = '', string $callback = '')
+    public function __construct(
+        string $id, 
+        string $table, 
+        array $formFields = [], 
+        string $redirect = '', 
+        string $popup = '',
+        string $submit_text = 'Submit', 
+        string $submit_url = '',
+        string $user = '', 
+        string $callback = '',
+        string $uploading_message = ''
+    )
     {
         $this->id = $id;
         $this->table = $table;
@@ -29,7 +41,7 @@ class BaseFormRequest
         $this->submit_url = $submit_url;
         $this->user = $user;
         $this->callback = $callback;
-        
+        $this->uploading_message = $uploading_message;
     }
 
     public function rules($rawRequest): array

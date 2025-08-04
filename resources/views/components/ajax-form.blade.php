@@ -34,6 +34,14 @@
 @endonce
 @endif
 
+@if($form->uploading_message != "")
+@once('form-uploading-popup')
+    <x-sharedutils::modal  id="form-uploading-popup">
+        <p style="text-align:center">{{ $form->uploading_message }}</p>
+    </x-modal>
+@endonce
+@endif
+
 @push('scripts')
 <script>
     function {{$form->id}}_submit() {
@@ -45,6 +53,9 @@
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
                 }
+                @if($form->uploading_message != "")
+                openPopup("form-uploading-popup");
+                @endif
                 $.ajax({
                     url: '{{ $form->submit_url==""? '/form/'.$form->id : $form->submit_url }}',
                     method: 'POST',
@@ -70,7 +81,12 @@
                         } else {
                             this.errors = { general: 'An error occurred. Please try again.' };
                         }
+                    },
+                    @if($form->uploading_message != "")
+                    complete: () => {
+                        closePopup("form-uploading-popup");
                     }
+                    @endif
                 });
             }
         }
