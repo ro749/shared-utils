@@ -20,7 +20,7 @@ class {{ class }} extends LoginFormRequest
             formFields: [
                 "name" => new FormField(
                     placeholder:"Usuario", 
-                    type: InputType::PASSWORD,
+                    type: InputType::TEXT,
                     icon: "bx bx-user"
                 ),
                 "password" => new FormField(
