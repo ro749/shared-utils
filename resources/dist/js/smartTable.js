@@ -48,23 +48,45 @@
                         let buttons = '';
 
                         if (options.view) {
-                            buttons += '<button type="button" class="btn view-btn"><i class="bx bx-show"></i></button>';
+                            buttons += `
+                                <button type="button" class="btn view-btn w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="iconamoon:eye-light">
+                                    </iconify-icon>
+                                </button>
+                            `;
                         }
 
                         if (options.is_editable) {
-                            buttons += '<button type="button" class="btn edit-btn"><i class="bx bx-edit-alt"></i></button>';
+                            buttons += `
+                                <button type="button" class="btn edit-btn w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="lucide:edit">
+                                    </iconify-icon>
+                                </button>
+                            `;
                         }
 
                         if (options.delete) {
-                            buttons += '<button type="button" class="btn delete-btn"><i class="bx bx-trash"></i></button>';
+                            buttons += `
+                                <button type="button" class="btn delete-btn w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="mingcute:delete-2-line">
+                                    </iconify-icon>
+                                </button>
+                            `;
                         }
 
                         if (options.is_editable) {
                             buttons = `
                                 <div class="normalbuttons" style="display:flex">`+buttons+`</div>
                                 <div class="editbuttons" style="display:none">
-                                    <button type="button" class="btn save-btn"><i class="bx bx-save"></i></button>
-                                    <button type="button" class="btn cancel-btn"><i class="bx bx-x-circle"></i></button>
+                                    <button type="button" class="btn save-btn w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                                        <iconify-icon icon="iconamoon:check-circle-1">
+                                        </iconify-icon>
+                                    </button>
+                                    <div style="width:6px"></div>
+                                    <button type="button" class="btn cancel-btn w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
+                                        <iconify-icon icon="iconamoon:close-circle-1">
+                                        </iconify-icon>
+                                    </button>
                                 </div>
                             `;
                         }
@@ -186,7 +208,6 @@
             if(options.view){
                 $table.on('click', '.view-btn', function(event) {
                     window.location.href = options.view.url+'?'+options.view.name+'='+table.row($(this).parents('tr')).data()[options.view.param];
-                    
                 });
             }
             

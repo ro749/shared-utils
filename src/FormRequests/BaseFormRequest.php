@@ -17,7 +17,7 @@ class BaseFormRequest
     //if needs to register the loged user, fill with the column
     public string $user;
     public string $callback;
-    public string $uploading_message;
+    public string $uploading_message='';
     
     public function __construct(
         string $id, 

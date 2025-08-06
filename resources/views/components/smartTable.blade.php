@@ -1,6 +1,6 @@
 
 
-<table id="{{ $table->id }}" class="table table-striped table-bordered">
+<table id="{{ $table->id }}" class="table bordered-table mb-0">
     <thead>
         <tr>
             @foreach($table->get_columns() as $key=>$column)

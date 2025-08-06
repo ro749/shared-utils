@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Tables\{{ class }};
+class {{ class }}Controller extends Controller
+{
+    public function index() {
+        $table = {{ class }}::instance();
+        return view('{{ view }}', ['table'=>$table]);
+    }
+}

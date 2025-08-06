@@ -69,7 +69,7 @@ class MakeLogin extends GeneratorCommand
         }
 
         // Obtener el contenido del stub para el controlador
-        $stub = $this->files->get(__DIR__ . '/../stubs/controller.stub');
+        $stub = $this->files->get(__DIR__ . '/../stubs/formController.stub');
         $stub = str_replace(
             ['{{ class }}', '{{ view }}'],
             [$controllerName, $viewName],

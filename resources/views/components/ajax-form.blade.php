@@ -4,15 +4,16 @@
         @continue
         @endif
         <div id="form-field-{{ $name }}" class="form-field" style="width: auto;">
-            @if($field->icon)
-            <div class="input-group">
-                <span class="input-group-text">
-                    <i class="{{ $field->icon }}"></i>
-                </span>
-            @endif
             @if($field->label!="")
             <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
             @endif
+            @if($field->icon)
+            <div class="icon-field">
+                <span class="icon">
+                    <iconify-icon icon="{{ $field->icon }}"></iconify-icon>
+                </span>
+            @endif
+            
             {!! $field->render($name) !!}
             @if($field->icon)
             </div>
@@ -34,7 +35,7 @@
 @endonce
 @endif
 
-@if($form->uploading_message != "")
+@if(!empty($form->uploading_message))
 @once('form-uploading-popup')
     <x-sharedutils::modal  id="form-uploading-popup">
         <p style="text-align:center">{{ $form->uploading_message }}</p>
@@ -49,11 +50,12 @@
             form: {},
             errors: {},
             submit() {
+                console.log("submitting form");
                 const urlParams = new URLSearchParams(window.location.search);
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
                 }
-                @if($form->uploading_message != "")
+                @if(!empty($form->uploading_message))
                 openPopup("form-uploading-popup");
                 @endif
                 $.ajax({
@@ -82,7 +84,7 @@
                             this.errors = { general: 'An error occurred. Please try again.' };
                         }
                     },
-                    @if($form->uploading_message != "")
+                    @if(!empty($form->uploading_message))
                     complete: () => {
                         closePopup("form-uploading-popup");
                     }

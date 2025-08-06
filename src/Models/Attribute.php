@@ -9,6 +9,7 @@ use Ro749\SharedUtils\FormRequests\InputType;
 class Attribute
 {
     public string $label;
+    public string $placeholder;
     public ?Modifier $modifier;
     public ?InputType $input_type;
     public ?LogicModifier $logic_modifier;
@@ -22,6 +23,7 @@ class Attribute
 
     public function __construct(
         string $label,
+        string $placeholder = '',
         Modifier $modifier =null,
         LogicModifier $logic_modifier = null,
         Editable $editable = null,
@@ -32,6 +34,7 @@ class Attribute
         bool $encrypt = false
     ) {
         $this->label = $label;
+        $this->placeholder = $placeholder;
         $this->modifier = $modifier;
         $this->logic_modifier = $logic_modifier;
         $this->editable = $editable;

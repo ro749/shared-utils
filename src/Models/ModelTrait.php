@@ -52,17 +52,24 @@ trait ModelTrait
         return match (true) {
             $value->logic_modifier === null => new FormField(
                 type: $value->input_type ?? InputType::TEXT,
-                placeholder: $value->label,
+                label: $value->label,
                 icon : $value->icon,
+                placeholder: $value->placeholder,
                 rules: $value->rules,
             ),
             $value->logic_modifier->type === 'options' => new Selector(
                 options: $value->logic_modifier->options,
+                label: $value->label,
+                icon : $value->icon,
+                placeholder: $value->placeholder,
                 id: $key,
             ),
             $value->logic_modifier->type === 'foreign_key' => Selector::fromDB(
                 id: $key,
                 table: $value->logic_modifier->table,
+                label: $value->label,
+                icon : $value->icon,
+                placeholder: $value->placeholder,
                 label_column: $value->logic_modifier->column,
             ),
             default => throw new \Exception('Unknown logic modifier type'),
