@@ -22,13 +22,16 @@ class BaseTableDefinition
     public bool $needs_buttons = false;
     public bool $is_editable = false;
 
+    //if clicking edit redirects, if empty normal edit
+    public ?View $edit_url = null;
 
     public function __construct(
         string $id, 
         BaseGetter $getter,
         View $view = null, 
         Delete $delete = null,
-        BaseFormRequest $form = null
+        BaseFormRequest $form = null,
+        View $edit_url = null
     )
     {
         $this->id = $id;
@@ -36,6 +39,7 @@ class BaseTableDefinition
         $this->view = $view;
         $this->delete = $delete;
         $this->form = $form;
+        $this->edit_url = $edit_url;
         if($this->form != null){
             $this->make_it_modifiable();
         }
@@ -55,7 +59,7 @@ class BaseTableDefinition
 
     public function needsButtons(): bool
     {
-        return $this->view || $this->delete || $this->is_editable;
+        return $this->view || $this->delete || $this->is_editable || $this->edit_url;
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
@@ -97,6 +101,7 @@ class BaseTableDefinition
             'delete' => $this->delete,
             'needs_buttons' => $this->needs_buttons,
             'is_editable' => $this->is_editable,
+            'edit_url' => $this->edit_url
         ];
     }
 

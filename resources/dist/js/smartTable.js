@@ -56,7 +56,7 @@
                             `;
                         }
 
-                        if (options.is_editable) {
+                        if (options.is_editable || options.edit_url) {
                             buttons += `
                                 <button type="button" class="btn edit-btn w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                                     <iconify-icon icon="lucide:edit">
@@ -208,6 +208,12 @@
             if(options.view){
                 $table.on('click', '.view-btn', function(event) {
                     window.location.href = options.view.url+'?'+options.view.name+'='+table.row($(this).parents('tr')).data()[options.view.param];
+                });
+            }
+
+            if(options.edit_url){
+                $table.on('click', '.edit-btn', function(event) {
+                    window.location.href = options.edit_url.url+'?'+options.edit_url.name+'='+table.row($(this).parents('tr')).data()[options.edit_url.param];
                 });
             }
             
