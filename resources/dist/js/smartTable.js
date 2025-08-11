@@ -1,8 +1,8 @@
 (function ($) {
     $.fn.smartTable = function (options = {}) {
         function cancer_edit(){
-            $('.editbuttons').css('display', 'none');
-            $('.normalbuttons').css('display', 'flex');
+            $('.edit-buttons').css('display', 'none');
+            $('.normal-buttons').css('display', 'flex');
             $('.edit-cancel-recover').each(function(){
                 $(this).parent().html($(this).html());
             });
@@ -73,11 +73,10 @@
                                 </button>
                             `;
                         }
-
+                        buttons = '<div class="normal-buttons" style="display:flex">'+buttons+'</div>';
                         if (options.is_editable) {
-                            buttons = `
-                                <div class="normalbuttons" style="display:flex">`+buttons+`</div>
-                                <div class="editbuttons" style="display:none">
+                            buttons += `
+                                <div class="edit-buttons" style="display:none">
                                     <button type="button" class="btn save-btn w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
                                         <iconify-icon icon="iconamoon:check-circle-1">
                                         </iconify-icon>

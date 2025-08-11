@@ -14,7 +14,7 @@ class UserFilter extends BackendFilter
         $this->guard = $guard;
     }
 
-    public function filter(Builder $query)
+    public function filter(Builder $query,array $filters)
     {
         $query->where($this->column, "=", Auth::guard($this->guard)->user()->id);
     }

@@ -12,8 +12,8 @@ class BasicFilter extends BackendFilter
         $this->filter = $filter;
     }
 
-    public function filter(Builder $query)
+    public function filter(Builder $query,array $filters)
     {
-        ($this->filter)($query);
+        ($this->filter)($query,$filters);
     }
 }

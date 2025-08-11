@@ -1,7 +1,9 @@
 <?php
 
 namespace Ro749\SharedUtils\Filters\BackendFilters;
-use \Illuminate\Database\Query\Builder; 
+use \Illuminate\Database\Query\Builder;
+use Illuminate\Http\Request;
+
 abstract class BackendFilter
 {
     public string $id;
@@ -10,5 +12,5 @@ abstract class BackendFilter
         $this->id = $id;
     }
 
-    abstract public function filter(Builder $query);
+    abstract public function filter(Builder $query,array $filters);
 }

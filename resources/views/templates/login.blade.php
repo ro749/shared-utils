@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Inputs Test</title>
-    @include('shared-utils::includes.min')
-    @include('shared-utils::includes.select2')
-    @include('shared-utils::includes.modals')
-    @include('shared-utils::includes.forms')
-    @include('shared-utils::includes.icons')
+    @include('shared-utils::components.head')
     @stack('styles')
 </head>
 
