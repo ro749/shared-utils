@@ -2,7 +2,7 @@
 
 <table id="{{ $table->id }}" class="table bordered-table mb-0">
     <thead>
-        <tr>
+        <tr id="{{ $table->id }}-header">
             @foreach($table->get_columns() as $key=>$column)
                 <th>{{ $column->display }}</th>
             @endforeach
@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tfoot>
-        <tr>
+        <tr id="{{ $table->id }}-footer">
             @foreach($table->get_columns() as $key=>$column)
                 <th>{{ $column->display }}</th>
             @endforeach

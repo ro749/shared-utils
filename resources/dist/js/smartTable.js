@@ -18,25 +18,58 @@
             const columns = [];
             for (let col in options.columns){
                 let column = { data: col };
-                if(options.columns[col].logic_modifier) {
-                    switch (options.columns[col].logic_modifier.type) {
+                let col_data = options.columns[col];
+                let renderFn = null;
+                if(col_data.logic_modifier) {
+                    switch (col_data.logic_modifier.type) {
                         case 'options':
-                            column.render = (data) => window[options.columns[col].logic_modifier.options][data];
+                            if(col_data.modifier == 'encapsulate'){
+                                renderFn = (data) => {
+                                    return '<div class="'+col_data.logic_modifier.options+'-'+data+'">'+
+                                    window[col_data.logic_modifier.options][data]+
+                                    '</div>';
+                                }
+                                    
+                            }
+                            else{
+                                renderFn = (data) => window[col_data.logic_modifier.options][data];
+                            }
+                            
                             break;
                     }
                 }
-                switch (options.columns[col].modifier) {
+                switch (col_data.modifier) {
                     case 'money':
-                        column.render = (data) => `$${Number(data).toLocaleString('es-MX')}`;
+                        column.render = (data) => {
+                            let value = renderFn ? renderFn(data) : data;
+                            return `$${Number(value).toLocaleString('es-MX')}`;
+                        }
+                        break;
+                    case 'meters':
+                        column.render = (data) => {
+                            let value = renderFn ? renderFn(data) : data;
+                            return `${value} m²`;
+                        }
                         break;
                     case 'percent':
-                        column.render = (data) => `${data}%`;
+                        column.render = (data) => {
+                            let value = renderFn ? renderFn(data) : data;
+                            return `${value}%`;
+                        }
                         break;
                     case 'date':
-                        column.render = (data) => new Date(data).toLocaleDateString();
+                        column.render = (data) => {
+                            let value = renderFn ? renderFn(data) : data;
+                            return new Date(value).toLocaleDateString();
+                        }
                         break;
+                    case '':
+                    case 'encapsulate':
+                        column.render = (data) => renderFn ? renderFn(data) : data;
+                        break;
+                    
                 }
-                if(options.columns[col].table && options.columns[col].column && options.columns[col].editable){
+                if(col_data.table && options.columns[col].column && options.columns[col].editable){
                     column.render = (data) => data==0?"":selectors[col][data];
                 }
                 columns.push(column);
@@ -46,29 +79,10 @@
                     data: null,
                     render: function (data, type, row, meta) {
                         let buttons = '';
-
-                        if (options.view) {
+                        for(var button in options.buttons){
                             buttons += `
-                                <button type="button" class="btn view-btn w-32-px h-32-px bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="iconamoon:eye-light">
-                                    </iconify-icon>
-                                </button>
-                            `;
-                        }
-
-                        if (options.is_editable || options.edit_url) {
-                            buttons += `
-                                <button type="button" class="btn edit-btn w-32-px h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="lucide:edit">
-                                    </iconify-icon>
-                                </button>
-                            `;
-                        }
-
-                        if (options.delete) {
-                            buttons += `
-                                <button type="button" class="btn delete-btn w-32-px h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="mingcute:delete-2-line">
+                                <button type="button" class="btn `+options.buttons[button].button_class+` w-32-px h-32-px `+options.buttons[button].background_color_class+' '+options.buttons[button].text_color_class+` rounded-circle d-inline-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="`+options.buttons[button].icon+`"> 
                                     </iconify-icon>
                                 </button>
                             `;
@@ -118,7 +132,7 @@
                     type: 'GET',
                     data: function (d) {
                         d.filters = filters; 
-                    }
+                    },
                 },
                 columns: columns,
                 serverSide: true,
@@ -201,19 +215,17 @@
                     
                 }
             });
-            
-            
-            
-            if(options.view){
-                $table.on('click', '.view-btn', function(event) {
-                    window.location.href = options.view.url+'?'+options.view.name+'='+table.row($(this).parents('tr')).data()[options.view.param];
-                });
-            }
-
-            if(options.edit_url){
-                $table.on('click', '.edit-btn', function(event) {
-                    window.location.href = options.edit_url.url+'?'+options.edit_url.name+'='+table.row($(this).parents('tr')).data()[options.edit_url.param];
-                });
+            for(var button_num in options.buttons){
+                var button = options.buttons[button_num];
+                if(button.view != null){
+                    $table.on('click', '.'+button.button_class, function(event) {
+                        window.location.href = 
+                        button.view.url+'?'+
+                        button.view.name+'='+
+                        table.row($(this).parents('tr')).data()[button.view.param];
+                    });
+                }
+                
             }
             
             if(options.delete){
@@ -274,8 +286,10 @@
                     var has_selector = false;
                     for(var key in options.columns){
                         var col = options.columns[key];
+                        console.log(col);
                         if(col.editable){
                             var cell = row.node().getElementsByTagName('td')[colnum];
+                            
                             var hidden = "<span style='display:none' class='edit-cancel-recover'>"+cell.innerHTML+"</span>";
                             if(col.logic_modifier != null){
                                 switch(col.logic_modifier.type){
@@ -313,8 +327,9 @@
                                 //text input
                                 cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" value="'+row.data()[key]+'" >';
                             }
+                            cell.innerHTML += '<p class="form-error" x-text="errors[\''+key+'\']"></p>';
                         }
-                        cell.innerHTML += '<p class="form-error" x-text="errors[\''+key+'\']"></p>';
+                        
                         colnum+=1;
                     }
                     if(has_date){

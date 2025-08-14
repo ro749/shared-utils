@@ -8,6 +8,10 @@ use Ro749\SharedUtils\FormRequests\BaseFormRequest;
 use Ro749\SharedUtils\FormRequests\InputType;
 use Ro749\SharedUtils\FormRequests\FormField;
 use Ro749\SharedUtils\FormRequests\Selector;
+use Ro749\SharedUtils\Tables\TableButton;
+use Ro749\SharedUtils\Tables\TableButtonView;
+use Ro749\SharedUtils\Enums\Icon;
+use Illuminate\Http\Request;
 class BaseTableDefinition
 {
     //the id the table is going to have
@@ -24,7 +28,7 @@ class BaseTableDefinition
 
     //if clicking edit redirects, if empty normal edit
     public ?View $edit_url = null;
-
+    public array $buttons = [];
     public function __construct(
         string $id, 
         BaseGetter $getter,
@@ -43,8 +47,7 @@ class BaseTableDefinition
         if($this->form != null){
             $this->make_it_modifiable();
         }
-        $this->needs_buttons = $this->needsButtons();
-        
+        $this->generate_buttons();
     }
 
     public function getColumn(string $key): ?Column
@@ -59,7 +62,7 @@ class BaseTableDefinition
 
     public function needsButtons(): bool
     {
-        return $this->view || $this->delete || $this->is_editable || $this->edit_url;
+        return count($this->buttons) > 0;//$this->view || $this->delete || $this->is_editable || $this->edit_url;
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
@@ -99,9 +102,10 @@ class BaseTableDefinition
             'backend_filters' => $this->getter->backend_filters,
             'view' => $this->view,
             'delete' => $this->delete,
-            'needs_buttons' => $this->needs_buttons,
+            'needs_buttons' => $this->needsButtons(),
             'is_editable' => $this->is_editable,
-            'edit_url' => $this->edit_url
+            'edit_url' => $this->edit_url,
+            'buttons' => $this->buttons
         ];
     }
 
@@ -128,5 +132,49 @@ class BaseTableDefinition
         $this->form->formFields = array_filter($this->form->formFields, function ($field) {
             return $field->type != InputType::PASSWORD && !$field->encrypt;
         });
+    }
+
+    function generate_buttons() {
+        if($this->view) {
+            $this->buttons[] = new TableButtonView(
+                icon: Icon::VIEW,
+                button_class: "view-btn",
+                background_color_class:"bg-primary-light",
+                text_color_class: "text-primary-600",
+                view: $this->view
+            );
+        }
+        if($this->edit_url) {
+            $this->buttons[] = new TableButtonView(
+                icon: Icon::EDIT,
+                button_class: "edit-btn",
+                background_color_class:"bg-success-focus",
+                text_color_class:"text-success-main",
+                view: $this->edit_url
+            );
+        }
+        if ($this->is_editable) {
+            $this->buttons[] = new TableButton(
+                icon: Icon::EDIT,
+                button_class: "edit-btn",
+                background_color_class:"bg-success-focus",
+                text_color_class:"text-success-main",
+            );
+        }
+        if ($this->delete) {
+            $this->buttons[] = new TableButton(
+                icon: Icon::DELETE,
+                button_class: "delete-btn",
+                background_color_class:"bg-danger-focus",
+                text_color_class: "text-danger-main",
+            );
+        }
+    }
+
+    function get_metadata(Request $request){
+        foreach ($this->getter->columns as $key => $value) {
+            $ans[] = ['key' => $key, 'label' => $value->display];
+        }
+        return $ans;
     }
 }

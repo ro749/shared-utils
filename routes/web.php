@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Ro749\SharedUtils\ImageMapPro;
 
 Route::middleware('web')->group(function () {
     Route::get('/api/autosave/{class}', function ($class) {
@@ -43,6 +44,27 @@ Route::middleware('web')->group(function () {
         $table = new $fullClass();
         $table->save($request);
         return response()->json(['success' => true]);
+        //$data = $table->get_metadata($request);
+        //return response()->json($data );
+    });
+
+    Route::get('/table/{table}/get/{layer}', function (Request $request,string $table,string $layer) {
+        $fullClass = 'App\\Tables\\' . $table;
+        $table = new $fullClass();
+        return response()->json($table->get(
+            $request->get('start'), 
+            $request->get('length'),
+            $request->get('search')['value'],
+            $request->get('order')[0],
+            $request->get('filters')?? [],
+            $layer
+        ));
+    });
+
+    Route::get('/table/{table}/metadata/{layer}', function (Request $request,string $table,string $layer) {
+        $fullClass = 'App\\Tables\\' . $table;
+        $table = new $fullClass();
+        return response()->json($table->get_metadata($layer));
     });
     
     Route::post('/form/{form}', function (Request $request,$form) {
@@ -64,4 +86,12 @@ Route::middleware('web')->group(function () {
     
         return response()->json(['redirect' => '/']);
     });
+
+    Route::get('imagemappro', function (Request $request){
+        $imp = new ImageMapPro(
+            colors:["#00ff00","#ff0000","#ffff00"],
+            opacities:[0.8,0.8,0.8]
+        );
+        return $imp->get();
+    })->name('image-map-pro');
 });
