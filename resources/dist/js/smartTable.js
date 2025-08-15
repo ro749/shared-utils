@@ -216,7 +216,7 @@
                 }
             });
             for(var button_num in options.buttons){
-                var button = options.buttons[button_num];
+                let button = options.buttons[button_num];
                 if(button.view != null){
                     $table.on('click', '.'+button.button_class, function(event) {
                         window.location.href = 

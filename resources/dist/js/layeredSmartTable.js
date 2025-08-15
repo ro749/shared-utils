@@ -5,12 +5,8 @@
             let tableInstance = null;
             let layer = 0;
             function initTable(metadata) {
-                // Si ya existe una tabla, la destruimos y limpiamos
                 if (tableInstance) {
-                    console.log("tableInstance");
-                    console.log(tableInstance);
                     tableInstance.destroy();
-                    console.log(tableInstance);
                     $table.empty();
                 }
                 else{

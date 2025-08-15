@@ -47,7 +47,7 @@ class LayeredTable
                 $layer == count($this->layers)-1 ?
                 new TableButton(
                     icon: Icon::ACCEPT,
-                    button_class: "next-btn",
+                    button_class: "ok-btn",
                     background_color_class:"bg-primary-light",
                     text_color_class:"text-primary-600"
                 ):
