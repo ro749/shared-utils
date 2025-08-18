@@ -3,8 +3,6 @@
         return this.each(function () {
             const $table = $(this);
             
-            let currentColumnsJson = null;
-            let tableInstance = null;
             let layer = 0;
             let selected_layers = [];
             var labels = [];
@@ -15,16 +13,27 @@
                 create_html(metadata);
                 metadata.layer = layer;
                 metadata.manual_filters = selected_layers;
-                tableInstance = $table.smartTable(metadata);
+                $table.smartTable(metadata);
             }
 
             function fetchAndInit() {
-                $.getJSON('/table/' + options.id + '/metadata/'+layer, function (metadata) {
-                    initTable(metadata);
+                $.ajax({
+                    url: '/table/' + options.id + '/metadata',
+                    type: 'GET',
+                    dataType: 'json',
+                    data:
+                    {
+                        layer: layer,
+                        selected_id: layer > 0 ? selected_layers[layer-1] : 0 
+                    },
+                    success: function (metadata) {
+                        initTable(metadata);
+                    }
                 });
             }
 
             function create_html(metadata){
+                $('#'+options.id+'-container .title').html(metadata.title);
                 let theadHtml = '<thead><tr>';
                 let tfootHtml = '<tfoot><tr>';
                 for(column in metadata.columns){
@@ -46,7 +55,7 @@
                 selected_layers[layer] = row.id;
                 labels[layer] = row;
                 layer+=1;
-                $('#back-btn').visibility = 'visible';
+                $('#' + options.id + '-container .back-btn').css('visibility', 'visible');
                 fetchAndInit();
             });
 
@@ -58,10 +67,11 @@
                 fetchAndInit();
             });
 
-            $table.on('click', '#back-btn', function(event) {
+            $('#'+options.id+'-container').on('click','.back-btn', function(event) {
+                
                 layer -= 1;
                 if(layer == 0){
-                    $('#back-btn').visibility = 'hidden';
+                    $('#' + options.id + '-container .back-btn').css('visibility', 'hidden');
                 }
                 fetchAndInit();
             });

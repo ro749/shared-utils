@@ -1,6 +1,6 @@
 <?php
 
-namespace Ro749\SharedUtils;
+namespace Ro749\SharedUtils\ImageMapPro;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -8,12 +8,14 @@ class SingleImageMapPro extends ImageMapProBase
 {
     public string $label_column;
     public string $data_column;
+    public string $file;
 
     public function __construct(
         string $id,
         string $table,
         string $label_column,
         string $data_column,
+        string $file,
         array $colors,
         array $opacities
     ){
@@ -25,30 +27,18 @@ class SingleImageMapPro extends ImageMapProBase
         );
         $this->label_column = $label_column;
         $this->data_column = $data_column;
+        $this->file = $file;
     }
 
     public function get_map(){
-        $path = storage_path("ImageMapPro.json");
+        $path = storage_path($this->file);
         $map = json_decode(file_get_contents($path),true);
         $data = DB::table($this->table)->select('id',$this->label_column,$this->data_column)->get();
         $dispo = [];
         foreach($data as $d){
             $dispo[$d->unit] = $d->status;
         }
-        $artboards = &$map["artboards"];
-        foreach($artboards as &$artboard){
-            foreach($artboard["children"] as &$child){
-                if($child["type"] == "group"){
-                    foreach($child["children"] as &$grandchildren){
-                        $this->style_unit($grandchildren,$dispo);
-                    }
-                }
-                else{
-                    $this->style_unit($child,$dispo);
-                }
-            }
-        }
-        return $map;
+        return $this->re_color($map, $dispo);
     }
 
     function get_unit(Request $data){

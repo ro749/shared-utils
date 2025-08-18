@@ -1,19 +1,17 @@
 <?php
 
-namespace Ro749\SharedUtils;
+namespace Ro749\SharedUtils\ImageMapPro;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class MultiFloorImageMapPro extends ImageMapProBase
 {
-    public string $id;
-    public string $table;
     public string $floor_column;
     public string $type_column;
     public string $data_column;
-    public array $colors = [];
-    public array $opacities = [];
     public array $floors = [];
+
+    public array $files;
 
     public function __construct(
         string $id,
@@ -21,6 +19,7 @@ class MultiFloorImageMapPro extends ImageMapProBase
         string $floor_column,
         string $type_column,
         string $data_column,
+        array $files,
         array $colors,
         array $opacities,
         array $floors
@@ -34,31 +33,43 @@ class MultiFloorImageMapPro extends ImageMapProBase
         $this->floor_column = $floor_column;
         $this->type_column = $type_column;
         $this->data_column = $data_column;
+        $this->files = $files;
         $this->floors = $floors;
     }
 
-    public function get_map(){
-        $path = storage_path("ImageMapPro.json");
+    public function get_tower_map(){
+        $path = storage_path($this->files[0]);
         $map = json_decode(file_get_contents($path),true);
-        $data = DB::table($this->table)->select('id',$this->label_column,$this->data_column)->get();
+        $data = DB::table($this->table)
+            ->select($this->floor_column)
+            ->selectRaw("
+                CASE 
+                    WHEN MIN(".$this->data_column.") >= 1 AND MAX(".$this->data_column.") <= 2 
+                    THEN 1 
+                    ELSE 0 
+                END as ".$this->data_column."
+            ")
+            ->groupBy($this->floor_column)
+            ->get();
         $dispo = [];
         foreach($data as $d){
-            $dispo[$d->unit] = $d->status;
+            $dispo[$d->floor] = $d->status;
         }
-        $artboards = &$map["artboards"];
-        foreach($artboards as &$artboard){
-            foreach($artboard["children"] as &$child){
-                if($child["type"] == "group"){
-                    foreach($child["children"] as &$grandchildren){
-                        $this->style_unit($grandchildren,$dispo);
-                    }
-                }
-                else{
-                    $this->style_unit($child,$dispo);
-                }
-            }
+        return $this->re_color($map, $dispo);
+    }
+
+    public function get_floor_map($floor){
+        $path = storage_path($this->files[$this->floors[$floor]]);
+        $map = json_decode(file_get_contents($path),true);
+        $data = DB::table($this->table)
+        ->select('id',$this->type_column,$this->data_column)
+        ->where($this->floor_column,$floor)
+        ->get();
+        $dispo = [];
+        foreach($data as $d){
+            $dispo[$d->type] = $d->status;
         }
-        return $map;
+        return $this->re_color($map, $dispo);
     }
 
     function get_unit(Request $data){

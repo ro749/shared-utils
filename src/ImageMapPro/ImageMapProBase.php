@@ -1,6 +1,6 @@
 <?php
 
-namespace Ro749\SharedUtils;
+namespace Ro749\SharedUtils\ImageMapPro;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -24,12 +24,14 @@ abstract class ImageMapProBase
     }
 
     public function style_unit(&$child,&$dispo){
-        $color = $this->colors[$dispo[$child["title"]]];
-        $opacity = $this->opacities[$dispo[$child["title"]]];;
-        if($color==null){
-            $color = "#ffffff";
-            $opacity = 0;
+        if(!isset($dispo[$child["title"]])){
+            $child["default_style"]["background_color"] = "#ffffff";
+            $child["default_style"]["background_opacity"] = 0;
+            return;
         }
+        $color_value = $dispo[$child["title"]];
+        $color = $this->colors[$color_value];
+        $opacity = $this->opacities[$color_value];
         $child["default_style"]["background_color"] = $color;
         $child["default_style"]["background_opacity"] = $opacity;
         $child["mouseover_style"] = [
@@ -60,7 +62,22 @@ abstract class ImageMapProBase
             $child["default_style"]["border_color"] = $color;
         }
     }
-    abstract public function get_map();
 
+    function re_color($map,$data):array{
+        $artboards = &$map["artboards"];
+        foreach($artboards as &$artboard){
+            foreach($artboard["children"] as &$child){
+                if($child["type"] == "group"){
+                    foreach($child["children"] as &$grandchildren){
+                        $this->style_unit($grandchildren,$data);
+                    }
+                }
+                else{
+                    $this->style_unit($child,$data);
+                }
+            }
+        }
+        return $map;
+    }
     abstract function get_unit(Request $data);
 }
