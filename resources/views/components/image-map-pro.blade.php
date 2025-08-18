@@ -9,14 +9,47 @@
 @push('scripts')
 <script>
     $(document).ready(function () {
+
+        function get_map(unit){
+            $.ajax({
+                url: "imagemappro/{{$imp->id}}/unit",
+                method: 'GET',
+                dataType: 'json',
+                data: {unit: unit},
+                success: function (response) {
+                    $(document).trigger('selected-unit', [{ unit: event.target.getAttribute("data-title") }]);
+                }
+            });
+        } 
+
+        ImageMapPro.subscribe((action) =>{
+            if(action.type == "mapInit"){
+                if(ImageMapPro.isMobile()){
+                    document.getElementById("image-map-pro").addEventListener("click", function(event) {
+                        get_map(event.target.getAttribute("data-title"));
+                    });
+                }
+            }
+            if(action.type == "objectClick"){
+                get_map(action.payload.object);
+            }
+            if(ImageMapPro.isMobile() && action.type == "tooltipShow"){
+                ImageMapPro.hideTooltip(action.payload.map, action.payload.object);
+            }
+            if(action.type == "artboardChange"){
+                current_artboard = action.payload.artboard;
+            }
+        });
+
         $.ajax({
-            url: "{{ route('image-map-pro') }}",
+            url: "imagemappro/{{$imp->id}}/map",
             method: 'GET',
             dataType: 'json',
             success: function (response) {
                 ImageMapPro.init('#image-map-pro',response);
             }
         });
+        
     });
 </script>
 @endpush

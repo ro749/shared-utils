@@ -2,25 +2,20 @@
     $.fn.layeredSmartTable = function (options = {}) {
         return this.each(function () {
             const $table = $(this);
+            
+            let currentColumnsJson = null;
             let tableInstance = null;
             let layer = 0;
+            let selected_layers = [];
+            var labels = [];
             function initTable(metadata) {
-                if (tableInstance) {
-                    tableInstance.destroy();
-                    $table.empty();
-                }
-                else{
-                    console.log("no tableInstance");
-                }
+                $('#'+options.id).DataTable().destroy();
+                $table.empty();
                 
                 create_html(metadata);
-
-                // Inicializamos tu wrapper smartTable
-                $table.smartTable(metadata);
-
-                // Guardamos la instancia de DataTable para futuras manipulaciones
-                tableInstance = $table.smartTable();
-                console.log(tableInstance);
+                metadata.layer = layer;
+                metadata.manual_filters = selected_layers;
+                tableInstance = $table.smartTable(metadata);
             }
 
             function fetchAndInit() {
@@ -32,10 +27,10 @@
             function create_html(metadata){
                 let theadHtml = '<thead><tr>';
                 let tfootHtml = '<tfoot><tr>';
-                metadata.columns.forEach(col => {
-                    theadHtml += `<th>${col.display}</th>`;
-                    tfootHtml += `<th>${col.display}</th>`;
-                });
+                for(column in metadata.columns){
+                    theadHtml += `<th>${metadata.columns[column].display}</th>`;
+                    tfootHtml += `<th>${metadata.columns[column].display}</th>`;
+                }
             
                 theadHtml += '<th></th>';
                 tfootHtml += '<th></th>';
@@ -46,7 +41,23 @@
                 $('#'+options.id).html(theadHtml + tfootHtml);
             }
 
-            // Primera carga
+            $table.on('click', '.next-btn', function(event) {
+                var row = $('#'+options.id).DataTable().row($(this).parents('tr')).data();
+                selected_layers[layer] = row.id;
+                labels[layer] = row;
+                layer+=1;
+                fetchAndInit();
+            });
+
+            $table.on('click', '.ok-btn', function(event) {
+                var row = $('#'+options.id).DataTable().row($(this).parents('tr')).data();
+                labels[layer] = row;
+                $(document).trigger('selected-'+options.id, {"labels":labels});
+                layer = 0;
+                fetchAndInit();
+            });
+
+            
             fetchAndInit();
 
             // Puedes exponer un método para refrescar columnas y datos si quieres:

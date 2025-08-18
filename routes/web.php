@@ -87,11 +87,15 @@ Route::middleware('web')->group(function () {
         return response()->json(['redirect' => '/']);
     });
 
-    Route::get('imagemappro', function (Request $request){
-        $imp = new ImageMapPro(
-            colors:["#00ff00","#ff0000","#ffff00"],
-            opacities:[0.8,0.8,0.8]
-        );
-        return $imp->get();
-    })->name('image-map-pro');
+    Route::get('imagemappro/{imagemappro}/map', function (Request $request,$imagemappro){
+        $impClass = "App\\ImageMapPro\\".$imagemappro;
+        $imp = new $impClass();
+        return $imp->get_map();
+    });
+
+    Route::get('imagemappro/{imagemappro}/unit', function (Request $request,$imagemappro){
+        $impClass = "App\\ImageMapPro\\".$imagemappro;
+        $imp = new $impClass();
+        return $imp->get_unit($request);
+    });
 });

@@ -1,0 +1,30 @@
+<?php
+
+namespace {{ namespace }};
+
+use Ro749\SharedUtils\ImageMapProBase;
+
+class {{ class }} extends ImageMapProBase
+{
+    public function __construct(){
+        parent::__construct(
+            id: '{{ class }}',
+            table: 'units',
+            label_column: 'unit',
+            data_column: 'status',
+            colors: ["#00ff00","#ff0000","#ffff00"],
+            opacities:[0.8,0.8,0.8]
+
+        );
+    }
+
+    protected static ?ImageMapPro $instance = null;
+
+    public static function instance(): ImageMapPro
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+}
