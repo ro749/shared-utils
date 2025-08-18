@@ -10,18 +10,23 @@ class LayeredTable
 {
     public string $id;
     public array $layers = [];
+    //the column to use for each title
+    public array $titles = [];
     public function __construct(
         string $id,
         array $layers,
+        array $titles = []
     ){
         $this->id = $id;
         $this->layers = $layers;
+        $this->titles = $titles;
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = [],$layer = 0): mixed
     {
         $ans = $this->layers[$layer]->get($start, $length, $search,$order,$filters);
         $ans['layer'] = $layer;
+        
         return $ans;
     }
 
@@ -31,8 +36,8 @@ class LayeredTable
         ];
     }
 
-    public function get_metadata($layer = 0){
-        return [
+    public function get_metadata($layer = 0, $selected_id = 0){
+        $ans = [
             'id' => $this->id,
             'table' => $this->layers[$layer]->table,
             'columns' => $this->layers[$layer]->columns,
@@ -59,5 +64,13 @@ class LayeredTable
                 )
             ]
         ];
+        $ans['title'] = '';
+        if(count($this->titles)!=0 && $selected_id != 0){
+            $prev_layer = $this->layers[$layer-1];
+            $ans['title'] = DB::table($prev_layer->table)
+                ->where('id','=', $selected_id)
+                ->value($this->titles[$layer-1]);
+        }
+        return $ans;
     }
 }

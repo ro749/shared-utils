@@ -61,10 +61,15 @@ Route::middleware('web')->group(function () {
         ));
     });
 
-    Route::get('/table/{table}/metadata/{layer}', function (Request $request,string $table,string $layer) {
+    Route::get('/table/{table}/metadata', function (Request $request,string $table) {
         $fullClass = 'App\\Tables\\' . $table;
         $table = new $fullClass();
-        return response()->json($table->get_metadata($layer));
+        return response()->json(
+            $table->get_metadata(
+                $request->get('layer', 0), 
+                $request->get('selected_id', 0)
+            )
+        );
     });
     
     Route::post('/form/{form}', function (Request $request,$form) {
