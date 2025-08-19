@@ -58,8 +58,8 @@
 }
 .popup-body{
     position: relative; 
-    overflow-y: hidden;
-    overflow-x: hidden; 
+    overflow-y: auto;
+    overflow-x: auto; 
     padding-top:0; 
     color:black !important;
 }

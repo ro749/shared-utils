@@ -2,7 +2,6 @@
     $.fn.layeredSmartTable = function (options = {}) {
         return this.each(function () {
             const $table = $(this);
-            
             let layer = 0;
             let selected_layers = [];
             var labels = [];
@@ -76,11 +75,23 @@
                 fetchAndInit();
             });
 
+            if($table.is(':visible')){
+                fetchAndInit();
+            }
             
-            fetchAndInit();
-
-            // Puedes exponer un método para refrescar columnas y datos si quieres:
-            $table.data('refresh', fetchAndInit);
+            $table.data('fetchAndInit', fetchAndInit);
         });
     };
+
+    $.fn.refreshLayeredSmartTable = function () {
+        return this.each(function () {
+            const $table = $(this);
+            if ($table.data('fetchAndInit')) {
+                $table.data('fetchAndInit')();
+            } else {
+                console.warn("No fetchAndInit method found for this table.");
+            }
+        });
+    };
+
 })(jQuery);
