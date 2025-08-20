@@ -24,9 +24,6 @@
     <!-- audioplayer -->
     <script src="{{ asset('vendor/shared-utils/js/lib/audioplayer.js') }}"></script>
 
-    <!-- smart-table -->
-    <script src="{{ asset('vendor/shared-utils/js/smartTable.js') }}"></script>
-    <script src="{{ asset('vendor/shared-utils/js/layeredSmartTable.js') }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script>
 $(function() {

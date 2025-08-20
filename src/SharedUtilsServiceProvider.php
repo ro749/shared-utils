@@ -34,8 +34,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 MakeTable::class,
                 MakeLogin::class,
                 MakeForm::class,
-                Options::class,
-                MakeImageMapPro::class
+                Options::class
             ])
             ->hasRoutes('web');
     }
