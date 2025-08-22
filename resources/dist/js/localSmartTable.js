@@ -41,7 +41,20 @@
             table.row($(this).parents('tr')).remove().draw();
         });
         $('#save-'+options.id).on('click', function() {
-            console.log(table.data().toArray());
+            var table_data = table.data().toArray();
+            var upload_table = [];
+            for(var data in table_data){
+                var row = table_data[data];
+                upload_table.push({product: row.id});
+            }
+            $.ajax({
+                url: '/table/'+options.id+'/save',
+                method: 'POST',
+                data: {data: upload_table},
+                success: function(response) {
+                    alert('Data saved successfully!');
+                }
+            })
         });
     };
 })(jQuery);
