@@ -6,25 +6,34 @@ use Ro749\SharedUtils\FormRequests\BaseFormRequest;
 use Illuminate\Support\Facades\DB;
 use Ro749\SharedUtils\Tables\TableButton;
 use Ro749\SharedUtils\Enums\Icon;
+use Illuminate\Database\Query\Builder;
+use Ro749\SharedUtils\Filters\BackendFilters\BasicFilter;
 class LayeredTable
 {
     public string $id;
     public array $layers = [];
-    //the column to use for each title
-    public array $titles = [];
     public function __construct(
         string $id,
         array $layers,
-        array $titles = []
     ){
         $this->id = $id;
         $this->layers = $layers;
-        $this->titles = $titles;
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = [],$layer = 0): mixed
     {
-        $ans = $this->layers[$layer]->get($start, $length, $search,$order,$filters);
+        $curent_layer = $this->layers[$layer];
+        if($curent_layer->parent != ''){
+            $ans = $curent_layer->getter->backend_filters[] = new BasicFilter(
+                id:'',
+                filter: function(Builder $query,array $data) use ($curent_layer) {
+                    $query->where($curent_layer->parent, $data[0]);
+                }
+            );
+                
+        }
+        
+        $ans = $curent_layer->getter->get($start, $length, $search,$order,$filters);
         $ans['layer'] = $layer;
         
         return $ans;
@@ -39,10 +48,10 @@ class LayeredTable
     public function get_metadata($layer = 0, $selected_id = 0){
         $ans = [
             'id' => $this->id,
-            'table' => $this->layers[$layer]->table,
-            'columns' => $this->layers[$layer]->columns,
-            'filters' => $this->layers[$layer]->filters,
-            'backend_filters' => $this->layers[$layer]->backend_filters,
+            'table' => $this->layers[$layer]->getter->table,
+            'columns' => $this->layers[$layer]->getter->columns,
+            'filters' => $this->layers[$layer]->getter->filters,
+            'backend_filters' => $this->layers[$layer]->getter->backend_filters,
             'view' => null,
             'delete' => null,
             'needs_buttons' => true,
@@ -65,11 +74,11 @@ class LayeredTable
             ]
         ];
         $ans['title'] = '';
-        if(count($this->titles)!=0 && $selected_id != 0){
+        if($selected_id != 0){
             $prev_layer = $this->layers[$layer-1];
-            $ans['title'] = DB::table($prev_layer->table)
+            $ans['title'] = DB::table($prev_layer->getter->table)
                 ->where('id','=', $selected_id)
-                ->value($this->titles[$layer-1]);
+                ->value($prev_layer->title);
         }
         return $ans;
     }
