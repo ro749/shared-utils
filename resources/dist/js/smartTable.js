@@ -128,7 +128,7 @@
             })
             var table = $table.DataTable({
                 ajax: {
-                    url: '/table/'+options.id+'/get',
+                    url: '/table/'+options.id+'/get'+(options.layer!=null?'/'+options.layer:''),
                     type: 'GET',
                     data: function (d) {
                         d.filters = filters; 
@@ -284,9 +284,13 @@
                     var colnum = 0;
                     var has_date = false;
                     var has_selector = false;
+                    for(var key in options.form.fields){
+                        var field = options.form.fields[key];
+                        var col = options.columns[key];
+                        
+                    }
                     for(var key in options.columns){
                         var col = options.columns[key];
-                        console.log(col);
                         if(col.editable){
                             var cell = row.node().getElementsByTagName('td')[colnum];
                             
