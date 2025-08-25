@@ -108,7 +108,7 @@
                     }
                 });
             }
-            var filters = {};
+            var filters = options.manual_filters??{};
             var params = new URLSearchParams(window.location.search);
             params.forEach((value, key) => {
                 filters[key] = value;
