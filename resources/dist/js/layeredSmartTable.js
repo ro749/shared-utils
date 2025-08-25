@@ -63,11 +63,12 @@
                 labels[layer] = row;
                 $(document).trigger('selected-'+options.id, {"labels":labels});
                 layer = 0;
-                fetchAndInit();
+                $table.empty();
+                $('#'+options.id+'-container .title').html('');
+                $('#'+options.id).html('');
             });
 
             $('#'+options.id+'-container').on('click','.back-btn', function(event) {
-                
                 layer -= 1;
                 if(layer == 0){
                     $('#' + options.id + '-container .back-btn').css('visibility', 'hidden');
