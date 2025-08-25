@@ -104,4 +104,11 @@ class BaseFormRequest
         }
         return $this->redirect;
     }
+
+    public function get_info(): array
+    {
+        return [
+            'fields' => $this->formFields
+        ];
+    }
 }

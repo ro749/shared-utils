@@ -8,12 +8,24 @@
         });
     };
     $.fn.localSmartTable = function (options = {}) {
-        
         const $table = $(this);
-        
         var columns = [];
         for (let col in options.columns){
-            let column = { data: col };
+            var field = options.form.fields[col]??null;
+            if(field==null){
+                var column = { data: col };
+            }
+            else{
+                
+                let html_input = InputFactory.createInput(field);
+                
+                var column = {
+                    data: null,
+                    render: function (data, type, row) {
+                        return html_input.prop('outerHTML');
+                    }
+                }
+            }
             columns.push(column);
         }
         columns.push({
@@ -43,9 +55,21 @@
         $('#save-'+options.id).on('click', function() {
             var table_data = table.data().toArray();
             var upload_table = [];
+            var rowIndex = 0;
+            var columns = Object.keys(options.columns);
             for(var data in table_data){
-                var row = table_data[data];
-                upload_table.push({product: row.id});
+                var row = {};
+                for(var field_key in options.form.fields){
+                    var field = options.form.fields[field_key];
+                    if(field.type=='hidden'){
+                        row[field_key] = table_data[data][field_key];
+                    }
+                    else{
+                        row[field_key] = table.row(rowIndex).node().children[columns.indexOf(field_key)].children[0].value;
+                    }
+                }
+
+                upload_table.push(row);
             }
             $.ajax({
                 url: '/table/'+options.id+'/save',

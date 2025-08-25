@@ -96,16 +96,14 @@ class BaseTableDefinition
     function get_info(){
         return [
             'id' => $this->id,
-            'table' => $this->getter->table,
             'columns' => $this->getter->columns,
             'filters' => $this->getter->filters,
-            'backend_filters' => $this->getter->backend_filters,
-            'view' => $this->view,
             'delete' => $this->delete,
             'needs_buttons' => $this->needsButtons(),
             'is_editable' => $this->is_editable,
             'edit_url' => $this->edit_url,
-            'buttons' => $this->buttons
+            'buttons' => $this->buttons,
+            'form' => $this->form?->get_info(),
         ];
     }
 

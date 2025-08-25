@@ -24,6 +24,7 @@
     <!-- audioplayer -->
     <script src="{{ asset('vendor/shared-utils/js/lib/audioplayer.js') }}"></script>
 
+    <script src="{{ asset('vendor/shared-utils/js/inputs.js') }}"></script>
     <!-- smart-table -->
     <script src="{{ asset('vendor/shared-utils/js/smartTable.js') }}"></script>
     <script src="{{ asset('vendor/shared-utils/js/layeredSmartTable.js') }}"></script>
