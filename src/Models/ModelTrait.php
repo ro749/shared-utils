@@ -56,6 +56,7 @@ trait ModelTrait
                 icon : $value->icon,
                 placeholder: $value->placeholder,
                 rules: $value->rules,
+                encrypt: $value->encrypt,
             ),
             $value->logic_modifier->type === 'options' => new Selector(
                 options: $value->logic_modifier->options,

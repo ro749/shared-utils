@@ -70,7 +70,6 @@ class Selector extends FormField
     ):self
     {
         $query = DB::table($table)->select($value_column, $label_column);
-
         if ($queryModifier) {
             $query = $queryModifier($query);
         }
@@ -81,7 +80,6 @@ class Selector extends FormField
         foreach ($rows as $row) {
             $options[$row->$value_column] = $row->$label_column;
         }
-
         return new self(
             id: $id,
             value: $value,

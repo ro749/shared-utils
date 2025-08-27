@@ -9,7 +9,6 @@ use Ro749\SharedUtils\Commands\MakeTable;
 use Ro749\SharedUtils\Commands\MakeLogin;
 use Ro749\SharedUtils\Commands\MakeForm;
 use Ro749\SharedUtils\Commands\Options;
-use Ro749\SharedUtils\Commands\MakeImageMapPro;
 use Illuminate\Support\Facades\Blade;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
@@ -47,8 +46,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
         Blade::component('sharedutils::components.fillables.fillable-text', 'f-text');
         Blade::component('sharedutils::components.fillables.fillable-image', 'f-image');
-        //Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
-        //Blade::component('sharedutils::components.inputs.input', 'sharedutils::input');
-        //Blade::component('sharedutils::components.inputs.db-select', 'sharedutils::db-select');
+        Blade::component('sharedutils::components.tables.smartTable', 'smartTable');
+        Blade::component('sharedutils::components.tables.localSmartTable', 'localSmartTable');
+        Blade::component('sharedutils::components.tables.layeredSmartTable', 'layeredSmartTable');
     }
 }

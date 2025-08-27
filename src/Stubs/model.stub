@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+use Ro749\SharedUtils\Models\ModelTrait;
+use Ro749\SharedUtils\Models\Attribute;
+
+class {{ class }} extends Model
+{
+    use ModelTrait;
+    public string $owner;
+    public function __construct()
+    {
+        $this->attributes = [
+            
+        ];
+    }
+}

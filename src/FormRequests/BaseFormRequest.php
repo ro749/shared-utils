@@ -11,12 +11,12 @@ class BaseFormRequest
     public string $table;
     public array $formFields;
     public string $submit_text;
-    public string $redirect;
-    public string $popup;
-    public string $submit_url="";
+    public string $redirect='';
+    public string $popup='';
+    public string $submit_url='';
     //if needs to register the loged user, fill with the column
-    public string $user;
-    public string $callback;
+    public string $user = '';
+    public string $callback='';
     public string $uploading_message='';
     
     public function __construct(
@@ -89,7 +89,9 @@ class BaseFormRequest
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
         foreach ($this->formFields as $key => $field) {
+            echo "\n";
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
+                echo "ecnripting $key\n";
                 $data[$key] = Hash::make($data[$key]);
             }
         }
