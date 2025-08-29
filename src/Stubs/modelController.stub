@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Http\Controllers;
+use App\Http\Requests\Register{{ class }};
+use App\Tables\{{ class }}sTable;
+class {{ class }}Controller extends Controller
+{
+    public function form() {
+        $form = Register{{ class }}::instanciate();
+        return view('register-{{ view }}', ['form'=>$form]);
+    }
+
+    public function table() {
+        $table = {{ class }}sTable::instance();
+        return view('table-{{ view }}s', ['table'=>$table]);
+    }
+}

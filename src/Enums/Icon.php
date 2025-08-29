@@ -11,4 +11,8 @@ enum Icon: string{
     case NEXT = "iconamoon:arrow-right-6-circle-thin";
     case UP = "iconamoon:arrow-up-6-circle-thin";
     case DOWN = "iconamoon:arrow-down-6-circle-thin";
+    case USER = "iconamoon:profile";
+    case PHONE = "iconamoon:phone";
+    case EMAIL = "iconamoon:email";
+    case PASSWORD = "iconamoon:lock";
 }

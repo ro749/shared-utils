@@ -14,11 +14,19 @@ class Column
 
     public bool $editable = false;
 
-    public function __construct(string $display, Modifier $modifier = null, LogicModifier $logic_modifier = null)
+    public bool $fillable = false;
+
+    public function __construct(
+        string $display, 
+        Modifier $modifier = null, 
+        LogicModifier $logic_modifier = null,
+        bool $fillable = false
+    )
     {
         $this->display = $display;
         $this->modifier = $modifier;
         $this->logic_modifier = $logic_modifier;
+        $this->fillable = $fillable;
     }
 
     public function is_foreign(): bool

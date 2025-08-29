@@ -9,19 +9,18 @@ use Ro749\SharedUtils\Tables\ColumnModifiers\Enum;
 use Ro749\SharedUtils\Filters\BackendFilters\UserFilter;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Builder;
-class Clients extends BaseTableDefinition
+class {{ class }}Table extends BaseTableDefinition
 {
     public function __construct(){
-        $client = new Client();
-        $client->get_table($this);
-        $this->getter->debug = true;
-        $this->id = 'Clients';
+        ${{ class }} = new {{ class }}();
+        ${{ class }}->get_table($this);
+        $this->id = '{{ class }}Table';
         
     }
 
-    protected static ?BaseTableDefinition $instance = null;
+    protected static ?{{ class }}Table $instance = null;
 
-    public static function instance(): BaseTableDefinition
+    public static function instance(): {{ class }}Table
     {
         if (!self::$instance) {
             self::$instance = new self();

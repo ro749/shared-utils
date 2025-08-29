@@ -7,7 +7,7 @@
 
 
 <body>
-    @include('shared-utils::components.smartTable', ['table' => $table])
+    @include('shared-utils::components.tables.smartTable', ['table' => $table])
     @stack('script-includes')
     @stack('scripts')
 </body>

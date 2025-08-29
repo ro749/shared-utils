@@ -23,6 +23,7 @@ trait ModelTrait
     {
         $table->getter = new ArrayGetter($this->getTable(),[]);
         foreach($this->attributes as $key => $value){
+            if($value->encrypt) continue;
             $table->getter->columns[$key] = new Column(
                 display: $value->label,
                 modifier: $value->modifier,

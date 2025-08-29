@@ -9,6 +9,7 @@ use Ro749\SharedUtils\Commands\MakeTable;
 use Ro749\SharedUtils\Commands\MakeLogin;
 use Ro749\SharedUtils\Commands\MakeForm;
 use Ro749\SharedUtils\Commands\Options;
+use Ro749\SharedUtils\Commands\MakeCrud;
 use Illuminate\Support\Facades\Blade;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
@@ -33,7 +34,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 MakeTable::class,
                 MakeLogin::class,
                 MakeForm::class,
-                Options::class
+                Options::class,
+                MakeCrud::class
             ])
             ->hasRoutes('web');
     }

@@ -29,8 +29,7 @@ class LayeredTable
                 filter: function(Builder $query,array $data) use ($curent_layer) {
                     $query->where($curent_layer->parent, $data[0]);
                 }
-            );
-                
+            ); 
         }
         
         $ans = $curent_layer->getter->get($start, $length, $search,$order,$filters);

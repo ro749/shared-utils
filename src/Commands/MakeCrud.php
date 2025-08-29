@@ -5,61 +5,77 @@ namespace Ro749\SharedUtils\Commands;
 use Illuminate\Support\Str;
 use Illuminate\Console\GeneratorCommand;
 
-class MakeModel extends GeneratorCommand
+class MakeCrud extends GeneratorCommand
 {
-    protected $name = 'make:model'; // Así se llama tu comando Artisan
-    protected $description = 'Crea una clase Model personalizada';
+    protected $name = 'make:crud'; // Así se llama tu comando Artisan
+    protected $description = 'Crea una crud (Registro y Tabla) para un modelo';
     protected $type = 'Model';
 
     public function handle()
     {
         parent::handle();
-        
+        $this->create_form_and_table();
         if ($this->option('view')) {
-            $this->createView();
+            $this->createViews();
         }
         if ($this->option('ctrl')) {
             $this->createController();
         }
         if($this->option('all')) {
-            $this->createView();
+            $this->createViews();
             $this->createController();
         }
     }
 
     public function create_form_and_table()
     {
-        
+        $form_name = Str::pascal($this->argument('name'));
+        $table_name = $form_name.'s';
+        $formPath = app_path("Http/Requests/Register{$form_name}.php");
+        $tablePath = app_path("Tables/{$table_name}Table.php");
+        $formStub = $this->files->get(__DIR__ . '/../Stubs/formRegisterModel.stub');
+        $tableStub = $this->files->get(__DIR__ . '/../Stubs/tableModel.stub');
+        $formStub = str_replace(
+            '{{ class }}',
+            $form_name,
+            $formStub
+        );
+        $tableStub = str_replace(
+            '{{ class }}',
+            $table_name,
+            $tableStub
+        );
+        $this->files->put($formPath, $formStub);
+        $this->files->put($tablePath, $tableStub);
+        $this->info("Formulario y tabla creados en: {$formPath} y {$tablePath}");
+
     }
 
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/table.stub';
+        return __DIR__ . '/../Stubs/model.stub';
     }
 
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Tables';
+        return $rootNamespace . '\Models';
     }
 
-    protected function createView()
+    protected function createViews()
     {
-        $viewName = Str::kebab($this->argument('name'));
-        $viewPath = resource_path("views/{$viewName}.blade.php");
-
-        // Si la vista ya existe, avisa y no sobrescribe
-        if ($this->files->exists($viewPath)) {
-            $this->error("La vista {$viewName} ya existe.");
-            return;
-        }
-
+        $viewFormName = 'register-'.Str::kebab($this->argument('name'));
+        $viewTableName = 'table-'.Str::kebab($this->argument('name'));
+        $viewFormPath = resource_path("views/{$viewFormName}.blade.php");
+        $viewTablePath = resource_path("views/{$viewTableName}.blade.php");
         // Obtener el contenido del stub para la vista
-        $stub = $this->files->get(__DIR__ . '/../stubs/tableView.stub');
+        $form_stub = $this->files->get(__DIR__ . '/../stubs/formView.stub');
+        $table_stub = $this->files->get(__DIR__ . '/../stubs/tableView.stub');
 
         // Crear el archivo de vista
-        $this->files->put($viewPath, $stub);
+        $this->files->put($viewFormPath, $form_stub);
+        $this->files->put($viewTablePath, $table_stub);
 
-        $this->info("Vista creada en: {$viewPath}");
+        $this->info("Vistas creadas en: {$viewFormPath} y {$viewTablePath}");
     }
 
     protected function createController()
@@ -75,7 +91,7 @@ class MakeModel extends GeneratorCommand
         }
 
         // Obtener el contenido del stub para el controlador
-        $stub = $this->files->get(__DIR__ . '/../stubs/tableController.stub');
+        $stub = $this->files->get(__DIR__ . '/../stubs/modelController.stub');
         $stub = str_replace(
             ['{{ class }}', '{{ view }}'],
             [$controllerName, $viewName],

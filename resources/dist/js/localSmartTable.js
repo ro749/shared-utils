@@ -2,6 +2,10 @@
     $.fn.addElementToTable = function (element) {
         return this.each(function () {
             const $table = $(this);
+            var counter = $table.data('counter');
+            counter += 1;
+            $table.data('counter',counter);
+            element.id = counter;
             var table = $table.DataTable();
             table.rows.add([element]);
             table.draw();
@@ -9,19 +13,34 @@
     };
     $.fn.localSmartTable = function (options = {}) {
         const $table = $(this);
+        $table.data('counter',0);
         var columns = [];
+        
         for (let col in options.columns){
             var field = options.form.fields[col]??null;
+            var column = options.columns[col];
             if(field==null){
-                var column = { data: col };
+                if(column.fillable){
+                    var column = {
+                        data: null,
+                        render: function (data, type, row) {
+                            return '<span class="'+col+'" id="'+col+'-'+row.id+'"></span>';
+                        }
+                    }
+                }
+                else{
+                    var column = { data: col };
+                }
             }
             else{
+                field.class = 'input-'+col;
                 
                 let html_input = InputFactory.createInput(field);
                 
                 var column = {
                     data: null,
                     render: function (data, type, row) {
+                        html_input.attr("id", col+'-'+row.id);
                         return html_input.prop('outerHTML');
                     }
                 }
@@ -47,6 +66,8 @@
         var table = $table.DataTable({
             columns: columns,
             data: [],
+            searching: false,
+            paging: false
         });
 
         $table.on('click', '.delete-btn', function(event) {
