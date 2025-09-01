@@ -88,8 +88,9 @@
                     else{
                         row[field_key] = table.row(rowIndex).node().children[columns.indexOf(field_key)].children[0].value;
                     }
+                    
                 }
-
+                rowIndex++;
                 upload_table.push(row);
             }
             $.ajax({

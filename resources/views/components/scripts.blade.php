@@ -23,6 +23,8 @@
     <script src="{{ asset('vendor/shared-utils/js/lib/file-upload.js') }}"></script>
     <!-- audioplayer -->
     <script src="{{ asset('vendor/shared-utils/js/lib/audioplayer.js') }}"></script>
+    <!-- select2 -->
+    <script src="{{ asset('vendor/shared-utils/js/lib/select2.min.js') }}"></script>
 
     <script src="{{ asset('vendor/shared-utils/js/inputs.js') }}"></script>
     <!-- smart-table -->
@@ -37,5 +39,6 @@ $(function() {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+    $('.select2').select2();
 });
 </script>

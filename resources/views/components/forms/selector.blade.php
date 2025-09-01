@@ -19,3 +19,12 @@
         @endif
     @endforeach
 </select>
+
+@if($selector->search)
+@push($push)
+    $('#{{ $name }}').select2();
+    $('#{{ $name }}').on('change', () => {
+        this.form.{{ $name }} = $('#{{ $name }}').val();
+    });
+@endpush
+@endif

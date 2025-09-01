@@ -80,7 +80,7 @@ class FormField
         return $this->type; // default type
     }
 
-    public function render(string $name)
+    public function render(string $name,string $push)
     {
         return view('shared-utils::components.forms.field', ["field"=>$this,"name"=>$name]);
     }

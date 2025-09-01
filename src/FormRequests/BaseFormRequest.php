@@ -97,13 +97,14 @@ class BaseFormRequest
         }
         
         if(isset($data['id'])) {
-            DB::table($this->table)->where('id', $data['id'])->update($data);
+            $id = DB::table($this->table)->where('id', $data['id'])->update($data);
         } else {
             if ($this->user !== '') {
                 $data[$this->user] = Auth::guard($this->user)->user()->id;
             }
-            DB::table($this->table)->insert($data);
+            $id = DB::table($this->table)->insertGetId($data);
         }
+        $this->after_process($id);
         return $this->redirect;
     }
 
@@ -113,4 +114,6 @@ class BaseFormRequest
             'fields' => $this->formFields
         ];
     }
+
+    public function after_process(int $id){}
 }

@@ -14,7 +14,7 @@
                 </span>
             @endif
             
-            {!! $field->render($name) !!}
+            {!! $field->render($name,$form->id) !!}
             @if($field->icon)
             </div>
             @endif
@@ -49,8 +49,10 @@
         return {
             form: {},
             errors: {},
+            init(){
+                @stack($form->id)
+            },
             submit() {
-                console.log("submitting form");
                 const urlParams = new URLSearchParams(window.location.search);
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);

@@ -15,4 +15,6 @@ enum Icon: string{
     case PHONE = "iconamoon:phone";
     case EMAIL = "iconamoon:email";
     case PASSWORD = "iconamoon:lock";
+    case SEND_MAIL = "mdi:email-fast-outline";
+    case LINK = "iconamoon:link";
 }
