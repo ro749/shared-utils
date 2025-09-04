@@ -1,8 +1,13 @@
-@props(['id' => '', 'src' => '', 'ext'=>''])
-<img id="image-{{ $id }}">
+@props(['id' => '', 'data' => '', 'src' => '', 'ext'=>'', 'unit'=>null])
+<img id="image-{{ $id }}"  
+@if(!empty($unit))
+  src='{{ $src }}{{ $unit->{$data} }}{{ $ext }}'
+@endif
+  {{ $attributes }}
+>
 
-<script>
-    @push('fill')
-        $('#image-{{ $id }}').attr('src', '{{ $src }}'+data['{{ $id }}']+'{{ $ext }}');
-    @endpush
-</script>
+@if(empty($unit))
+@push('fill')
+    $('#image-{{ $id }}').attr('src', '{{ $src }}'+data['{{ $data }}']+'{{ $ext }}');
+@endpush
+@endif
