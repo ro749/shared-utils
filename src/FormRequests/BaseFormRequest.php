@@ -111,6 +111,7 @@ class BaseFormRequest
     public function get_info(): array
     {
         return [
+            'id' => $this->id,
             'fields' => $this->formFields
         ];
     }

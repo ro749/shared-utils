@@ -73,7 +73,7 @@
         $table.on('click', '.delete-btn', function(event) {
             table.row($(this).parents('tr')).remove().draw();
         });
-        $('#save-'+options.id).on('click', function() {
+        $(document).on('submit-'+options.parent_form.id, function(event,parent_data) {
             var table_data = table.data().toArray();
             var upload_table = [];
             var rowIndex = 0;
@@ -96,7 +96,10 @@
             $.ajax({
                 url: '/table/'+options.id+'/save',
                 method: 'POST',
-                data: {data: upload_table},
+                data: {
+                    parent_data: parent_data,
+                    table_data: upload_table
+                },
                 success: function(response) {
                     alert('Data saved successfully!');
                 }

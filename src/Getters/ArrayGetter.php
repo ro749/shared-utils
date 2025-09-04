@@ -134,6 +134,15 @@ class ArrayGetter extends BaseGetter{
         return $ans;
     }
 
+    public function needs_selectors(): bool{
+        foreach ($this->columns as $key => $column){
+            if ($column->is_foreign() && $column->editable) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function search(Builder $query,string $search): Builder{
         $query->where(function ($query) use ($search) {
             foreach ($this->columns as $key => $column) {

@@ -119,13 +119,16 @@
                     filters["cf-"+key] = sessionValue;
                 } 
             }
-            $.ajax({
-                url: '/table/'+options.id+'/selectors',
-                type: 'GET',
-                success: function(response) {
-                    selectors = response;
-                }
-            })
+            if(options.needs_selectors){
+                $.ajax({
+                    url: '/table/'+options.id+'/selectors',
+                    type: 'GET',
+                    success: function(response) {
+                        selectors = response;
+                    }
+                });
+            }
+            
             var table = $table.DataTable({
                 ajax: {
                     url: '/table/'+options.id+'/get'+(options.layer!=null?'/'+options.layer:''),

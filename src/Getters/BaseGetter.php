@@ -56,5 +56,9 @@ abstract class BaseGetter
         return [];
     }
 
+    public function needs_selectors(): bool{
+        return false;
+    }
+
     abstract function apply_filters($query, $filters);
 }

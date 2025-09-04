@@ -26,15 +26,15 @@ class LayeredTable
         if($curent_layer->parent != ''){
             $ans = $curent_layer->getter->backend_filters[] = new BasicFilter(
                 id:'',
-                filter: function(Builder $query,array $data) use ($curent_layer) {
-                    $query->where($curent_layer->parent, $data[0]);
+                filter: function(Builder $query,array $data) use ($curent_layer,$layer) {
+                    $query->where($curent_layer->parent,'=', $data[$layer-1]);
                 }
             ); 
         }
         
         $ans = $curent_layer->getter->get($start, $length, $search,$order,$filters);
         $ans['layer'] = $layer;
-        
+        $ans['filters'] = $filters;
         return $ans;
     }
 

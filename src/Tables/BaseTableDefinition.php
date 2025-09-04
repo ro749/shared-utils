@@ -104,6 +104,7 @@ class BaseTableDefinition
             'edit_url' => $this->edit_url,
             'buttons' => $this->buttons,
             'form' => $this->form?->get_info(),
+            'needs_selectors' => $this->getter->needs_selectors()
         ];
     }
 

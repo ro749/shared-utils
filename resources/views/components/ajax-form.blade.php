@@ -1,4 +1,4 @@
-<div x-data="{{$form->id}}_submit()" style="{{ isset($style)?$style:"" }}">
+<div x-data="{{$form->id}}_submit()" id="{{ $form->id }}">
     @foreach ($form->formFields as $name => $field)
         @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
         @continue
@@ -23,9 +23,11 @@
             </template>
         </div>
     @endforeach
+    @if($form->submit_text==!"")
     <button class="btn btn-light" @click="submit">
-        {{ $form->submit_text=="" ? 'Enviar': $form->submit_text }}
+        {{ $form->submit_text }}
     </button>
+    @endif
 </div>
 @if($form->redirect=="" && $form->popup=="")
 @once('form-popup')
@@ -60,6 +62,7 @@
                 @if(!empty($form->uploading_message))
                 openPopup("form-uploading-popup");
                 @endif
+                @if($form->submit_text==!"")
                 $.ajax({
                     url: '{{ $form->submit_url==""? '/form/'.$form->id : $form->submit_url }}',
                     method: 'POST',
@@ -92,6 +95,9 @@
                     }
                     @endif
                 });
+                @else
+                $(document).trigger('submit-{{$form->id}}', this.form);
+                @endif
             }
         }
     }
