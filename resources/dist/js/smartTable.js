@@ -64,6 +64,7 @@
                         }
                         break;
                     case '':
+                    case null:
                     case 'encapsulate':
                         column.render = (data) => renderFn ? renderFn(data) : data;
                         break;
@@ -128,7 +129,6 @@
                     }
                 });
             }
-            
             var table = $table.DataTable({
                 ajax: {
                     url: '/table/'+options.id+'/get'+(options.layer!=null?'/'+options.layer:''),
@@ -136,9 +136,11 @@
                     data: function (d) {
                         d.filters = filters; 
                     },
+                    
                 },
                 columns: columns,
                 serverSide: true,
+                order: options.order?[options.order]:[],
                 initComplete: function () {
                     for (const [key, filter] of Object.entries(options.filters)) {
                         const selector = document.createElement('div');

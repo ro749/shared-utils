@@ -16,17 +16,21 @@ class Column
 
     public bool $fillable = false;
 
+    public ColumnOrder $order = ColumnOrder::NONE;
+
     public function __construct(
         string $display, 
         Modifier $modifier = null, 
         LogicModifier $logic_modifier = null,
-        bool $fillable = false
+        bool $fillable = false,
+        $order = ColumnOrder::NONE
     )
     {
         $this->display = $display;
         $this->modifier = $modifier;
         $this->logic_modifier = $logic_modifier;
         $this->fillable = $fillable;
+        $this->order = $order;
     }
 
     public function is_foreign(): bool

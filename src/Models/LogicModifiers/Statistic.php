@@ -21,7 +21,7 @@ class Statistic extends LogicModifier
         $this->filter = $filter;
     }
 
-    public function get_value($key):string{
+    public function  get_value(string $table, string $key):string{
         return "";
     }
 }

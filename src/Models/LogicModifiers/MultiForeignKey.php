@@ -16,10 +16,10 @@ class MultiForeignKey extends LogicModifier
         $this->columns = $columns;
     }
 
-    public function get_value($key):string{
+    public function  get_value(string $table, string $key):string{
         $ans = 'CASE ';
         foreach ($this->columns as $column_key => $column_value) {
-            $ans .= 'WHEN '.$this->table.'.'.$key.' = '.$column_key.' THEN '.$this->table.'.'.$column_value.' ';
+            $ans .= 'WHEN '.$table.'.'.$key.' = '.$column_key.' THEN '.$this->table.'.'.$column_value.' ';
         }
         $ans .= 'END ';
         return $ans;

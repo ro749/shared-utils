@@ -104,7 +104,8 @@ class BaseTableDefinition
             'edit_url' => $this->edit_url,
             'buttons' => $this->buttons,
             'form' => $this->form?->get_info(),
-            'needs_selectors' => $this->getter->needs_selectors()
+            'needs_selectors' => $this->getter->needs_selectors(),
+            'order' => $this->get_order()
         ];
     }
 
@@ -175,5 +176,15 @@ class BaseTableDefinition
             $ans[] = ['key' => $key, 'label' => $value->display];
         }
         return $ans;
+    }
+
+    function get_order(){
+        $i = 0;
+        foreach ($this->getter->columns as $key => $value) {
+            if($value->order != ColumnOrder::NONE){
+                return [$i, $value->order];
+            }
+            $i++;
+        }
     }
 }

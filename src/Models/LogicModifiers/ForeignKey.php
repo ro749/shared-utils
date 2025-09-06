@@ -12,7 +12,7 @@ class ForeignKey extends LogicModifier
         $this->column = $column;
     }
 
-    public function get_value($key):string{
+    public function get_value(string $table, string $key):string{
         return $this->table . '.' . $this->column;
     }
 }

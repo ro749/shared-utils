@@ -38,7 +38,7 @@ class ArrayGetter extends BaseGetter{
                             $modifier->table, 
                             $modifier->table . '.id', '=', $this->table . '.' . $key);
                     }
-                    $query->addSelect($modifier->get_value($key) . ' as ' . $key);
+                    $query->addSelect(DB::raw($modifier->get_value($this->table ,$key) . ' as ' . $key));
                 }
                 //if column needs data from other table and its editable
                 else{
@@ -148,7 +148,7 @@ class ArrayGetter extends BaseGetter{
             foreach ($this->columns as $key => $column) {
                 if ($column->is_foreign()) {
                     $modifier = $column->logic_modifier;
-                    $query->orWhereRaw($modifier->get_value($key)." LIKE ?", ["%{$search}%"]);
+                    $query->orWhereRaw($modifier->get_value($this->table ,$key)." LIKE ?", ["%{$search}%"]);
                 }
                 else {
                     $query->orWhere($this->table . '.' . $key, 'like', '%' . $search . '%');
