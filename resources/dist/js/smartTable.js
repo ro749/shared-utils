@@ -23,18 +23,11 @@
                 if(col_data.logic_modifier) {
                     switch (col_data.logic_modifier.type) {
                         case 'options':
-                            if(col_data.modifier == 'encapsulate'){
-                                renderFn = (data) => {
-                                    return '<div class="'+col_data.logic_modifier.options+'-'+data+'">'+
-                                    window[col_data.logic_modifier.options][data]+
-                                    '</div>';
-                                }
-                                    
+                            renderFn = (data) => {
+                                return '<div class="'+col_data.logic_modifier.options+'-'+data+'">'+
+                                window[col_data.logic_modifier.options][data]+
+                                '</div>';
                             }
-                            else{
-                                renderFn = (data) => window[col_data.logic_modifier.options][data];
-                            }
-                            
                             break;
                     }
                 }
@@ -140,7 +133,7 @@
                 },
                 columns: columns,
                 serverSide: true,
-                order: options.order?[options.order]:[],
+                order: options.order?[options.order]:[[0, 'asc']],
                 initComplete: function () {
                     for (const [key, filter] of Object.entries(options.filters)) {
                         const selector = document.createElement('div');
@@ -300,6 +293,7 @@
                             var cell = row.node().getElementsByTagName('td')[colnum];
                             
                             var hidden = "<span style='display:none' class='edit-cancel-recover'>"+cell.innerHTML+"</span>";
+                            
                             if(col.logic_modifier != null){
                                 switch(col.logic_modifier.type){
                                     case 'foreign_key':
@@ -321,8 +315,8 @@
                                         break;
                                 }
                             }
-                            else if(col.modifier != null){
-                                switch(col.modifier){
+                            else if(field.modifier != null){
+                                switch(field.modifier){
                                     case 'date':
                                         cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="date" class="form-control date-editor" >';
                                         has_date = true;

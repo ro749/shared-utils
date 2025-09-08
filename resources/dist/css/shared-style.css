@@ -84,3 +84,7 @@
     transform: translateY(-50%) !important;
 }
 
+.dt-container{
+    overflow-x: auto !important;
+}
+
