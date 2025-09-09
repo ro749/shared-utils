@@ -14,6 +14,7 @@ class FormField
     public int $max_length;
     public int $min_length;
     public bool $encrypt = false;
+    public bool $autosave = false;
 
     public function __construct(
         InputType $type, 
@@ -25,7 +26,8 @@ class FormField
         string $value = "",
         int $max_length = 0,
         int $min_length = 0,
-        bool $encrypt = false
+        bool $encrypt = false,
+        bool $autosave = false
     )
     {
         $this->type = $type;
@@ -38,6 +40,7 @@ class FormField
         $this->max_length = $max_length;
         $this->min_length = $min_length;
         $this->encrypt = $encrypt;
+        $this->autosave = $autosave;
     }
 
     public function is_required(): bool
@@ -82,6 +85,9 @@ class FormField
 
     public function render(string $name,string $push)
     {
+        if($this->type === InputType::TEXTAREA){
+            view('shared-utils::components.forms.textarea', ["field"=>$this,"name"=>$name]);
+        }
         return view('shared-utils::components.forms.field', ["field"=>$this,"name"=>$name]);
     }
 }

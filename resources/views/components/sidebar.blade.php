@@ -4,7 +4,7 @@
     </button>
     <div>
         <a  class="sidebar-logo">
-            <img src="" alt="site logo" class="light-logo">
+            <img src="{{ $logo }}" alt="site logo" class="light-logo">
         </a>
     </div>
     <div class="sidebar-menu-area">

@@ -27,7 +27,8 @@ class Selector extends FormField
         bool $search = false,
         string $table = "", 
         string $label_column = "", 
-        string $value_column = "id"
+        string $value_column = "id",
+        bool $autosave = false
     )    
     {
         parent::__construct(
@@ -37,7 +38,8 @@ class Selector extends FormField
             icon:$icon,
             rules:$rules, 
             message:$message, 
-            value:$value 
+            value:$value,
+            autosave: $autosave
         );
 
         $this->id = $id;
@@ -66,7 +68,7 @@ class Selector extends FormField
         array $rules=[], 
         string $message="", 
         string $value = "",
-
+        bool $autosave = false
     ):self
     {
         $query = DB::table($table)->select($value_column, $label_column);
@@ -93,7 +95,8 @@ class Selector extends FormField
             placeholder:$placeholder, 
             icon:$icon, 
             rules:$rules, 
-            message:$message
+            message:$message,
+            autosave: $autosave
         );
     }
 

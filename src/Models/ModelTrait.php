@@ -46,6 +46,7 @@ trait ModelTrait
             $this->get_edit_form($table->form);
             $table->make_it_modifiable();
         }
+        $table->generate_buttons();
         $table->needs_buttons = $table->needsButtons();
     }
 

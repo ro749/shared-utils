@@ -49,7 +49,13 @@
 <script>
     function {{$form->id}}_submit() {
         return {
-            form: {},
+            form: {
+                @if($form->initial_data != null)
+                @foreach ($form->initial_data as $key => $value)
+                {{ $key }}: '{{ $value }}',
+                @endforeach
+                @endif
+            },
             errors: {},
             init(){
                 @stack($form->id)
@@ -62,12 +68,15 @@
                 @if(!empty($form->uploading_message))
                 openPopup("form-uploading-popup");
                 @endif
-                @if($form->submit_text==!"")
+                @if($form->submit_text==!"" || $form->is_autosave())
                 $.ajax({
                     url: '{{ $form->submit_url==""? '/form/'.$form->id : $form->submit_url }}',
                     method: 'POST',
                     data: this.form,
                     success: (response) => {
+                        @if($form->is_autosave())
+                        @else
+
                         @if($form->redirect)
                         window.location.href = response.redirect;
                         @elseif($form->popup)
@@ -80,6 +89,7 @@
                         for (const key in this.form) {
                             this.form[key] = '';
                         }
+                        @endif
                         this.errors = {};
                     },
                     error: (xhr) => {

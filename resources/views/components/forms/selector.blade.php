@@ -9,6 +9,9 @@
         $selector->search ? 'select2' : '',
         $class ?? '',
     ]) }}
+    @if($field->autosave)
+    @input.debounce.500ms="submit()"
+    @endif
 >
     <option disabled selected value>select</option>
     @foreach ($selector->options as $k=>$v)

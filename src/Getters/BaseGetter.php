@@ -40,7 +40,6 @@ abstract class BaseGetter
         $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         $query->offset($start);
         $query->limit($length);
-        
         if($this->debug){
             $ans['query'] = $query->toSql();
         }

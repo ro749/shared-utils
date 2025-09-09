@@ -13,4 +13,7 @@
         )
     oninput="this.value = this.value.replace(/\D/g, '')"
     @endif
+    @if($field->autosave)
+    @input.debounce.500ms="submit()"
+    @endif
 >

@@ -18,6 +18,8 @@ class BaseFormRequest
     public string $user = '';
     public string $callback='';
     public string $uploading_message='';
+
+    public $initial_data = null;
     
     public function __construct(
         string $id, 
@@ -108,6 +110,15 @@ class BaseFormRequest
         return $this->redirect;
     }
 
+    function is_autosave(): bool { 
+        foreach ($this->formFields as $key => $field) {
+            if ($field->autosave) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function get_info(): array
     {
         return [
@@ -117,4 +128,5 @@ class BaseFormRequest
     }
 
     public function after_process(int $id){}
+
 }
