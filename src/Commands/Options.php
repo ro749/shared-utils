@@ -42,11 +42,30 @@ class Options extends Command
 
         $jsContent = '';
 
-        foreach ($options as $varName => $optionArray) {
-            $jsContent .= "var {$varName} = " . json_encode($optionArray, JSON_UNESCAPED_UNICODE) . ";\n";
+        foreach ($options as $var_name => $optionArray) {
+            $jsContent .= "var {$var_name} = " . json_encode($optionArray, JSON_UNESCAPED_UNICODE) . ";\n";
+            $phpContent = [
+                '<?php',
+                '',
+                'namespace App\Enums;',
+                '',
+                'enum '.$var_name,
+                '{'
+            ];
+
+            foreach ($optionArray as $key => $value) {
+                $caseName = Str::studly($value);
+                $phpContent[] = '    case '.$caseName.';';
+            }
+
+            $phpContent[] = '}';
+            File::put(app_path('Enums/'.$var_name.'.php'), implode("\n", $phpContent));
+
         }
 
         File::put(public_path('js/options.js'), $jsContent);
+
+        
 
         $this->info('Archivo JS generado: public/js/options.js');
 

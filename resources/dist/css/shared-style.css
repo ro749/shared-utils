@@ -88,3 +88,8 @@
     overflow-x: auto !important;
 }
 
+
+body{
+    min-height: 100vh;
+}
+
