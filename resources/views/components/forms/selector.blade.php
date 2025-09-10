@@ -9,7 +9,7 @@
         $selector->search ? 'select2' : '',
         $class ?? '',
     ]) }}
-    @if($field->autosave)
+    @if($selector->autosave)
     @input.debounce.500ms="submit()"
     @endif
 >
