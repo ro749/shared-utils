@@ -14649,11 +14649,6 @@ td.fc-header-center {
   display: inline-block;
 }
 
-@media (min-width: 1200px) {
-  .sidebar-mobile-toggle {
-    display: none;
-  }
-}
 .navbar-search {
   position: relative;
   display: none;
@@ -14730,7 +14725,6 @@ td.fc-header-center {
 
 @media (min-width: 1200px) {
   .sidebar {
-    inset-inline-start: 0;
     width: 13.75rem;
   }
 }
@@ -14761,11 +14755,6 @@ td.fc-header-center {
   align-items: center;
 }
 
-@media (min-width: 1200px) {
-  .sidebar-close-btn {
-    display: none;
-  }
-}
 .sidebar.sidebar-open {
   inset-inline-start: 0;
 }
