@@ -2,11 +2,13 @@
     <button type="button" class="sidebar-close-btn">
         <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
+    @if(!empty($logo))
     <div>
         <a  class="sidebar-logo">
             <img src="{{ $logo }}" alt="site logo" class="light-logo">
         </a>
     </div>
+    @endif
     <div class="sidebar-menu-area">
         <ul class="sidebar-menu" id="sidebar-menu">
             @foreach ($items as $item)

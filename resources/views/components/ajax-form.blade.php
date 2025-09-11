@@ -57,6 +57,14 @@
                 @endif
             },
             errors: {},
+            images: {},
+            @if($form->has_images)
+            // Second function
+            storeImage(event) {
+                this.images[event.target.id] = event.target.files[0];
+            },
+            
+            @endif
             init(){
                 @stack($form->id)
             },
@@ -65,6 +73,16 @@
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
                 }
+                @if($form->has_images)
+                var formData = new FormData();
+                formData.append('test', 'test');
+                Object.entries(this.form).forEach(([key, value]) => {
+                    formData.append(key, value);
+                });
+                Object.entries(this.images).forEach(([key, file]) => {
+                    formData.append(key, file);
+                });
+                @endif
                 @if(!empty($form->uploading_message))
                 openPopup("form-uploading-popup");
                 @endif
@@ -72,7 +90,13 @@
                 $.ajax({
                     url: '{{ $form->submit_url==""? '/form/'.$form->id : $form->submit_url }}',
                     method: 'POST',
+                    @if($form->has_images)
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    @else
                     data: this.form,
+                    @endif
                     success: (response) => {
                         @if($form->is_autosave())
                         @else
@@ -90,6 +114,11 @@
                             this.form[key] = '';
                         }
                         @endif
+
+                        @if($form->reload)
+                        location.reload();
+                        @endif
+
                         this.errors = {};
                     },
                     error: (xhr) => {

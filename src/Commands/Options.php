@@ -49,13 +49,13 @@ class Options extends Command
                 '',
                 'namespace App\Enums;',
                 '',
-                'enum '.$var_name,
+                'enum '.$var_name.': int',
                 '{'
             ];
 
             foreach ($optionArray as $key => $value) {
                 $caseName = Str::studly($value);
-                $phpContent[] = '    case '.$caseName.';';
+                $phpContent[] = '    case '.$caseName.' = '.$key.';';
             }
 
             $phpContent[] = '}';

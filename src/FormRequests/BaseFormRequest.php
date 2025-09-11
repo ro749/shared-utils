@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 class BaseFormRequest
 {
     public string $id;
@@ -16,10 +18,17 @@ class BaseFormRequest
     public string $submit_url='';
     //if needs to register the loged user, fill with the column
     public string $user = '';
+    //if is a form an update, rather than register
+    public int $db_id = 0;
     public string $callback='';
     public string $uploading_message='';
+    public bool $reload = false;
 
     public $initial_data = null;
+
+    public bool $has_images = false;
+
+
     
     public function __construct(
         string $id, 
@@ -31,7 +40,9 @@ class BaseFormRequest
         string $submit_url = '',
         string $user = '', 
         string $callback = '',
-        string $uploading_message = ''
+        string $uploading_message = '',
+        int $db_id = 0,
+        bool $reload = false
     )
     {
         $this->id = $id;
@@ -44,6 +55,9 @@ class BaseFormRequest
         $this->user = $user;
         $this->callback = $callback;
         $this->uploading_message = $uploading_message;
+        $this->db_id = $db_id;
+        $this->reload = $reload;
+        $this->has_images = $this->get_has_images();
     }
 
     public function rules($rawRequest): array
@@ -90,11 +104,26 @@ class BaseFormRequest
     public function prosses(Request $rawRequest): string
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
+        if($this->db_id!=0) {
+            $data['id'] = $this->db_id;
+        }
         foreach ($this->formFields as $key => $field) {
             echo "\n";
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
                 echo "ecnripting $key\n";
                 $data[$key] = Hash::make($data[$key]);
+            }
+            if ($field->type == InputType::IMAGE) {
+                $file = $rawRequest->file($key);
+                $data[$key] = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs($field->route, $data[$key], 'public');
+                if($this->db_id!=0){
+                    $prev_image = DB::table($this->table)->where('id', $this->db_id)->value($key);
+                    if ($prev_image != '') {
+                        Storage::disk('public')->delete($field->route . $prev_image);
+                    }
+                }
+                
             }
         }
         
@@ -106,6 +135,7 @@ class BaseFormRequest
             }
             $id = DB::table($this->table)->insertGetId($data);
         }
+
         $this->after_process($id);
         return $this->redirect;
     }
@@ -113,6 +143,16 @@ class BaseFormRequest
     function is_autosave(): bool { 
         foreach ($this->formFields as $key => $field) {
             if ($field->autosave) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function get_has_images(): bool
+    {
+        foreach ($this->formFields as $key => $field) {
+            if ($field->type == InputType::IMAGE) {
                 return true;
             }
         }
