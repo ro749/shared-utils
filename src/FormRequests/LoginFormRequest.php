@@ -8,9 +8,9 @@ abstract class LoginFormRequest extends BaseFormRequest
 {
     public string $guard;
 
-    public function __construct(string $id, string $table, array $formFields = [], string $redirect = '', string $popup = '', string $submit_text = 'Entrar', string $submit_url = '', string $callback = '', string $guard = 'web')
+    public function __construct(string $table, array $formFields = [], string $redirect = '', string $popup = '', string $submit_text = 'Entrar', string $submit_url = '', string $callback = '', string $guard = 'web')
     {
-        parent::__construct($id, $table, $formFields, $redirect, $popup, $submit_text, $submit_url, $callback);
+        parent::__construct( $table, $formFields, $redirect, $popup, $submit_text, $submit_url, $callback);
         $this->guard = $guard;
     }
     
