@@ -32,7 +32,6 @@ class BaseFormRequest
 
     
     public function __construct(
-        string $id, 
         string $table, 
         array $formFields = [], 
         string $redirect = '', 
