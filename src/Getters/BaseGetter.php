@@ -37,7 +37,9 @@ abstract class BaseGetter
             $query = $this->search($query,$search);
         }
         $ans['recordsFiltered'] = $query->count();
-        $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
+        if(!empty($order)){
+            $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
+        }
         $query->offset($start);
         $query->limit($length);
         if($this->debug){

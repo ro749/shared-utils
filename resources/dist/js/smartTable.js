@@ -133,7 +133,7 @@
                 },
                 columns: columns,
                 serverSide: true,
-                order: options.order?[options.order]:[[0, 'asc']],
+                order: options.order?[options.order]:[],
                 initComplete: function () {
                     for (const [key, filter] of Object.entries(options.filters)) {
                         const selector = document.createElement('div');
