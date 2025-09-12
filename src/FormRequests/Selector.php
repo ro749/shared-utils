@@ -105,7 +105,7 @@ class Selector extends FormField
         return $this->table.".".$this->value_column;
     }
 
-    public function render(string $name,string $push = "")
+    public function render(string $name,string $push = "",string $data)
     {
         return view('shared-utils::components.forms.selector',[
             "selector"=>$this,

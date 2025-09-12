@@ -21,8 +21,8 @@ class ImageUploader extends FormField
         return 'image';
     }
 
-    public function render(string $name,string $push = "")
+    public function render(string $name,string $push = "",string $data)
     {
-        return view($this->view , ["field"=>$this,"name"=>$name, "data"=>$this->view_data]);
+        return view('shared-utils::components.forms.image-uploader' , ["field"=>$this,"name"=>$name,"data"=>$data]);
     }
 }

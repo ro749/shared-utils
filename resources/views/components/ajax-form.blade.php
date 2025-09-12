@@ -1,4 +1,11 @@
-<div x-data="{{$form->id}}_submit()" id="{{ $form->id }}">
+@props(['form' => null])
+@php
+$initial_data = $form->get_initial_data();
+@endphp
+@if (!$slot->isEmpty())
+    {{ $slot }}
+@else
+<div x-data="{{$form->id}}_submit()" id="{{ $form->id }}"  {{ $attributes }}>
     @foreach ($form->formFields as $name => $field)
         @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
         @continue
@@ -14,7 +21,7 @@
                 </span>
             @endif
             
-            {!! $field->render($name,$form->id) !!}
+            {!! $field->render($name,$form->id,$initial_data->{$name}??'') !!}
             @if($field->icon)
             </div>
             @endif
@@ -29,6 +36,7 @@
     </button>
     @endif
 </div>
+@endif
 @if($form->redirect=="" && $form->popup=="")
 @once('form-popup')
     <x-sharedutils::modal  id="form-success-popup" title="Datos guardados correctamente.">
@@ -51,7 +59,7 @@
         return {
             form: {
                 @if($form->initial_data != null)
-                @foreach ($form->initial_data as $key => $value)
+                @foreach ($initial_data as $key => $value)
                 {{ $key }}: '{{ $value }}',
                 @endforeach
                 @endif

@@ -28,6 +28,8 @@ class BaseFormRequest
 
     public bool $has_images = false;
 
+    public string $view = '';
+
 
     
     public function __construct(
@@ -42,7 +44,8 @@ class BaseFormRequest
         string $callback = '',
         string $uploading_message = '',
         int $db_id = 0,
-        bool $reload = false
+        bool $reload = false,
+        string $view = ''
     )
     {
         $this->id = $id;
@@ -57,6 +60,7 @@ class BaseFormRequest
         $this->uploading_message = $uploading_message;
         $this->db_id = $db_id;
         $this->reload = $reload;
+        $this->view = $view;
         $this->has_images = $this->get_has_images();
     }
 
@@ -165,6 +169,15 @@ class BaseFormRequest
             'id' => $this->id,
             'fields' => $this->formFields
         ];
+    }
+
+    public function get_initial_data()
+    {
+        if($this->db_id!=0) {
+            $ans =  DB::table($this->table)->where('id', $this->db_id)->first();
+            return $ans;//json_decode(json_encode($ans), true);
+        }
+        return $this->initial_data;
     }
 
     public function after_process(int $id){}

@@ -83,7 +83,7 @@ class FormField
         return $this->type; // default type
     }
 
-    public function render(string $name,string $push)
+    public function render(string $name,string $push,string $data)
     {
         if($this->type === InputType::TEXTAREA){
             view('shared-utils::components.forms.textarea', ["field"=>$this,"name"=>$name]);
