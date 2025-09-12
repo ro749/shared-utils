@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 class BaseFormRequest
 {
-    public string $id;
     public string $table;
     public array $formFields;
     public string $submit_text;
@@ -48,7 +47,6 @@ class BaseFormRequest
         string $view = ''
     )
     {
-        $this->id = $id;
         $this->table = $table;
         $this->formFields = $formFields;
         $this->redirect = $redirect;
@@ -166,7 +164,7 @@ class BaseFormRequest
     public function get_info(): array
     {
         return [
-            'id' => $this->id,
+            'id' => $this->get_id(),
             'fields' => $this->formFields
         ];
     }
@@ -178,6 +176,10 @@ class BaseFormRequest
             return $ans;//json_decode(json_encode($ans), true);
         }
         return $this->initial_data;
+    }
+
+    function get_id(){
+        return class_basename($this);
     }
 
     public function after_process(int $id){}

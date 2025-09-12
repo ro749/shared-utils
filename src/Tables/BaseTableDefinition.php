@@ -14,11 +14,7 @@ use Ro749\SharedUtils\Enums\Icon;
 use Illuminate\Http\Request;
 class BaseTableDefinition
 {
-    //the id the table is going to have
-    public string $id;
-
     public BaseGetter $getter;
-
     public ?View $view = null;
     public ?Delete $delete = null;
     public ?BaseFormRequest $form;
@@ -29,21 +25,23 @@ class BaseTableDefinition
     //if clicking edit redirects, if empty normal edit
     public ?View $edit_url = null;
     public array $buttons = [];
+
+    public int $page_length = 0;
     public function __construct(
-        string $id, 
         BaseGetter $getter,
         View $view = null, 
         Delete $delete = null,
         BaseFormRequest $form = null,
-        View $edit_url = null
+        View $edit_url = null,
+        int $page_length = 0
     )
     {
-        $this->id = $id;
         $this->getter = $getter;
         $this->view = $view;
         $this->delete = $delete;
         $this->form = $form;
         $this->edit_url = $edit_url;
+        $this->page_length = $page_length;
         if($this->form != null){
             $this->make_it_modifiable();
         }
@@ -95,7 +93,7 @@ class BaseTableDefinition
 
     function get_info(){
         return [
-            'id' => $this->id,
+            'id' => $this->get_id(),
             'columns' => $this->getter->columns,
             'filters' => $this->getter->filters,
             'delete' => $this->delete,
@@ -105,7 +103,8 @@ class BaseTableDefinition
             'buttons' => $this->buttons,
             'form' => $this->form?->get_info(),
             'needs_selectors' => $this->getter->needs_selectors(),
-            'order' => $this->get_order()
+            'order' => $this->get_order(),
+            'page_length' => $this->page_length==0?null:$this->page_length
         ];
     }
 
@@ -186,5 +185,9 @@ class BaseTableDefinition
             }
             $i++;
         }
+    }
+
+    function get_id(){
+        return class_basename($this);
     }
 }

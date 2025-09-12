@@ -134,6 +134,7 @@
                 columns: columns,
                 serverSide: true,
                 order: options.order?[options.order]:[],
+                pageLength: options.page_length??10,
                 initComplete: function () {
                     for (const [key, filter] of Object.entries(options.filters)) {
                         const selector = document.createElement('div');

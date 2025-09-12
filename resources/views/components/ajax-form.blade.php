@@ -5,7 +5,7 @@ $initial_data = $form->get_initial_data();
 @if (!$slot->isEmpty())
     {{ $slot }}
 @else
-<div x-data="{{$form->id}}_submit()" id="{{ $form->id }}"  {{ $attributes }}>
+<div x-data="{{$form->get_id()}}_submit()" id="{{ $form->get_id() }}"  {{ $attributes }}>
     @foreach ($form->formFields as $name => $field)
         @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
         @continue
@@ -21,7 +21,7 @@ $initial_data = $form->get_initial_data();
                 </span>
             @endif
             
-            {!! $field->render($name,$form->id,$initial_data->{$name}??'') !!}
+            {!! $field->render($name,$form->get_id(),$initial_data->{$name}??'') !!}
             @if($field->icon)
             </div>
             @endif
@@ -55,7 +55,7 @@ $initial_data = $form->get_initial_data();
 
 @push('scripts')
 <script>
-    function {{$form->id}}_submit() {
+    function {{$form->get_id()}}_submit() {
         return {
             form: {
                 @if($form->initial_data != null)
@@ -74,7 +74,7 @@ $initial_data = $form->get_initial_data();
             
             @endif
             init(){
-                @stack($form->id)
+                @stack($form->get_id())
             },
             submit() {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -96,7 +96,7 @@ $initial_data = $form->get_initial_data();
                 @endif
                 @if($form->submit_text==!"" || $form->is_autosave())
                 $.ajax({
-                    url: '{{ $form->submit_url==""? '/form/'.$form->id : $form->submit_url }}',
+                    url: '{{ $form->submit_url==""? '/form/'.$form->get_id() : $form->submit_url }}',
                     method: 'POST',
                     @if($form->has_images)
                     data: formData,
@@ -143,7 +143,7 @@ $initial_data = $form->get_initial_data();
                     @endif
                 });
                 @else
-                $(document).trigger('submit-{{$form->id}}', this.form);
+                $(document).trigger('submit-{{$form->get_id()}}', this.form);
                 @endif
             }
         }

@@ -1,8 +1,8 @@
 
 
-<table id="{{ $table->id }}" class="table bordered-table mb-0">
+<table id="{{ $table->get_id() }}" class="table bordered-table mb-0">
     <thead>
-        <tr id="{{ $table->id }}-header">
+        <tr id="{{ $table->get_id() }}-header">
             @foreach($table->get_columns() as $key=>$column)
                 <th>{{ $column->display }}</th>
             @endforeach
@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tfoot>
-        <tr id="{{ $table->id }}-footer">
+        <tr id="{{ $table->get_id() }}-footer">
             @foreach($table->get_columns() as $key=>$column)
                 <th>{{ $column->display }}</th>
             @endforeach
@@ -35,6 +35,6 @@
 
 @push('scripts')
 <script>
-    $('#{{ $table->id }}').smartTable(@json($table->get_info()));
+    $('#{{ $table->get_id() }}').smartTable(@json($table->get_info()));
 </script>
 @endpush
