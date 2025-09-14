@@ -8,12 +8,32 @@ abstract class LoginFormRequest extends BaseFormRequest
 {
     public string $guard;
 
-    public function __construct(string $table, array $formFields = [], string $redirect = '', string $popup = '', string $submit_text = 'Entrar', string $submit_url = '', string $callback = '', string $guard = 'web')
+    public bool $plain_password = false;
+
+    public function __construct(
+        string $table, 
+        array $formFields = [], 
+        string $redirect = '', 
+        string $popup = '', 
+        string $submit_text = 'Entrar', 
+        string $submit_url = '', 
+        string $callback = '', 
+        string $guard = 'web', 
+        bool $plain_password = false
+    )
     {
         parent::__construct( $table, $formFields, $redirect, $popup, $submit_text, $submit_url, $callback);
         $this->guard = $guard;
+        $this->plain_password = $plain_password;
     }
     
+    function incorrect_credentials($key)
+    {
+        RateLimiter::hit($key, 60);
+        throw ValidationException::withMessages([
+            'password' => ['Las credenciales proporcionadas son incorrectas.'],
+        ]);
+    }
 
     public function prosses(Request $rawRequest): string
     {
@@ -26,12 +46,15 @@ abstract class LoginFormRequest extends BaseFormRequest
                 'password' => ['Demasiados intentos de inicio de sesión. Inténtalo en ' . $seconds . ' segundos.'],
             ]);
         }
-        if (!Auth::guard($this->guard)->attempt($credentials)) {
-            RateLimiter::hit($key, 60);
-            throw ValidationException::withMessages([
-                'password' => ['Las credenciales proporcionadas son incorrectas.'],
-            ]);
+        if ($this->plain_password) {
+            $credentials['password'] = $user;
         }
+        else{
+            if (!Auth::guard($this->guard)->attempt($credentials)) {
+            $this->incorrect_credentials($key);
+        }
+        }
+        
         RateLimiter::clear($key);
         //Auth::login($user);
         $rawRequest->session()->regenerate();

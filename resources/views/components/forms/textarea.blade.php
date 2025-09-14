@@ -9,5 +9,7 @@
     @if($field->autosave)
     @input.debounce.500ms="submit()"
     @endif
+    rows="{{ $field->rows }}",
+    cols="{{ $field->cols }}"
 >
 </textarea>
