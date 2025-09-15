@@ -60,7 +60,7 @@ $initial_data = $form->get_initial_data();
             form: {
                 @if($form->initial_data != null)
                 @foreach ($initial_data as $key => $value)
-                {{ $key }}: '{{ $value }}',
+                {{ $key }}: `{{ $value }}`,
                 @endforeach
                 @endif
             },

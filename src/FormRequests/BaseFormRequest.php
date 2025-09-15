@@ -109,9 +109,7 @@ class BaseFormRequest
             $data['id'] = $this->db_id;
         }
         foreach ($this->formFields as $key => $field) {
-            echo "\n";
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
-                echo "ecnripting $key\n";
                 $data[$key] = Hash::make($data[$key]);
             }
             if ($field->type == InputType::IMAGE) {
