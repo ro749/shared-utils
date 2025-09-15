@@ -21,12 +21,18 @@
                 let col_data = options.columns[col];
                 let renderFn = null;
                 if(col_data.logic_modifier) {
+                    console.log(col_data.logic_modifier);
                     switch (col_data.logic_modifier.type) {
                         case 'options':
                             renderFn = (data) => {
                                 return '<div class="'+col_data.logic_modifier.options+'-'+data+'">'+
                                 window[col_data.logic_modifier.options][data]+
                                 '</div>';
+                            }
+                            break;
+                        case 'foreign_key':
+                            if(options.form && options.form.fields && options.form.fields[col]) {
+                                renderFn = (data) => data==0?"":selectors[col][data];
                             }
                             break;
                     }
@@ -58,14 +64,15 @@
                         break;
                     case '':
                     case null:
-                    case 'encapsulate':
-                        column.render = (data) => renderFn ? renderFn(data) : data;
+                        column.render = (data) => {
+                            return renderFn ? renderFn(data) : data;
+                        }
                         break;
                     
                 }
-                if(col_data.table && options.columns[col].column && options.columns[col].editable){
-                    column.render = (data) => data==0?"":selectors[col][data];
-                }
+                //if(col_data.table && options.columns[col].column && options.columns[col].editable){
+                //    column.render = (data) => data==0?"":selectors[col][data];
+                //}
                 columns.push(column);
             }
             if (options.needs_buttons) {
@@ -307,7 +314,25 @@
                         }
                     }
                     initial_data = initial_data.slice(0, -1);
-                    this.parentElement.parentElement.parentElement.setAttribute('x-data', '{ form: { '+initial_data+' },errors: {} }');
+                    var xdata = [];
+                    xdata.push('form: { '+initial_data+' },');
+                    xdata.push('errors: {},');
+                    xdata.push('init(){');
+                    for(var key_field in options.form.fields){
+                        var column = options.columns[key_field];
+                        if(column?.logic_modifier && column.logic_modifier.type == 'foreign_key'){
+                            xdata.push("$('#"+key_field+"').select2();");
+                            xdata.push("$('#"+key_field+"').on('change', () => {");
+                            xdata.push("this.form."+key_field+" = $('#"+key_field+"').val();");
+                            xdata.push("});");
+                        }
+                        
+                    }
+                    xdata.push('},');
+                    this.parentElement.parentElement.parentElement.setAttribute(
+                        'x-data',
+                        '{ ' + xdata.join(' ') + ' }'
+                    );
                     this.parentElement.parentElement.parentElement.id = "editing";
                     var colnum = 0;
                     var has_date = false;
