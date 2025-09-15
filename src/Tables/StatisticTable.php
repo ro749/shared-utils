@@ -9,14 +9,12 @@ class StatisticTable extends BaseTableDefinition
 {
     public BaseStatistic $statistic;
     public function __construct(
-        string $id,
         StatisticsGetter $getter,
         View $view = null, 
         Delete $delete = null, 
         BaseFormRequest $form = null
     ){
         parent::__construct(
-            id: $id,
             getter: $getter,
             view: $view,
             delete: $delete,

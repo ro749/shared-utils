@@ -137,56 +137,85 @@
                 pageLength: options.page_length??10,
                 initComplete: function () {
                     for (const [key, filter] of Object.entries(options.filters)) {
-                        const selector = document.createElement('div');
-                        selector.classList.add('filter');
-                        selector.style.display = 'flex';
-                        selector.style.flexDirection = 'row';
-                        selector.style.justifyContent = 'flex-end';
-                        selector.style.gap = '8px';
-                        selector.style.marginLeft = '8px';
-                        selector.style.alignItems = 'center';
-
-                        const p = document.createElement('p');
-                        p.style.margin = '0';
-                        p.textContent = filter.display;
-                        selector.appendChild(p);
-
-                        const select = document.createElement('select');
-                        select.id = "cf-"+key;
-                        select.classList.add(filter.class);
-                        select.classList.add('form-select');
-                        select.classList.add('w-auto');
-                        select.classList.add('category-filter');
-                        for (const [option_key, option] of Object.entries(filter.selector.options)) {
-                            const optionElement = document.createElement('option');
-                            optionElement.value = option_key;
-                            optionElement.textContent = option;
-                            select.appendChild(optionElement);
-                        }
-                        selector.appendChild(select);
-                        if(filter.session!=""){
-                            const sessionValue = sessionStorage.getItem(filter.session)??1;
-                            if (sessionValue) {
-                                select.value = sessionValue;
-                                filters[select.id] = sessionValue;
-                            }
-                            select.addEventListener('change', function () {
-                                sessionStorage.setItem(filter.session, this.value);
-                            });
-                        }
                         
-                        $("#"+options.id+"_filter").prepend(selector);
+                        if(filter.selector){
+                            const selector = document.createElement('div');
+                            selector.classList.add('filter');
+                            selector.style.display = 'flex';
+                            selector.style.flexDirection = 'row';
+                            selector.style.justifyContent = 'flex-end';
+                            selector.style.gap = '8px';
+                            selector.style.marginLeft = '8px';
+                            selector.style.alignItems = 'center';
+
+                            const p = document.createElement('p');
+                            p.style.margin = '0';
+                            p.textContent = filter.display;
+                            selector.appendChild(p);
+                            const select = document.createElement('select');
+                            select.id = "cf-"+key;
+                            select.classList.add(filter.class);
+                            select.classList.add('form-select');
+                            select.classList.add('w-auto');
+                            select.classList.add('category-filter');
+                            for (const [option_key, option] of Object.entries(filter.selector.options)) {
+                                const optionElement = document.createElement('option');
+                                optionElement.value = option_key;
+                                optionElement.textContent = option;
+                                select.appendChild(optionElement);
+                            }
+                            selector.appendChild(select);
+                            if(filter.session!=""){
+                                const sessionValue = sessionStorage.getItem(filter.session)??1;
+                                if (sessionValue) {
+                                    select.value = sessionValue;
+                                    filters[select.id] = sessionValue;
+                                }
+                                select.addEventListener('change', function () {
+                                    sessionStorage.setItem(filter.session, this.value);
+                                });
+                            }
+
+                            $("#"+options.id+"_wrapper .dt-layout-cell.dt-end").first().prepend(selector);
+                        }
+                        else{
+                            const filters_div = document.createElement('div');
+                            filters_div.classList.add('filter');
+                            filters_div.style.display = 'flex';
+                            filters_div.style.flexDirection = 'row';
+                            filters_div.style.justifyContent = 'flex-end';
+                            filters_div.style.gap = '8px';
+                            filters_div.style.marginLeft = '8px';
+                            filters_div.style.alignItems = 'center';
+                            filters_div.id = key;
+                            const p = document.createElement('p');
+                            p.style.margin = '0';
+                            p.textContent = filter.display;
+                            filters_div.appendChild(p);
+                            for(let f in filter.filters){
+                                let filter_button = filter.filters[f];
+                                const button = document.createElement('button');
+                                button.id = "f-"+key+"-"+f;
+                                button.classList.add('filter-button');
+                                button.classList.add('btn');
+                                button.classList.add('btn-outline-neutral-900');
+                                button.classList.add('no-hover');
+                                button.textContent = filter_button.display;
+                                filters_div.appendChild(button);
+                            }
+                            $("#"+options.id+"_wrapper .dt-layout-cell.dt-end").first().prepend(filters_div);
+                        }
                     }
-                    $("#"+options.id+"_filter").css("display", "flex").css("flex-direction", "row").css("gap", "6px");
+                    $("#"+options.id+"_wrapper .dt-layout-cell.dt-end").first().css("display", "flex").css("flex-direction", "row").css("justify-content", "flex-end").css("gap", "6px");
                     setTimeout(function() {
                         if(options.filters!=[]){
                             $('.filter-button').on('click', function () {
                                 const clickedButton = $(this);
-                                var is_on = clickedButton.hasClass("filter-on");
-                                $('.filter-button').removeClass('filter-on');
+                                var is_on = clickedButton.hasClass("active");
+                                $('.filter-button').removeClass('active');
                                 if(!is_on){
-                                    clickedButton.addClass("filter-on");
-                                    filters[this.parentElement.id] = this.id.substring(11);
+                                    clickedButton.addClass("active");
+                                    filters[this.parentElement.id] = this.id.substring(10);
                                 }
                                 else{
                                     delete filters[this.parentElement.id];
@@ -294,7 +323,6 @@
                             var cell = row.node().getElementsByTagName('td')[colnum];
                             
                             var hidden = "<span style='display:none' class='edit-cancel-recover'>"+cell.innerHTML+"</span>";
-                            
                             if(col.logic_modifier != null){
                                 switch(col.logic_modifier.type){
                                     case 'foreign_key':

@@ -10365,13 +10365,13 @@ h6, .h6 {
   border-color: var(--neutral-900) !important;
 }
 
-.btn-outline-neutral-900:hover {
+/*.btn-outline-neutral-900:hover {
   background-color: var(--neutral-900) !important;
   color: #fff !important;
   border-color: var(--neutral-900) !important;
-}
+}*/
 
-.btn-outline-neutral-900:active, .btn-outline-neutral-900:focus {
+.btn-outline-neutral-900.active {
   background-color: var(--neutral-800) !important;
   color: #fff !important;
   border-color: var(--neutral-800) !important;
