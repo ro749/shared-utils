@@ -14,6 +14,7 @@ enum InputType: string
     case EMAIL = 'email';
     case PHONE = 'tel';
     case PASSWORD = 'password';
+    case DATE = 'date';
     case HIDDEN = 'hidden';
     case SELECTOR = 'selector';
     case IMAGE = 'image';

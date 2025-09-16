@@ -21,7 +21,6 @@
                 let col_data = options.columns[col];
                 let renderFn = null;
                 if(col_data.logic_modifier) {
-                    console.log(col_data.logic_modifier);
                     switch (col_data.logic_modifier.type) {
                         case 'options':
                             renderFn = (data) => {
@@ -31,8 +30,8 @@
                             }
                             break;
                         case 'foreign_key':
-                            if(options.form && options.form.fields && options.form.fields[col]) {
-                                renderFn = (data) => data==0?"":selectors[col][data];
+                            if(options?.form && options.form.fields && options.form.fields[col]) {
+                                renderFn = (data) => data==0||data==null?"":selectors[col][data];
                             }
                             break;
                     }
@@ -59,7 +58,8 @@
                     case 'date':
                         column.render = (data) => {
                             let value = renderFn ? renderFn(data) : data;
-                            return new Date(value).toLocaleDateString();
+                            const [y, m, d] = value.split("-");
+                            return `${m}/${d}/${y}`;
                         }
                         break;
                     case '':
@@ -293,10 +293,6 @@
                 });
                 
                 table.delete_id = 0;
-                
-                table.on_delete = function(){
-                    
-                }
             }
             
             if(options.is_editable){
@@ -321,12 +317,12 @@
                     for(var key_field in options.form.fields){
                         var column = options.columns[key_field];
                         if(column?.logic_modifier && column.logic_modifier.type == 'foreign_key'){
-                            xdata.push("$('#"+key_field+"').select2();");
+                            xdata.push("$('#"+key_field+"').select2({allowClear: true,placeholder: 'Select'});");
+                            xdata.push("$('#"+key_field+"').val(this.form."+key_field+").trigger('change');");
                             xdata.push("$('#"+key_field+"').on('change', () => {");
                             xdata.push("this.form."+key_field+" = $('#"+key_field+"').val();");
                             xdata.push("});");
                         }
-                        
                     }
                     xdata.push('},');
                     this.parentElement.parentElement.parentElement.setAttribute(
@@ -335,67 +331,60 @@
                     );
                     this.parentElement.parentElement.parentElement.id = "editing";
                     var colnum = 0;
-                    var has_date = false;
-                    var has_selector = false;
                     for(var key in options.form.fields){
                         var field = options.form.fields[key];
                         var col = options.columns[key];
                         
                     }
-                    for(var key in options.columns){
-                        var col = options.columns[key];
-                        if(col.editable){
-                            var cell = row.node().getElementsByTagName('td')[colnum];
-                            
-                            var hidden = "<span style='display:none' class='edit-cancel-recover'>"+cell.innerHTML+"</span>";
-                            if(col.logic_modifier != null){
-                                switch(col.logic_modifier.type){
-                                    case 'foreign_key':
-                                        hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
-                                        for(var option in selectors[key]){
-                                            hidden += '<option value=' + option + '>' + selectors[key][option] + '</option>';
-                                        }
-                                        hidden += '</select>';
-                                        cell.innerHTML = hidden;
-                                        has_selector = true;
-                                        break;
-                                    case 'options':
-                                        hidden = hidden+'<select x-model="form.'+key+'" class="form-select" id="'+key+'">';
-                                        for(var option in window[col.logic_modifier.options]){
-                                            hidden += '<option value=' + option + '>' + window[col.logic_modifier.options][option] + '</option>';
-                                        }
-                                        hidden += '</select>';
-                                        cell.innerHTML = hidden;
-                                        break;
+                    //options.form && options.form.fields && options.form.fields[col]
+                    if(options?.form){
+                        for(var key in options.columns){
+                            var col = options.columns[key];
+                            if(options.form.fields[key]){
+                                var cell = row.node().getElementsByTagName('td')[colnum];
+                                var field = options.form.fields[key];
+                                var hidden = "<span style='display:none' class='edit-cancel-recover'>"+cell.innerHTML+"</span>";
+                                if(col.logic_modifier != null){
+                                    switch(col.logic_modifier.type){
+                                        case 'foreign_key':
+                                            hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
+                                            for(var option in selectors[key]){
+                                                hidden += '<option value=' + option + '>' + selectors[key][option] + '</option>';
+                                            }
+                                            hidden += '</select>';
+                                            cell.innerHTML = hidden;
+                                            has_selector = true;
+                                            break;
+                                        case 'options':
+                                            hidden = hidden+'<select x-model="form.'+key+'" class="form-select" id="'+key+'">';
+                                            for(var option in window[col.logic_modifier.options]){
+                                                hidden += '<option value=' + option + '>' + window[col.logic_modifier.options][option] + '</option>';
+                                            }
+                                            hidden += '</select>';
+                                            cell.innerHTML = hidden;
+                                            break;
+                                    }
                                 }
-                            }
-                            else if(field.modifier != null){
-                                switch(field.modifier){
-                                    case 'date':
-                                        cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="date" class="form-control date-editor" >';
-                                        has_date = true;
-                                        break;
-                                    case 'number':
-                                        cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="number" class="form-control" >';
-                                        break;
+                                else{
+                                    switch(field.type){
+                                        case 'date':
+                                            cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="date" class="form-control date-editor" >';
+                                            has_date = true;
+                                            break;
+                                        case 'number':
+                                            cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="number" class="form-control" >';
+                                            break;
+                                        case 'text':
+                                            cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" value="'+row.data()[key]+'" >';
+                                            break;
+                                    }
                                 }
+                                
+                                cell.innerHTML += '<p class="form-error" x-text="errors[\''+key+'\']"></p>';
                             }
-                            else{
-                                //text input
-                                cell.innerHTML = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" value="'+row.data()[key]+'" >';
-                            }
-                            cell.innerHTML += '<p class="form-error" x-text="errors[\''+key+'\']"></p>';
+
+                            colnum+=1;
                         }
-                        
-                        colnum+=1;
-                    }
-                    if(has_date){
-                        //$('input.date-editor').bootstrapMaterialDatePicker({
-				        //	time: false        
-				        //});
-                    }
-                    if(has_selector){
-                        $('select.db-select').select2({theme: 'bootstrap4',allowClear: true,placeholder:"select"});
                     }
                 });
                 
