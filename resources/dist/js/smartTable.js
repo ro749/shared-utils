@@ -314,8 +314,7 @@
                     for(var key_field in options.form.fields){
                         var column = options.columns[key_field];
                         if(column?.logic_modifier && column.logic_modifier.type == 'foreign_key'){
-                            xdata.push("$('#"+key_field+"').select2({theme: 'bootstrap-5',width: 'auto',allowClear: true,placeholder: 'Select'});");
-                            xdata.push("$('#"+key_field+"').val(this.form."+key_field+").select2();");
+                            xdata.push("$('#"+key_field+"').val(this.form."+key_field+").select2({theme: 'bootstrap-5',width: 'auto',allowClear: true,placeholder: 'Select'});");
                             xdata.push("$('#"+key_field+"').on('change', () => {");
                             xdata.push("this.form."+key_field+" = $('#"+key_field+"').val();");
                             xdata.push("});");
