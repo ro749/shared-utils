@@ -25,7 +25,7 @@
 
 @if($selector->search)
 @push($push)
-    $('#{{ $name }}').select2({theme: "bootstrap-5",width: 'auto'});
+    $('#{{ $name }}').select2({theme: "bootstrap-5",width: 'auto',allowClear: true,placeholder: 'Select'});
     $('#{{ $name }}').on('change', () => {
         this.form.{{ $name }} = $('#{{ $name }}').val();
     });
