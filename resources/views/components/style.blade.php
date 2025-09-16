@@ -28,6 +28,7 @@
 
     <link rel="stylesheet"  href="{{ asset('vendor/shared-utils/css/lib/audioplayer.css') }}">
     <link rel="stylesheet"  href="{{ asset('vendor/shared-utils/css/lib/select2.min.css') }}">
+    <link rel="stylesheet"  href="{{ asset('vendor/shared-utils/css/lib/select2-bootstrap-5-theme.min.css') }}">
     <!-- main css -->
     <link rel="stylesheet"  href="{{ asset('vendor/shared-utils/css/style.css') }}">
     <link rel="stylesheet"  href="{{ asset('vendor/shared-utils/css/shared-style.css') }}">
