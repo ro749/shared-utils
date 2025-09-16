@@ -13,7 +13,7 @@ class Selector extends FormField
     public string $label_column;
     public string $value_column;
     public bool $search = false;
-    
+    public string $hot_reload = '';
 
     public function __construct(
         $options, 
@@ -28,7 +28,8 @@ class Selector extends FormField
         string $table = "", 
         string $label_column = "", 
         string $value_column = "id",
-        bool $autosave = false
+        bool $autosave = false,
+        string $hot_reload = ''
     )    
     {
         parent::__construct(
@@ -53,6 +54,7 @@ class Selector extends FormField
         $this->table = $table;
         $this->label_column = $label_column;
         $this->value_column = $value_column;
+        $this->hot_reload = $hot_reload;
     }
 
     public static function fromDB(
@@ -68,7 +70,8 @@ class Selector extends FormField
         array $rules=[], 
         string $message="", 
         string $value = "",
-        bool $autosave = false
+        bool $autosave = false,
+        string $hot_reload = ''
     ):self
     {
         $query = DB::table($table)->select($value_column, $label_column);
@@ -96,7 +99,8 @@ class Selector extends FormField
             icon:$icon, 
             rules:$rules, 
             message:$message,
-            autosave: $autosave
+            autosave: $autosave,
+            hot_reload: $hot_reload
         );
     }
 
@@ -110,7 +114,8 @@ class Selector extends FormField
         return view('shared-utils::components.forms.selector',[
             "selector"=>$this,
             "name"=>$name,
-            "push"=>$push
+            "push"=>$push,
+            "hot_reload"=>$this->hot_reload
         ]);
     }
 }
