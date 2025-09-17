@@ -10,7 +10,7 @@ $initial_data = $form->get_initial_data();
         @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
         @continue
         @endif
-        <div id="form-field-{{ $name }}" class="form-field" style="width: auto;">
+        <div id="form-field-{{ $name }}" class="form-field" style="width: 100%;">
             @if($field->label!="")
             <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
             @endif

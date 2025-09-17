@@ -3,6 +3,7 @@
     id="{{ $name }}"
     name="{{ $name }}"
     x-model="form.{{ $name }}"
+    style="width: 100%"
     {{ $attributes->class([
         'form-select',
         'w-auto',
@@ -25,7 +26,7 @@
 
 @if($selector->search)
 @push($push)
-    $('#{{ $name }}').select2({theme: "bootstrap-5",width: 'auto',allowClear: true,placeholder: 'Select'});
+    $('#{{ $name }}').select2({theme: "bootstrap-5",width: '100%'});
     $('#{{ $name }}').on('change', () => {
         this.form.{{ $name }} = $('#{{ $name }}').val();
     });
