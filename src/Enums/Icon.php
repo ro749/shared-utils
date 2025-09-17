@@ -17,4 +17,5 @@ enum Icon: string{
     case PASSWORD = "iconamoon:lock";
     case SEND_MAIL = "mdi:email-fast-outline";
     case LINK = "iconamoon:link";
+    case WHATSAPP = "ic:outline-whatsapp";
 }

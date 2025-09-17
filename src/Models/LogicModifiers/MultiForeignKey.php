@@ -19,7 +19,7 @@ class MultiForeignKey extends LogicModifier
     public function  get_value(string $table, string $key):string{
         $ans = 'CASE ';
         foreach ($this->columns as $column_key => $column_value) {
-            $ans .= 'WHEN '.$table.'.'.$key.' = '.$column_key.' THEN '.$this->table.'.'.$column_value.' ';
+            $ans .= 'WHEN '.$table.'.'.$key.' = '.$column_key.' THEN '.$column_value->get_value($this->table).' ';
         }
         $ans .= 'END ';
         return $ans;
