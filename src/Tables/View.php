@@ -11,10 +11,18 @@ class View
     //the name for the param in the url
     public string $name;
 
-    public function __construct(string $url, string $param, string $name)
+    public bool $full_row = false;
+
+    public function __construct(
+        string $url, 
+        string $param, 
+        string $name,
+        bool $full_row = false
+    )
     {
         $this->url = $url;
         $this->param = $param;
         $this->name = $name;
+        $this->full_row = $full_row;
     }
 }

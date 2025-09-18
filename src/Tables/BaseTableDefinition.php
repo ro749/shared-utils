@@ -12,6 +12,7 @@ use Ro749\SharedUtils\Tables\TableButton;
 use Ro749\SharedUtils\Tables\TableButtonView;
 use Ro749\SharedUtils\Enums\Icon;
 use Illuminate\Http\Request;
+use Ro749\SharedUtils\Tables\Texts\TableTexts;
 class BaseTableDefinition
 {
     public BaseGetter $getter;
@@ -27,13 +28,16 @@ class BaseTableDefinition
     public array $buttons = [];
 
     public int $page_length = 0;
+
+    public ?TableTexts $texts = null;
     public function __construct(
         BaseGetter $getter,
         View $view = null, 
         Delete $delete = null,
         BaseFormRequest $form = null,
         View $edit_url = null,
-        int $page_length = 0
+        int $page_length = 0,
+        TableTexts $texts = new TableTexts()
     )
     {
         $this->getter = $getter;
@@ -42,6 +46,7 @@ class BaseTableDefinition
         $this->form = $form;
         $this->edit_url = $edit_url;
         $this->page_length = $page_length;
+        $this->texts = $texts;
         if($this->form != null){
             $this->make_it_modifiable();
         }
@@ -104,7 +109,9 @@ class BaseTableDefinition
             'form' => $this->form?->get_info(),
             'needs_selectors' => $this->getter->needs_selectors(),
             'order' => $this->get_order(),
-            'page_length' => $this->page_length==0?null:$this->page_length
+            'page_length' => $this->page_length==0?null:$this->page_length,
+            'texts' => $this->texts,
+            'view' => $this->view->full_row?$this->view:null
         ];
     }
 
