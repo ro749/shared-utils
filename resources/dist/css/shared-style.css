@@ -72,6 +72,9 @@
     .popup{
         width: 33%;
     }
+    .just-phone{
+        display: none !important;
+    }
 }
 @media only screen and (max-width: 767px) {
     .popup{
