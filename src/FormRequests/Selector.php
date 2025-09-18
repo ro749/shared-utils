@@ -71,7 +71,8 @@ class Selector extends FormField
         string $message="", 
         string $value = "",
         bool $autosave = false,
-        string $hot_reload = ''
+        string $hot_reload = '',
+        string $direction = 'asc'
     ):self
     {
         $query = DB::table($table)->select($value_column, $label_column);
