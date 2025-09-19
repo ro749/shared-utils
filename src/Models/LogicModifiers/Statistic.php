@@ -4,6 +4,7 @@ namespace Ro749\SharedUtils\Models\LogicModifiers;
 use Ro749\SharedUtils\Models\StatisticType;
 use Ro749\SharedUtils\Filters\BackendFilters\BasicFilter;
 use Closure;
+use Illuminate\Support\Facades\DB;
 class Statistic extends LogicModifier
 {
     public string $table;
@@ -21,7 +22,11 @@ class Statistic extends LogicModifier
         $this->filter = $filter;
     }
 
-    public function  get_value(string $table, string $key):string{
+    public function get_value(string $table, string $key):string{
         return "";
+    }
+
+    public function get_select(string $subquery, string $column){
+        return DB::raw(DB::raw('COALESCE('.$subquery.'.'.$column.',0) as '.$column));
     }
 }

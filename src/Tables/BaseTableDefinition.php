@@ -111,7 +111,7 @@ class BaseTableDefinition
             'order' => $this->get_order(),
             'page_length' => $this->page_length==0?null:$this->page_length,
             'texts' => $this->texts,
-            'view' => $this->view->full_row?$this->view:null
+            'view' => ($this->view&&$this->view->full_row)?$this->view:null
         ];
     }
 
