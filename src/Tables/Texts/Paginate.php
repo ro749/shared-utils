@@ -10,10 +10,10 @@ class Paginate
     public string $previous;
 
     public function __construct(
-        string $first = 'Primero', 
-        string $last = 'Ultimo', 
-        string $next = 'Siguiente', 
-        string $previous = 'Anterior'
+        string $first = 'Prim.', 
+        string $last = 'Ult.', 
+        string $next = 'Sig.', 
+        string $previous = 'Ant.'
     )
     {
         $this->first = $first;
