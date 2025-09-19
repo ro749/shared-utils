@@ -373,14 +373,19 @@
                                 switch(field.type){
                                     case 'date':
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="date" class="form-control date-editor" >';
-                                        
                                         break;
                                     case 'number':
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="number" class="form-control" >';
-                                        
                                         break;
+                                    case 'tel':
+                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="tel" class="form-control" oninput="console.log(this.value.replace(/\D/g, \'\'))" >';
+                                        break;
+                                    case 'email':
+                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" oninput="this.value = this.value.toLowerCase()" >';
+                                        break;
+                                    
                                     case 'text':
-                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" value="'+row.data()[key]+'" >';
+                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" >';
                                         break;
                                 }
                             }
@@ -423,6 +428,16 @@
                             }
                         },
                     });
+                });
+            }
+
+            if(options.view){
+                $('#'+options.id+' tbody').on('click', 'tr', function(event) {
+                    var data = table.row(this).data();
+                    window.location.href = 
+                        options.view.url+'?'+
+                        options.view.name+'='+
+                        data[options.view.param];
                 });
             }
         });
