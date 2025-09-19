@@ -6,7 +6,7 @@ $initial_data = $form->get_initial_data();
     {{ $slot }}
 @else
 <div x-data="{{$form->get_id()}}_submit()" id="{{ $form->get_id() }}"  {{ $attributes }}>
-    @foreach ($form->formFields as $name => $field)
+    @foreach ($form->fields as $name => $field)
         @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
         @continue
         @endif

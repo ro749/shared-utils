@@ -9,7 +9,7 @@ use App\Models\{{ class }};
 
 class Register{{ class }} extends BaseFormRequest
 {
-    public function __construct($formFields = [])
+    public function __construct($fields = [])
     {
         ${{ class }} = new {{ class }}();
         ${{ class }}->get_register_form($this);

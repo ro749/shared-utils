@@ -16,7 +16,7 @@ class {{ class }} extends BaseFormRequest
             id: "{{ class }}",
             table: "",
             submit_text: "",
-            formFields: [
+            fields: [
                 
             ],
         );

@@ -17,7 +17,7 @@ class {{ class }} extends LoginFormRequest
             table: "users",
             submit_text: "Entrar",
             redirect: "/",
-            formFields: [
+            fields: [
                 "name" => new FormField(
                     placeholder:"Usuario", 
                     type: InputType::TEXT,

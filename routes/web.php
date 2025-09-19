@@ -73,7 +73,7 @@ Route::middleware('web')->group(function () {
     
     Route::post('/form/{form}', function (Request $request,$form) {
         $ans = [];
-        $formClass = "App\\Http\\Requests\\".$form;
+        $formClass = "App\\Forms\\".$form;
         $formRequest = new $formClass();
         $redirect = $formRequest->prosses($request);
         if($redirect!="") {  

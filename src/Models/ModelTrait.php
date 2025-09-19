@@ -84,7 +84,7 @@ trait ModelTrait
         $form->table = $this->getTable();
         foreach($this->attributes as $key => $value){
             if(($value->editable == Editable::CREATE || $value->editable == Editable::ALLWAYS)){
-                $form->formFields[$key] = $this->get_field($key, $value);
+                $form->fields[$key] = $this->get_field($key, $value);
             }
         }
         if(!empty($this->owner) && Auth::guard($this->owner)->check()){
@@ -97,7 +97,7 @@ trait ModelTrait
         $form->table = $this->getTable();
         foreach($this->attributes as $key => $value){
             if(($value->editable == Editable::UPDATE || $value->editable == Editable::ALLWAYS)){
-                $form->formFields[$key] = $this->get_field($key, $value);
+                $form->fields[$key] = $this->get_field($key, $value);
             }
         }
     }

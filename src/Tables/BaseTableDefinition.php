@@ -117,7 +117,7 @@ class BaseTableDefinition
 
     function make_it_modifiable(){
         $this->is_editable = true;
-        foreach ($this->form->formFields as $key => $field) {
+        foreach ($this->form->fields as $key => $field) {
             if(isset($this->getter->columns[$key])) {
                 $this->getter->columns[$key]->editable = true;
             }
@@ -131,11 +131,11 @@ class BaseTableDefinition
             }
             
         }
-        $this->form->formFields["id"] = new FormField(
+        $this->form->fields["id"] = new FormField(
             type: InputType::TEXT,
             rules: ['required', 'integer', 'exists:' . $this->getter->table . ',id'],
         );
-        $this->form->formFields = array_filter($this->form->formFields, function ($field) {
+        $this->form->fields = array_filter($this->form->fields, function ($field) {
             return $field->type != InputType::PASSWORD && !$field->encrypt;
         });
     }

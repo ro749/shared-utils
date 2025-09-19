@@ -12,7 +12,7 @@ abstract class LoginFormRequest extends BaseFormRequest
 
     public function __construct(
         string $table, 
-        array $formFields = [], 
+        array $fields = [], 
         string $redirect = '', 
         string $popup = '', 
         string $submit_text = 'Entrar', 
@@ -22,7 +22,7 @@ abstract class LoginFormRequest extends BaseFormRequest
         bool $plain_password = false
     )
     {
-        parent::__construct( $table, $formFields, $redirect, $popup, $submit_text, $submit_url, $callback);
+        parent::__construct( $table, $fields, $redirect, $popup, $submit_text, $submit_url, $callback);
         $this->guard = $guard;
         $this->plain_password = $plain_password;
     }

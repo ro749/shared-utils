@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class BaseFormRequest
 {
     public string $table;
-    public array $formFields;
+    public array $fields;
     public string $submit_text;
     public string $redirect='';
     public string $popup='';
@@ -33,7 +33,7 @@ class BaseFormRequest
     
     public function __construct(
         string $table, 
-        array $formFields = [], 
+        array $fields = [], 
         string $redirect = '', 
         string $popup = '',
         string $submit_text = 'Submit', 
@@ -47,7 +47,7 @@ class BaseFormRequest
     )
     {
         $this->table = $table;
-        $this->formFields = $formFields;
+        $this->fields = $fields;
         $this->redirect = $redirect;
         $this->popup = $popup;
         $this->submit_text = $submit_text;
@@ -64,7 +64,7 @@ class BaseFormRequest
     public function rules($rawRequest): array
     {
         if($rawRequest->filled('id')) {
-            foreach ($this->formFields as $key => $field) {
+            foreach ($this->fields as $key => $field) {
                 if (in_array('unique', $field->rules)) {
                     foreach ($field->rules as $index => $rule) {
                         if ($rule === 'unique') {
@@ -74,7 +74,7 @@ class BaseFormRequest
                 }
             }
         } else {
-            foreach ($this->formFields as $key => $field) {
+            foreach ($this->fields as $key => $field) {
                 if (in_array('unique', $field->rules)) {
                     foreach ($field->rules as $index => $rule) {
                         if ($rule === 'unique') {
@@ -86,7 +86,7 @@ class BaseFormRequest
         }
         
         $rules = [];
-        foreach ($this->formFields as $key=>$value) {
+        foreach ($this->fields as $key=>$value) {
            $rules[$key] = $value->get_rules();
         }
         return $rules;
@@ -95,7 +95,7 @@ class BaseFormRequest
     public function messages(): array
     {
         $messages = [];
-        foreach ($this->formFields as $key=>$value) {
+        foreach ($this->fields as $key=>$value) {
             if($value->rule === '')continue;
            $messages[$key] = $value->message;
         }
@@ -108,7 +108,7 @@ class BaseFormRequest
         if($this->db_id!=0) {
             $data['id'] = $this->db_id;
         }
-        foreach ($this->formFields as $key => $field) {
+        foreach ($this->fields as $key => $field) {
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
                 $data[$key] = Hash::make($data[$key]);
             }
@@ -140,7 +140,7 @@ class BaseFormRequest
     }
 
     function is_autosave(): bool { 
-        foreach ($this->formFields as $key => $field) {
+        foreach ($this->fields as $key => $field) {
             if ($field->autosave) {
                 return true;
             }
@@ -150,7 +150,7 @@ class BaseFormRequest
 
     public function get_has_images(): bool
     {
-        foreach ($this->formFields as $key => $field) {
+        foreach ($this->fields as $key => $field) {
             if ($field->type == InputType::IMAGE) {
                 return true;
             }
@@ -162,7 +162,7 @@ class BaseFormRequest
     {
         return [
             'id' => $this->get_id(),
-            'fields' => $this->formFields
+            'fields' => $this->fields
         ];
     }
 
