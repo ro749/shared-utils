@@ -13,6 +13,9 @@
         )
     oninput="this.value = this.value.replace(/\D/g, '')"
     @endif
+    @if($field->type === \Ro749\SharedUtils\FormRequests\InputType::EMAIL)
+    oninput="this.value = this.value.toLowerCase()"
+    @endif
     @if($field->autosave)
     @input.debounce.500ms="submit()"
     @endif
