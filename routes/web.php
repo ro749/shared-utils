@@ -54,7 +54,7 @@ Route::middleware('web')->group(function () {
             $request->get('start'), 
             $request->get('length'),
             $request->get('search')['value'],
-            $request->get('order')[0],
+            $request->get('order')[0]??null,
             $request->get('filters')?? [],
             $layer
         ));

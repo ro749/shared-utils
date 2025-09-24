@@ -15,18 +15,32 @@ class Statistic{
     /** @var BaseFilter[] */
     public array $filters;
 
-    public function __construct(string $table, string $group_column, array $columns, array $filters = []){
+    public ?StatisticLink $link;
+
+    public function __construct(string $table, string|StatisticLink $group_column, array $columns, array $filters = [], StatisticLink $link = null){
         $this->table = $table;
         $this->group_column = $group_column;
         $this->columns = $columns;
         $this->filters = $filters;
+        $this->link = $link;
     }
 
     public function get_subquery($query,$table,$name,$filters){
-        $subquery = 
-            DB::table($this->table)->
-            select($this->group_column)->
-            groupBy($this->group_column);
+        
+        if(empty($this->link)){
+            $subquery = 
+                DB::table($this->table)->
+                select($this->group_column)->
+                groupBy($this->group_column);
+        }
+        else{
+            $subquery = 
+                DB::table($this->link->table)->
+                select($this->link->column)->
+                groupBy($this->link->column)->
+                join($this->table, $this->link->table.'.id', '=', $this->table.'.'.$this->group_column);
+        }
+        
         foreach ($this->filters as $filter) {
             $filter->filter($subquery, $filters);
         }
@@ -62,8 +76,17 @@ class Statistic{
             $subquery->addSelect(DB::Raw($str_stat));
             //$query->addSelect(DB::raw('COALESCE('.$key.'.'.$column["key"].',0) as '.$column["key"]));
         }
-        $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
-            $join->on($name.'.'.$this->group_column, '=', $table . '.id');
-        });
+
+        if(empty($this->link)){
+            $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
+                $join->on($name.'.'.$this->group_column, '=', $table . '.id');
+            });
+        }
+        else{
+            $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
+                $join->on($name.'.'.$this->link->column, '=', $table . '.id');
+            });
+        }
+        
     }
 }

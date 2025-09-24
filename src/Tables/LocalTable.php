@@ -10,7 +10,6 @@ class LocalTable extends BaseTableDefinition{
     public string $owner = '';
     
     public function __construct(
-        string $id, 
         BaseFormRequest $parent_form,
         string $parent_column,
         BaseGetter $getter,
@@ -20,7 +19,6 @@ class LocalTable extends BaseTableDefinition{
         string $owner = ''
     ){
         parent::__construct(
-            id: $id, 
             getter: $getter, 
             view: $view, 
             delete: new Delete(warning: ''), 
@@ -45,7 +43,7 @@ class LocalTable extends BaseTableDefinition{
 
     function get_info(){
         return [
-            'id' => $this->id,
+            'id' => $this->get_id(),
             'columns' => $this->getter->columns,
             'filters' => $this->getter->filters,
             'delete' => $this->delete,
