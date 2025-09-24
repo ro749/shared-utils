@@ -97,10 +97,14 @@ class BaseTableDefinition
     }
 
     function get_info(){
+        $filters = $this->getter->filters;
+        foreach($this->getter->statistics as $stat){
+            $filters = array_merge($filters,$stat->filters);
+        }
         return [
             'id' => $this->get_id(),
             'columns' => $this->getter->columns,
-            'filters' => $this->getter->filters,
+            'filters' => $filters,
             'delete' => $this->delete,
             'needs_buttons' => $this->needsButtons(),
             'is_editable' => $this->is_editable,

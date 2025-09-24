@@ -2,15 +2,20 @@
 
 namespace Ro749\SharedUtils\Getters;
 
+use Ro749\SharedUtils\Tables\Column;
+use Ro749\SharedUtils\Filters\BaseFilter;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 
 abstract class BaseGetter
 {
     public string $table;
+
+     /** @var Column[] */
+    public array $columns;
+
+    /** @var BaseFilter[] */
     public array $filters;
     public array $backend_filters;
-    public array $columns;
     public bool $debug;
 
     function __construct(array $filters = [], array $backend_filters = [],array $columns = [],string $table = '',$debug = false)
@@ -30,13 +35,13 @@ abstract class BaseGetter
         foreach ($this->backend_filters as $filter) {
             $filter->filter($query, $filters);
         }
-        $ans['recordsTotal'] = $query->count();
+        $ans['recordsTotal'] = 1;//$query->count();
         $this->apply_filters($query, $filters);
         
         if ($search!="") {
             $query = $this->search($query,$search);
         }
-        $ans['recordsFiltered'] = $query->count();
+        $ans['recordsFiltered'] = 1;//$query->count();
         if(!empty($order)){
             $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         }
