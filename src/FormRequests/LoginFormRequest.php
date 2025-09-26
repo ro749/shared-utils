@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\RateLimiter;
 abstract class LoginFormRequest extends BaseFormRequest
 {
     public string $guard;
+    public string $column_status = '';
 
     public bool $plain_password = false;
 
@@ -19,12 +20,14 @@ abstract class LoginFormRequest extends BaseFormRequest
         string $submit_url = '', 
         string $callback = '', 
         string $guard = 'web', 
-        bool $plain_password = false
+        bool $plain_password = false,
+        string $column_status = ''
     )
     {
         parent::__construct( $table, $fields, $redirect, $popup, $submit_text, $submit_url, $callback);
         $this->guard = $guard;
         $this->plain_password = $plain_password;
+        $this->column_status = $column_status;
     }
     
     function incorrect_credentials($key)
@@ -51,12 +54,18 @@ abstract class LoginFormRequest extends BaseFormRequest
         }
         else{
             if (!Auth::guard($this->guard)->attempt($credentials)) {
-            $this->incorrect_credentials($key);
+                $this->incorrect_credentials($key);
+            }
         }
+        if($this->column_status != ''){
+            if(Auth::guard($this->guard)->user()->{$this->column_status} != '0'){
+                Auth::guard($this->guard)->logout();
+                throw ValidationException::withMessages([
+                    'password' => ['Usuario bloqueado.'],
+                ]);
+            }
         }
-        
         RateLimiter::clear($key);
-        //Auth::login($user);
         $rawRequest->session()->regenerate();
         return $this->redirect;
     }
