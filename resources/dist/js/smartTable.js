@@ -261,7 +261,6 @@
                         table.row($(this).parents('tr')).data()[button.view.param];
                     });
                 }
-                
             }
             
             if(options.delete){
@@ -428,16 +427,6 @@
                             }
                         },
                     });
-                });
-            }
-
-            if(options.view){
-                $('#'+options.id+' tbody').on('click', 'tr', function(event) {
-                    var data = table.row(this).data();
-                    window.location.href = 
-                        options.view.url+'?'+
-                        options.view.name+'='+
-                        data[options.view.param];
                 });
             }
         });
