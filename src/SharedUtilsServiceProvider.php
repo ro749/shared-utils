@@ -48,6 +48,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
         Blade::component('sharedutils::components.fillables.fillable-text', 'f-text');
         Blade::component('sharedutils::components.fillables.fillable-image', 'f-image');
+        Blade::component('sharedutils::components.fillables.fillable-conditional', 'f-conditional');
         Blade::component('sharedutils::components.ajax-form', 'smartForm');
         Blade::component('sharedutils::components.tables.smartTable', 'smartTable');
         Blade::component('sharedutils::components.tables.localSmartTable', 'localSmartTable');
