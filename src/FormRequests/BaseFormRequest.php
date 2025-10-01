@@ -105,10 +105,12 @@ class BaseFormRequest
     public function prosses(Request $rawRequest): string
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
+        $this->before_process($data);
         if($this->db_id!=0) {
             $data['id'] = $this->db_id;
         }
         foreach ($this->fields as $key => $field) {
+            if(!isset($data[$key])) continue;
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
                 $data[$key] = Hash::make($data[$key]);
             }
@@ -122,7 +124,6 @@ class BaseFormRequest
                         Storage::disk('public')->delete($field->route . $prev_image);
                     }
                 }
-                
             }
         }
         
@@ -179,6 +180,7 @@ class BaseFormRequest
         return class_basename($this);
     }
 
+    public function before_process(array &$data){}
     public function after_process(int $id){}
 
 }

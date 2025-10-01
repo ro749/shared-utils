@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\DB;
 abstract class LoginFormRequest extends BaseFormRequest
 {
     public string $guard;
@@ -64,6 +65,9 @@ abstract class LoginFormRequest extends BaseFormRequest
                     'password' => ['Usuario bloqueado.'],
                 ]);
             }
+        }
+        if(Auth::guard($this->guard)->user()->reset == '1'){
+            return route('reset-password-view');
         }
         RateLimiter::clear($key);
         $rawRequest->session()->regenerate();

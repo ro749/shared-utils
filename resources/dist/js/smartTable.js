@@ -251,7 +251,7 @@
                     
                 }
             });
-            for(var button_num in options.buttons){
+            for(let button_num in options.buttons){
                 let button = options.buttons[button_num];
                 if(button.view != null){
                     $table.on('click', '.'+button.button_class, function(event) {
@@ -259,6 +259,48 @@
                         button.view.url+'?'+
                         button.view.name+'='+
                         table.row($(this).parents('tr')).data()[button.view.param];
+                    });
+                }
+                if(button.warning != null){
+                    $table.on('click', '.'+button.button_class, function(event) {
+                        let row = table.row($(this).parents('tr')).data();
+                        let warning = button.warning;
+                        const matches = [...warning.matchAll(/\{(.*?)\}/g)];
+                        const args = matches.map(match => match[1].trim());
+                        for (const arg of args) {
+                            warning = warning.replace('{' + arg + '}', row[arg]);
+                        }
+                        $('#'+button.button_class+'-warning').text(warning);
+                        openPopup(button.button_class+'-warning-popup');
+                        $('#on-'+button.button_class)[0].onclick = function(){
+                            $.ajax({
+                                url: button.url,
+                                type: 'POST',
+                                data: {
+                                    id: row.id,
+                                    filters: filters,
+                                    _token: $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(response) {
+                                    console.log("success");
+                                    if(button.reload){
+                                        table.ajax.reload(null, false);
+                                    }
+                                    closePopup(button.button_class+'-warning-popup');
+                                    if(button.success != null){
+                                        let success = button.success;
+                                        const matches = [...success.matchAll(/\{(.*?)\}/g)];
+                                        const args = matches.map(match => match[1].trim());
+                                        for (const arg of args) {
+                                            success = success.replace('{' + arg + '}', row[arg]);
+                                        }
+                                        $('#'+button.button_class+'-success').text(success);
+                                        openPopup(button.button_class+'-success-popup');
+                                    }
+                                },
+                            });
+                        };
+                        openPopup(button.button_class+'-popup');
                     });
                 }
             }

@@ -25,6 +25,7 @@ class BaseTableDefinition
 
     //if clicking edit redirects, if empty normal edit
     public ?View $edit_url = null;
+    /* @var TableButton[] $buttons*/
     public array $buttons = [];
 
     public int $page_length = 0;
@@ -36,6 +37,7 @@ class BaseTableDefinition
         Delete $delete = null,
         BaseFormRequest $form = null,
         View $edit_url = null,
+        array $buttons = [],
         int $page_length = 0,
         TableTexts $texts = new TableTexts()
     )
@@ -47,6 +49,7 @@ class BaseTableDefinition
         $this->edit_url = $edit_url;
         $this->page_length = $page_length;
         $this->texts = $texts;
+        $this->buttons = $buttons;
         if($this->form != null){
             $this->make_it_modifiable();
         }
