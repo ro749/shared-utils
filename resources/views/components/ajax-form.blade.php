@@ -30,6 +30,7 @@ $initial_data = $form->get_initial_data();
             </template>
         </div>
     @endforeach
+    
     @if($form->submit_text==!"")
     <button class="btn btn-light" @click="submit">
         {{ $form->submit_text }}
@@ -51,6 +52,10 @@ $initial_data = $form->get_initial_data();
         <p style="text-align:center">{{ $form->uploading_message }}</p>
     </x-modal>
 @endonce
+@endif
+
+@if(!empty($form->popup))
+@include($form->popup, ['class' => $form->get_id()])
 @endif
 
 @push('scripts')
@@ -111,8 +116,17 @@ $initial_data = $form->get_initial_data();
 
                         @if($form->redirect)
                         window.location.href = response.redirect;
-                        @elseif($form->popup)
-                        openPopup("{{ $form->popup }}",2500);
+                        @elseif(!empty($form->popup))
+
+                        let success = '{{ $form->success_msg ?? 'Datos guardados correctamente.' }}';
+                        const matches = [...success.matchAll(/\{(.*?)\}/g)];
+                        const args = matches.map(match => match[1].trim());
+                        for (const arg of args) {
+                            success = success.replace('{' + arg + '}', this.form[arg]);
+                        }
+                        $('#{{ $form->get_id() }}-success').text(success);
+
+                        openPopup("{{ $form->get_id() }}-success-popup");
                         @elseif($form->callback)
                         {!! $form->callback !!}
                         @else

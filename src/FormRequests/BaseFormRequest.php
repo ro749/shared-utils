@@ -14,6 +14,7 @@ class BaseFormRequest
     public string $submit_text;
     public string $redirect='';
     public string $popup='';
+    public string $success_msg='';
     public string $submit_url='';
     //if needs to register the loged user, fill with the column
     public string $user = '';
@@ -35,7 +36,8 @@ class BaseFormRequest
         string $table, 
         array $fields = [], 
         string $redirect = '', 
-        string $popup = '',
+        string $popup = 'sharedutils::templates.popup-success',
+        string $success_msg = '',
         string $submit_text = 'Submit', 
         string $submit_url = '',
         string $user = '', 
@@ -50,6 +52,7 @@ class BaseFormRequest
         $this->fields = $fields;
         $this->redirect = $redirect;
         $this->popup = $popup;
+        $this->success_msg = $success_msg;
         $this->submit_text = $submit_text;
         $this->submit_url = $submit_url;
         $this->user = $user;
@@ -59,6 +62,7 @@ class BaseFormRequest
         $this->reload = $reload;
         $this->view = $view;
         $this->has_images = $this->get_has_images();
+        
     }
 
     public function rules($rawRequest): array
