@@ -114,7 +114,8 @@ class Selector extends FormField
         return view('shared-utils::components.forms.selector',[
             "selector"=>$this,
             "name"=>$name,
-            "push"=>$push,
+            "push_init"=>$push,
+            "push_reset"=>$push.'_reset',
             "hot_reload"=>$this->hot_reload,
             "value"=>$data
         ]);

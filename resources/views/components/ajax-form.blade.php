@@ -120,6 +120,7 @@ $initial_data = $form->get_initial_data();
                         for (const key in this.form) {
                             this.form[key] = '';
                         }
+                        @stack($form->get_id().'_reset')
                         @endif
 
                         @if($form->reload)

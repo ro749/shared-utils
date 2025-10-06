@@ -25,10 +25,16 @@
 </select>
 
 @if($selector->search)
-@push($push)
+@push($push_init)
     $('#{{ $name }}').select2({theme: "bootstrap-5",width: '100%'});
     $('#{{ $name }}').on('change', () => {
         this.form.{{ $name }} = $('#{{ $name }}').val();
     });
+    @if(!empty($value))
+    $('#{{ $name }}').val('{{ $value }}').trigger('change');
+    @endif
+@endpush
+@push($push_reset)
+    $('#{{ $name }}').val(null).trigger('change');
 @endpush
 @endif
