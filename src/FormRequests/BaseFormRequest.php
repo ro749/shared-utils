@@ -174,7 +174,16 @@ class BaseFormRequest
     public function get_initial_data()
     {
         if($this->db_id!=0) {
-            $ans =  DB::table($this->table)->where('id', $this->db_id)->first();
+            $query = DB::table($this->table);
+            $something_selected = false;
+            foreach ($this->fields as $key => $field) {
+                if($field->type == InputType::PASSWORD) continue;
+                if($field->type == InputType::IMAGE) continue;
+                $query->addSelect($key);
+                $something_selected = true;
+            }
+            if(!$something_selected) return [];
+            $ans = $query->where('id', $this->db_id)->first();
             return $ans;//json_decode(json_encode($ans), true);
         }
         return $this->initial_data;
