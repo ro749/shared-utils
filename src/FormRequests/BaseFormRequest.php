@@ -33,7 +33,7 @@ class BaseFormRequest
 
     
     public function __construct(
-        string $table, 
+        string $table = '', 
         array $fields = [], 
         string $redirect = '', 
         string $popup = 'sharedutils::templates.popup-success',

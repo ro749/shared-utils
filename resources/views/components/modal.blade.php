@@ -9,3 +9,12 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    $('#{{ $id }}').on('click', function(event) {
+        if (event.target === this) {
+            closePopup('{{ $id }}');
+        }
+    });
+</script>
+@endpush

@@ -2,33 +2,18 @@
 @php
 $initial_data = $form->get_initial_data();
 @endphp
-@if (!$slot->isEmpty())
-    {{ $slot }}
-@else
+
 <div x-data="{{$form->get_id()}}_submit()" id="{{ $form->get_id() }}"  {{ $attributes }}>
+@if (!$slot->isEmpty())
+{{ $slot }}
+@else
     @foreach ($form->fields as $name => $field)
         @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
         @continue
         @endif
-        <div id="form-field-{{ $name }}" class="form-field" style="width: 100%;">
-            @if($field->label!="")
-            <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
-            @endif
-            @if($field->icon)
-            <div class="icon-field">
-                <span class="icon">
-                    <iconify-icon icon="{{ $field->icon }}"></iconify-icon>
-                </span>
-            @endif
-            
-            {!! $field->render($name,$form->get_id(),$initial_data->{$name}??'') !!}
-            @if($field->icon)
-            </div>
-            @endif
-            <template x-if="errors['{{ $name }}']">
-                <p class="form-error" x-text="errors['{{ $name }}']"></p>
-            </template>
-        </div>
+        
+        <x-field :name="$name" :form="$form"/>
+        
     @endforeach
     
     @if($form->submit_text==!"")
@@ -36,8 +21,8 @@ $initial_data = $form->get_initial_data();
         {{ $form->submit_text }}
     </button>
     @endif
-</div>
 @endif
+</div>
 @if($form->redirect=="" && $form->popup=="")
 @once('form-popup')
     <x-sharedutils::modal  id="form-success-popup" title="Datos guardados correctamente.">
@@ -63,8 +48,8 @@ $initial_data = $form->get_initial_data();
     function {{$form->get_id()}}_submit() {
         return {
             form: {
-                @if($form->initial_data != null)
-                @foreach ($initial_data as $key => $value)
+                @if($form->get_initial_data() != null)
+                @foreach ($form->get_initial_data() as $key => $value)
                 {{ $key }}: `{{ $value }}`,
                 @endforeach
                 @endif

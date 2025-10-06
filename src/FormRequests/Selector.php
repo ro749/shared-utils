@@ -62,7 +62,7 @@ class Selector extends FormField
         string $table,
         string $label_column,
         string $value_column = "id",
-        Closure $queryModifier = null,
+        Closure $query_modifier = null,
 
         string $label="", 
         string $placeholder="", 
@@ -75,8 +75,8 @@ class Selector extends FormField
     ):self
     {
         $query = DB::table($table)->select($value_column, $label_column);
-        if ($queryModifier) {
-            $query = $queryModifier($query);
+        if ($query_modifier) {
+            $query_modifier($query);
         }
 
         $rows = $query->get();
@@ -115,7 +115,8 @@ class Selector extends FormField
             "selector"=>$this,
             "name"=>$name,
             "push"=>$push,
-            "hot_reload"=>$this->hot_reload
+            "hot_reload"=>$this->hot_reload,
+            "value"=>$data
         ]);
     }
 }

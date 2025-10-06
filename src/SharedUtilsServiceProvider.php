@@ -48,6 +48,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         // Register your component: <x-sharedutils::modal />
         Blade::component('sharedutils::components.modal', 'sharedutils::modal');
         Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
+        Blade::component('sharedutils::components.forms.base-field', 'field');
         Blade::component('sharedutils::components.fillables.fillable-text', 'f-text');
         Blade::component('sharedutils::components.fillables.fillable-image', 'f-image');
         Blade::component('sharedutils::components.fillables.fillable-conditional', 'f-conditional');
