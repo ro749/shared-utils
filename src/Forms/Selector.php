@@ -1,10 +1,8 @@
 <?php
 
-namespace Ro749\SharedUtils\FormRequests;
+namespace Ro749\SharedUtils\Forms;
 use Closure;
-use Illuminate\View\Component;
 use Illuminate\Support\Facades\DB;
-use Ro749\SharedUtils\FormRequests\FormField;
 
 class Selector extends FormField
 {

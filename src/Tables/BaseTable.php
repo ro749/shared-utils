@@ -1,24 +1,23 @@
 <?php
 namespace Ro749\SharedUtils\Tables;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Ro749\SharedUtils\Getters\BaseGetter;
-use Ro749\SharedUtils\FormRequests\BaseFormRequest;
-use Ro749\SharedUtils\FormRequests\InputType;
-use Ro749\SharedUtils\FormRequests\FormField;
-use Ro749\SharedUtils\FormRequests\Selector;
+use Ro749\SharedUtils\Forms\BaseForm;
+use Ro749\SharedUtils\Forms\InputType;
+use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\Selector;
 use Ro749\SharedUtils\Tables\TableButton;
 use Ro749\SharedUtils\Tables\TableButtonView;
 use Ro749\SharedUtils\Enums\Icon;
 use Illuminate\Http\Request;
 use Ro749\SharedUtils\Tables\Texts\TableTexts;
-class BaseTableDefinition
+class BaseTable
 {
     public BaseGetter $getter;
     public ?View $view = null;
     public ?Delete $delete = null;
-    public ?BaseFormRequest $form;
+    public ?BaseForm $form;
 
     public bool $needs_buttons = false;
     public bool $is_editable = false;
@@ -35,7 +34,7 @@ class BaseTableDefinition
         BaseGetter $getter,
         View $view = null, 
         Delete $delete = null,
-        BaseFormRequest $form = null,
+        BaseForm $form = null,
         View $edit_url = null,
         array $buttons = [],
         int $page_length = 0,
@@ -203,5 +202,11 @@ class BaseTableDefinition
 
     function get_id(){
         return class_basename($this);
+    }
+
+    public static function instance(): BaseTable
+    {
+        $basename = class_basename(static::class);
+        return config('tables.'.$basename) ?? static::class;
     }
 }

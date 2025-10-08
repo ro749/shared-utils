@@ -1,5 +1,5 @@
 <?php
-namespace Ro749\SharedUtils\FormRequests;
+namespace Ro749\SharedUtils\Forms;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-class BaseFormRequest
+class BaseForm
 {
     public string $table;
     public array $fields;
@@ -195,5 +195,11 @@ class BaseFormRequest
 
     public function before_process(array &$data){}
     public function after_process(int $id){}
+
+    public static function instanciate(): BaseForm
+    {
+        $basename = class_basename(static::class);
+        return config('forms.'.$basename) ?? static::class;
+    }
 
 }

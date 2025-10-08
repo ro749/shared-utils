@@ -4,10 +4,10 @@ use Ro749\SharedUtils\Getters\ArrayGetter;
 use Ro749\SharedUtils\Tables\BaseTableDefinition;
 use Ro749\SharedUtils\Tables\Column;
 use Ro749\SharedUtils\Filters\BackendFilters\UserFilter;
-use Ro749\SharedUtils\FormRequests\BaseFormRequest;
-use Ro749\SharedUtils\FormRequests\FormField;
-use Ro749\SharedUtils\FormRequests\Selector;
-use Ro749\SharedUtils\FormRequests\InputType;
+use Ro749\SharedUtils\Forms\BaseForm;
+use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\Selector;
+use Ro749\SharedUtils\Forms\InputType;
 use Illuminate\Support\Facades\Auth;
 trait ModelTrait
 {
@@ -39,7 +39,7 @@ trait ModelTrait
             );
         }
         if($this->is_editable()){
-            $table->form = new BaseFormRequest(
+            $table->form = new BaseForm(
                 id:$table->getter->table,
                 table: $table->getter->table,
             );
@@ -79,7 +79,7 @@ trait ModelTrait
         };
     }
 
-    public function get_register_form(BaseFormRequest $form)
+    public function get_register_form(BaseForm $form)
     {
         $form->table = $this->getTable();
         foreach($this->attributes as $key => $value){
@@ -92,7 +92,7 @@ trait ModelTrait
         }
     }
 
-    public function get_edit_form(BaseFormRequest $form)
+    public function get_edit_form(BaseForm $form)
     {
         $form->table = $this->getTable();
         foreach($this->attributes as $key => $value){

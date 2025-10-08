@@ -7,5 +7,5 @@
 />
 
 @if($field->view)
-@include($field->view, ["field"=>$field,"name"=>$name])
+@include($field->view, ["field"=>$field,"name"=>$name,"data"=>$data])
 @endif

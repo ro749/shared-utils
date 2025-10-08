@@ -1,11 +1,8 @@
 <?php
 namespace Ro749\SharedUtils\Tables;
-use Ro749\SharedUtils\Statistics\BaseStatistic;
-use Ro749\SharedUtils\Getters\StatisticsGetter;
-use Ro749\SharedUtils\FormRequests\BaseFormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-class DynamicTable extends BaseTableDefinition
+class DynamicTable extends BaseTable
 {
     public string $table;
     public string $metadata_id;

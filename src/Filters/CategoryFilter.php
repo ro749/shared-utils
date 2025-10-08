@@ -1,7 +1,7 @@
 <?php
 namespace Ro749\SharedUtils\Filters;
 use \Illuminate\Database\Query\Builder; 
-use Ro749\SharedUtils\FormRequests\Selector;
+use Ro749\SharedUtils\Forms\Selector;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use function DI\string;

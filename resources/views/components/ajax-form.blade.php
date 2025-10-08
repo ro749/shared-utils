@@ -8,7 +8,7 @@ $initial_data = $form->get_initial_data();
 {{ $slot }}
 @else
     @foreach ($form->fields as $name => $field)
-        @if($field->type === Ro749\SharedUtils\FormRequests\InputType::HIDDEN)
+        @if($field->type === Ro749\SharedUtils\Forms\InputType::HIDDEN)
         @continue
         @endif
         

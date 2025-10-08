@@ -2,7 +2,7 @@
 namespace Ro749\SharedUtils\Tables;
 use Ro749\SharedUtils\Statistics\BaseStatistic;
 use Ro749\SharedUtils\Getters\StatisticsGetter;
-use Ro749\SharedUtils\FormRequests\BaseFormRequest;
+use Ro749\SharedUtils\Forms\BaseForm;
 use Illuminate\Support\Facades\DB;
 
 class StatisticTable extends BaseTableDefinition
@@ -12,7 +12,7 @@ class StatisticTable extends BaseTableDefinition
         StatisticsGetter $getter,
         View $view = null, 
         Delete $delete = null, 
-        BaseFormRequest $form = null
+        BaseForm $form = null
     ){
         parent::__construct(
             getter: $getter,

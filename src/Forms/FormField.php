@@ -1,6 +1,6 @@
 <?php
 
-namespace Ro749\SharedUtils\FormRequests;
+namespace Ro749\SharedUtils\Forms;
 
 class FormField
 {
@@ -85,6 +85,6 @@ class FormField
 
     public function render(string $name,string $push,string $data)
     {
-        return view('shared-utils::components.forms.field', ["field"=>$this,"name"=>$name]);
+        return view('shared-utils::components.forms.field', ["field"=>$this,"name"=>$name,"data"=>$data]);
     }
 }

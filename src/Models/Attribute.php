@@ -5,7 +5,7 @@ use Doctrine\Inflector\Rules\English\Rules;
 use Ro749\SharedUtils\Models\Modifier;
 use Ro749\SharedUtils\Models\Editable;
 use Ro749\SharedUtils\Models\LogicModifiers\LogicModifier;
-use Ro749\SharedUtils\FormRequests\InputType;
+use Ro749\SharedUtils\Forms\InputType;
 class Attribute
 {
     public string $label;

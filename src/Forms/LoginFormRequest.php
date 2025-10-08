@@ -1,11 +1,11 @@
 <?php
-namespace Ro749\SharedUtils\FormRequests;
+namespace Ro749\SharedUtils\Forms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\DB;
-abstract class LoginFormRequest extends BaseFormRequest
+abstract class LoginFormRequest extends BaseForm
 {
     public string $guard;
     public string $column_status = '';

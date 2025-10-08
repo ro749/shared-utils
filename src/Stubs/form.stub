@@ -2,13 +2,13 @@
 
 namespace {{ namespace }};
 
-use Ro749\SharedUtils\FormRequests\BaseFormRequest;
-use Ro749\SharedUtils\FormRequests\FormField;
-use Ro749\SharedUtils\FormRequests\InputType;
+use Ro749\SharedUtils\Forms\BaseForm;
+use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\InputType;
 use App\Models\User;
 use App\Models\Client;
 
-class {{ class }} extends BaseFormRequest
+class {{ class }} extends BaseForm
 {
     public function __construct()
     {

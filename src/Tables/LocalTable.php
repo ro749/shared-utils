@@ -1,20 +1,20 @@
 <?php
 namespace Ro749\SharedUtils\Tables;
 use Ro749\SharedUtils\Getters\BaseGetter;
-use Ro749\SharedUtils\FormRequests\BaseFormRequest;
+use Ro749\SharedUtils\Forms\BaseForm;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-class LocalTable extends BaseTableDefinition{
-    public BaseFormRequest $parent_form;
+class LocalTable extends BaseTable{
+    public BaseForm $parent_form;
     public string $parent_column = '';
     public string $owner = '';
     
     public function __construct(
-        BaseFormRequest $parent_form,
+        BaseForm $parent_form,
         string $parent_column,
         BaseGetter $getter,
         View $view = null, 
-        BaseFormRequest $form = null,
+        BaseForm $form = null,
         View $edit_url = null,
         string $owner = ''
     ){

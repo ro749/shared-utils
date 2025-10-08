@@ -2,9 +2,9 @@
 
 namespace {{ namespace }};
 
-use Ro749\SharedUtils\FormRequests\LoginFormRequest;
-use Ro749\SharedUtils\FormRequests\FormField;
-use Ro749\SharedUtils\FormRequests\InputType;
+use Ro749\SharedUtils\Forms\LoginFormRequest;
+use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\InputType;
 use App\Models\User;
 use App\Models\Client;
 

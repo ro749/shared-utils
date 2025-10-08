@@ -1,5 +1,5 @@
 <?php
-namespace Ro749\SharedUtils\FormRequests;
+namespace Ro749\SharedUtils\Forms;
 
 enum InputType: string
 {

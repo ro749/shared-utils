@@ -1,6 +1,6 @@
 <?php
 
-namespace Ro749\SharedUtils\FormRequests;
+namespace Ro749\SharedUtils\Forms;
 
 class ImageUploader extends FormField
 {

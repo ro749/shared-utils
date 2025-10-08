@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests;
 
-use Ro749\SharedUtils\FormRequests\BaseFormRequest;
-use Ro749\SharedUtils\FormRequests\FormField;
-use Ro749\SharedUtils\FormRequests\InputType;
+use Ro749\SharedUtils\Forms\BaseForm;
+use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\InputType;
 use App\Models\{{ class }};
 
-class Register{{ class }} extends BaseFormRequest
+class Register{{ class }} extends BaseForm
 {
     public function __construct($fields = [])
     {

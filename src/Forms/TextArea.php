@@ -1,10 +1,6 @@
 <?php
 
-namespace Ro749\SharedUtils\FormRequests;
-use Closure;
-use Illuminate\View\Component;
-use Illuminate\Support\Facades\DB;
-use Ro749\SharedUtils\FormRequests\FormField;
+namespace Ro749\SharedUtils\Forms;
 
 class TextArea extends FormField
 {

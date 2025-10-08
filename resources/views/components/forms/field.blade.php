@@ -8,12 +8,12 @@
     maxlength="{{ $field->max_length }}"
     @endif
     @if(
-        $field->type === \Ro749\SharedUtils\FormRequests\InputType::ID_NUMBER ||
-        $field->type === \Ro749\SharedUtils\FormRequests\InputType::PHONE
+        $field->type === \Ro749\SharedUtils\Forms\InputType::ID_NUMBER ||
+        $field->type === \Ro749\SharedUtils\Forms\InputType::PHONE
         )
     oninput="this.value = this.value.replace(/\D/g, '')"
     @endif
-    @if($field->type === \Ro749\SharedUtils\FormRequests\InputType::EMAIL)
+    @if($field->type === \Ro749\SharedUtils\Forms\InputType::EMAIL)
     oninput="this.value = this.value.toLowerCase()"
     @endif
     @if($field->autosave)
