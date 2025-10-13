@@ -1,20 +1,10 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-
 Route::middleware('web')->group(function () {
-    Route::get('/api/autosave/{class}', function ($class) {
-        return $class::instance()->get();
-    });
-    
-    Route::post('/api/autosave/{class}', function (Request $request,string $class) {
-        $fullClass = 'App\\Autosaves\\' . $class;
-        $ans = $fullClass::instance()->save($request->input('param'));
-        return response()->json(['success' => true]);
-    });
     
     Route::get('/table/{table}/get', function (Request $request,string $table) {
-        $fullClass = 'App\\Tables\\' . $table;
+        $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
         return response()->json($table->get(
             $request->get('start'), 
@@ -26,20 +16,20 @@ Route::middleware('web')->group(function () {
     });
 
     Route::get('/table/{table}/selectors', function (Request $request,string $table) {
-        $fullClass = 'App\\Tables\\' . $table;
+        $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
         return response()->json($table->get_selectors());
     });
     
     Route::post('/table/{table}/delete', function (Request $request,string $table) {
-        $fullClass = 'App\\Tables\\' . $table;
+        $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
         $table->delete((int) $request->input('id'));
         return response()->json(['success' => true]);
     });
     
     Route::post('/table/{table}/save', function (Request $request,string $table) {
-        $fullClass = 'App\\Tables\\' . $table;
+        $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
         $table->save($request);
         return response()->json(['success' => true]);
@@ -48,7 +38,7 @@ Route::middleware('web')->group(function () {
     });
 
     Route::get('/table/{table}/get/{layer}', function (Request $request,string $table,string $layer) {
-        $fullClass = 'App\\Tables\\' . $table;
+        $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
         return response()->json($table->get(
             $request->get('start'), 
@@ -61,7 +51,7 @@ Route::middleware('web')->group(function () {
     });
 
     Route::get('/table/{table}/metadata', function (Request $request,string $table) {
-        $fullClass = 'App\\Tables\\' . $table;
+        $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
         return response()->json(
             $table->get_metadata(
@@ -73,7 +63,7 @@ Route::middleware('web')->group(function () {
     
     Route::post('/form/{form}', function (Request $request,$form) {
         $ans = [];
-        $formClass = "App\\Forms\\".$form;
+        $formClass = config('overrides.forms.'.$form);
         $formRequest = new $formClass();
         $redirect = $formRequest->prosses($request);
         if($redirect!="") {  

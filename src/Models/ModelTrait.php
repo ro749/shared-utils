@@ -1,7 +1,7 @@
 <?php
 namespace Ro749\SharedUtils\Models;
 use Ro749\SharedUtils\Getters\ArrayGetter;
-use Ro749\SharedUtils\Tables\BaseTableDefinition;
+use Ro749\SharedUtils\Tables\BaseTable;
 use Ro749\SharedUtils\Tables\Column;
 use Ro749\SharedUtils\Filters\BackendFilters\UserFilter;
 use Ro749\SharedUtils\Forms\BaseForm;
@@ -19,7 +19,7 @@ trait ModelTrait
         }
         return false;
     }
-    public function get_table(BaseTableDefinition $table)
+    public function get_table(BaseTable $table)
     {
         $table->getter = new ArrayGetter($this->getTable(),[]);
         foreach($this->attributes as $key => $value){
@@ -40,7 +40,6 @@ trait ModelTrait
         }
         if($this->is_editable()){
             $table->form = new BaseForm(
-                id:$table->getter->table,
                 table: $table->getter->table,
             );
             $this->get_edit_form($table->form);

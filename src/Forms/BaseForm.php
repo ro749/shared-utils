@@ -132,7 +132,8 @@ class BaseForm
         }
         
         if(isset($data['id'])) {
-            $id = DB::table($this->table)->where('id', $data['id'])->update($data);
+            DB::table($this->table)->where('id', $data['id'])->update($data);
+            $id = $data['id'];
         } else {
             if ($this->user !== '') {
                 $data[$this->user] = Auth::guard($this->user)->user()->id;
@@ -199,7 +200,7 @@ class BaseForm
     public static function instanciate(): BaseForm
     {
         $basename = class_basename(static::class);
-        return config('forms.'.$basename) ?? static::class;
+        return new (config('overrides.forms.'.$basename));
     }
 
 }

@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\DB;
-abstract class LoginFormRequest extends BaseForm
+use Illuminate\Support\Facades\Log;
+abstract class LoginForm extends BaseForm
 {
     public string $guard;
     public string $column_status = '';
