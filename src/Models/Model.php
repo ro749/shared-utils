@@ -8,6 +8,6 @@ class Model extends BaseModel
     public static function instance(): Model
     {
         $basename = class_basename(static::class);
-        return new (config('models.'.$basename));
+        return new (config('overrides.models.'.$basename));
     }
 }
