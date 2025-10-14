@@ -19,4 +19,5 @@ enum Icon: string{
     case LINK = "iconamoon:link";
     case WHATSAPP = "ic:outline-whatsapp";
     case RESTART = "iconamoon:restart";
+    case HASH = "ic:round-numbers";
 }
