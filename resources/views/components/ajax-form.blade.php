@@ -117,9 +117,11 @@ $initial_data = $form->get_initial_data();
                         @else
                         openPopup("form-success-popup",2500);
                         @endif
+                        @if($form->reset)
                         for (const key in this.form) {
                             this.form[key] = '';
                         }
+                        @endif
                         @stack($form->get_id().'_reset')
                         @endif
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 class BaseForm
 {
     public string $table;
@@ -30,6 +31,8 @@ class BaseForm
 
     public string $view = '';
 
+    public bool $reset = true;
+
 
     
     public function __construct(
@@ -45,7 +48,8 @@ class BaseForm
         string $uploading_message = '',
         int $db_id = 0,
         bool $reload = false,
-        string $view = ''
+        string $view = '',
+        bool $reset = true
     )
     {
         $this->table = $table;
@@ -62,6 +66,7 @@ class BaseForm
         $this->reload = $reload;
         $this->view = $view;
         $this->has_images = $this->get_has_images();
+        $this->reset = $reset;
         
     }
 
@@ -121,10 +126,13 @@ class BaseForm
             if ($field->type == InputType::IMAGE) {
                 $file = $rawRequest->file($key);
                 $data[$key] = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs($field->route, $data[$key], 'public');
+                Log::debug('storaging');
+                $ans = $file->storeAs($field->route, $data[$key], 'public');
+                Log::debug($ans);
                 if($this->db_id!=0){
                     $prev_image = DB::table($this->table)->where('id', $this->db_id)->value($key);
                     if ($prev_image != '') {
+                        
                         Storage::disk('public')->delete($field->route . $prev_image);
                     }
                 }
