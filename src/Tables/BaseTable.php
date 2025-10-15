@@ -123,6 +123,7 @@ class BaseTable
 
     function make_it_modifiable(){
         $this->is_editable = true;
+        if($this->form == null) return;
         foreach ($this->form->fields as $key => $field) {
             if(isset($this->getter->columns[$key])) {
                 $this->getter->columns[$key]->editable = true;
