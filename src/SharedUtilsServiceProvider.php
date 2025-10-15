@@ -11,6 +11,7 @@ use Ro749\SharedUtils\Commands\MakeForm;
 use Ro749\SharedUtils\Commands\Options;
 use Ro749\SharedUtils\Commands\MakeCrud;
 use Ro749\SharedUtils\Commands\ReadCsv;
+use Ro749\SharedUtils\Commands\GenerateOverridesConfig;
 use Illuminate\Support\Facades\Blade;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
@@ -38,6 +39,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 Options::class,
                 MakeCrud::class,
                 ReadCsv::class,
+                GenerateOverridesConfig::class
             ])
             ->hasRoutes('web');
     }
