@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 use Illuminate\Database\Query\Builder;
 use Ro749\SharedUtils\Statistics\Statistic;
+use Illuminate\Support\Facades\Log;
 class ArrayGetter extends BaseGetter{
     /** @var Statistic[] */
     public array $statistics = [];

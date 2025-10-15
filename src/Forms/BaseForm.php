@@ -114,6 +114,7 @@ class BaseForm
     public function prosses(Request $rawRequest): string
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
+        Log::debug($data);
         $this->before_process($data);
         if($this->db_id!=0) {
             $data['id'] = $this->db_id;

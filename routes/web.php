@@ -6,6 +6,7 @@ Route::middleware('web')->group(function () {
     Route::get('/table/{table}/get', function (Request $request,string $table) {
         $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
+        $table->make_it_modifiable();
         return response()->json($table->get(
             $request->get('start'), 
             $request->get('length'),
@@ -18,6 +19,7 @@ Route::middleware('web')->group(function () {
     Route::get('/table/{table}/selectors', function (Request $request,string $table) {
         $fullClass = config('overrides.tables.'.$table);
         $table = new $fullClass();
+        $table->make_it_modifiable();
         return response()->json($table->get_selectors());
     });
     

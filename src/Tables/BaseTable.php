@@ -49,10 +49,6 @@ class BaseTable
         $this->page_length = $page_length;
         $this->texts = $texts;
         $this->buttons = $buttons;
-        if($this->form != null){
-            $this->make_it_modifiable();
-        }
-        $this->generate_buttons();
     }
 
     public function getColumn(string $key): ?Column
@@ -99,6 +95,10 @@ class BaseTable
     }
 
     function get_info(){
+        if($this->form != null){
+            $this->make_it_modifiable();
+        }
+        $this->generate_buttons();
         $filters = $this->getter->filters;
         foreach($this->getter->statistics as $stat){
             $filters = array_merge($filters,$stat->filters);
