@@ -21,7 +21,7 @@ class GenerateOverridesConfig extends Command
         $overrides['tables'] = $this->getClassesFromFolder('app/Tables');
         $overrides['forms'] = $this->getClassesFromFolder('app/Forms');
         $overrides['models'] = $this->getClassesFromFolder('app/Models');
-
+        $overrides['controllers'] = $this->getClassesFromFolder('app/Http/Controllers');
         // Procesar Plans e ImageMapPro (solo archivos únicos, no carpetas)
         $plansOverrides = $this->getClassesFromFolder('app/Plans');
         if (!empty($plansOverrides)) {
@@ -103,11 +103,19 @@ class GenerateOverridesConfig extends Command
         $content .= "return [\n";
 
         foreach ($overrides as $key_override => $values) {
-            $content .= "    '{$key_override}' => [\n";
-            foreach($values as $key => $value) {
-                $content .= "        '{$key}' => {$value},\n";
+            
+            if(($key_override == "plans" || $key_override == "image_map_pro") && count($values) == 1){
+                $content .= "    '$key_override' => " . array_values($values)[0] . ",\n";
             }
-            $content .= "    ],\n";
+            else{
+                $content .= "    '{$key_override}' => [\n";
+                foreach($values as $key => $value) {
+                    $content .= "        '{$key}' => {$value},\n";
+                }
+                $content .= "    ],\n";
+            }
+            
+            
         }
 
         $content .= "];\n";

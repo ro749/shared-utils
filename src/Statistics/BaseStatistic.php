@@ -20,8 +20,7 @@ class BaseStatistic
     //the filters to aply as it is in php
     public array $filters;
 
-
-
+    public array $backend_filters = [];
     public ?Collection $data = null;
     
 
@@ -31,7 +30,8 @@ class BaseStatistic
         string $label ="",
         $row_height = 100,
         $max_elements = 10,
-        $filters = []
+        array $filters = [],
+        array $backend_filters = []
     )
     {
         $this->id = $id;
@@ -40,6 +40,7 @@ class BaseStatistic
         $this->row_height = $row_height;
         $this->max_elements = $max_elements;
         $this->filters = $filters;
+        $this->backend_filters = $backend_filters;
     }
 
     public function get(): mixed

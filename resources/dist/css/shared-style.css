@@ -80,6 +80,9 @@
     .popup{
         width: 83%;
     }
+    .no-phone{
+        display: none !important;
+    }
 }
 
 .icon{
