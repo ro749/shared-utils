@@ -114,7 +114,7 @@ class BaseForm
     public function prosses(Request $rawRequest): string
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
-        Log::debug($data);
+        
         $this->before_process($data);
         if($this->db_id!=0) {
             $data['id'] = $this->db_id;
@@ -127,9 +127,7 @@ class BaseForm
             if ($field->type == InputType::IMAGE) {
                 $file = $rawRequest->file($key);
                 $data[$key] = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                Log::debug('storaging');
                 $ans = $file->storeAs($field->route, $data[$key], 'public');
-                Log::debug($ans);
                 if($this->db_id!=0){
                     $prev_image = DB::table($this->table)->where('id', $this->db_id)->value($key);
                     if ($prev_image != '') {
