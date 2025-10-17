@@ -464,10 +464,6 @@ button:focus {
   outline: none;
 }
 
-span {
-  display: inline-block;
-}
-
 a {
   text-decoration: none;
   display: inline-block;

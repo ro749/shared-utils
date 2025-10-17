@@ -77,6 +77,7 @@ class BaseTable
     }
 
     function save($request) {
+        $this->form->fields["id"] = new FormField(type: InputType::HIDDEN);
         $this->form->prosses($request);
     }
 
