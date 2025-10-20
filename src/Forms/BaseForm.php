@@ -120,7 +120,10 @@ class BaseForm
             $data['id'] = $this->db_id;
         }
         foreach ($this->fields as $key => $field) {
-            if(!isset($data[$key])) continue;
+            if(!isset($data[$key])){
+                $data[$key] = '';
+                continue;
+            }
             if ($field->type == InputType::PASSWORD || $field->encrypt) {
                 $data[$key] = Hash::make($data[$key]);
             }
