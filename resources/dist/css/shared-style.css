@@ -75,6 +75,11 @@
     .just-phone{
         display: none !important;
     }
+
+    .responsive-row {
+        display: flex !important;
+        flex-direction: row !important;
+    }
 }
 @media only screen and (max-width: 767px) {
     .popup{
@@ -82,6 +87,14 @@
     }
     .no-phone{
         display: none !important;
+    }
+
+    .responsive-row {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .responsive-row > div {
+        width: 100% !important; 
     }
 }
 
