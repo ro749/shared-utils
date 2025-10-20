@@ -10,7 +10,7 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 class GenerateOverridesConfig extends Command
 {
-    protected $signature = 'config:generate-overrides';
+    protected $signature = 'generate:overrides';
     protected $description = 'Genera el archivo config/overrides.php con todas las clases';
 
     public function handle()

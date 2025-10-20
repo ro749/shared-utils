@@ -59,6 +59,7 @@ class FormField
         }
         switch ($this->type) {
             case InputType::EMAIL:
+                $rules[] = 'nullable';
                 $rules[] = 'email';
                 break;
             case InputType::PHONE:
