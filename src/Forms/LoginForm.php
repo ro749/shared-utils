@@ -14,7 +14,7 @@ abstract class LoginForm extends BaseForm
     public bool $plain_password = false;
 
     public function __construct(
-        string $table, 
+        string $table = '', 
         array $fields = [], 
         string $redirect = '', 
         string $popup = '', 

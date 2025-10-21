@@ -120,7 +120,10 @@ class BaseForm
             $data['id'] = $this->db_id;
         }
         foreach ($this->fields as $key => $field) {
-            if(!isset($data[$key])){
+            if(!array_key_exists($key, $data)) {
+                continue;
+            }
+            if($data[$key] == null){
                 $data[$key] = '';
                 continue;
             }
