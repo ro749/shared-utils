@@ -1,16 +1,19 @@
 <?php
 
 namespace Ro749\SharedUtils\Forms;
-
+use Illuminate\Validation\Rule;
 class FormField
 {
     public InputType $type;
     public string $label;
     public string $placeholder;
     public string $icon;
+    /* @var Rule[] $buttons*/
     public array $rules;
     public string $message;
     public string $value;
+    public bool $required = false;
+    public bool $unique = false;
     public int $max_length;
     public int $min_length;
     public bool $encrypt = false;
@@ -24,6 +27,8 @@ class FormField
         array $rules=[], 
         string $message="", 
         string $value = "",
+        bool $required = false,
+        bool $unique = false,
         int $max_length = 0,
         int $min_length = 0,
         bool $encrypt = false,
@@ -37,6 +42,8 @@ class FormField
         $this->rules = $rules;
         $this->message = $message;
         $this->value = $value;
+        $this->required = $required;
+        $this->unique = $unique;
         $this->max_length = $max_length;
         $this->min_length = $min_length;
         $this->encrypt = $encrypt;
@@ -45,12 +52,26 @@ class FormField
 
     public function is_required(): bool
     {
-        return in_array('required', $this->rules);
+        return $this->required;
     }
 
-    public function get_rules(): array
+    public function get_rules($key,$table,$request): array
     {
-        $rules = $this->rules;
+        $rules = [];
+        foreach ($this->rules as $rule) {
+            $rules[] = $rule->value;
+        }
+        if($this->required){
+            $rules[] = 'required';
+        }
+        if($this->unique){
+            if($request->filled('id')){
+                $rules[] = Rule::unique($table, $key)->ignore($$request->input('id'));
+            }
+            else{
+                $rules[] = 'unique:' . $table . ',' . $key;
+            }
+        }
         if($this->max_length!=0){
             $rules[] = 'max:' . $this->max_length;
         }
