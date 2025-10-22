@@ -104,12 +104,12 @@ class BaseForm
 
     public function prosses(Request $rawRequest): string
     {
-        return '';
         $data = $rawRequest->validate($this->rules($rawRequest));
         $this->before_process($data);
         if($this->db_id) {
             $data['id'] = $this->db_id;
         }
+        $arrays = [];
         foreach ($this->fields as $key => $field) {
             if(!isset($data[$key])){
                 $data[$key] = '';
@@ -130,6 +130,10 @@ class BaseForm
                     }
                 }
             }
+            if( $field->type == InputType::ARRAY) {
+                $arrays[$key] = $data[$key];
+                unset($data[$key]);
+            }
         }
 
         if(isset($data['id'])) {
@@ -140,7 +144,12 @@ class BaseForm
             }
             $model = $this->model_class::create($data);
         }
-
+        foreach ($arrays as $key => $array) {
+            foreach($array as &$value){
+                $value->{$this->fields[$key]->owner_column} = $model->id;
+            }
+            $model = $this->fields[$key]->table->form->model_class::create($array);
+        }
         $this->after_process($model);
         return $this->redirect;
     }
