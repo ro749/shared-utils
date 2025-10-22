@@ -25,6 +25,7 @@ class TableField extends FormField{
     public function render(string $name,string $push = "",string $data)
     {
         return view('shared-utils::components.tables.localSmartTable',[
+            "name"=>$name,
             "table"=>$this->table,
         ]);
     }

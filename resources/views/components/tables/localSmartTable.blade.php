@@ -25,6 +25,10 @@
 
 @push('scripts')
 <script>
-    $('#{{ $table->get_id() }}').localSmartTable(@json($table->get_info()));
+    @php 
+    $info = $table->get_info();
+    $info['name'] = $name;
+    @endphp
+    $('#{{ $table->get_id() }}').localSmartTable(@json($info));
 </script>
 @endpush

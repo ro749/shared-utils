@@ -4,9 +4,9 @@
             const $table = $(this);
             var counter = $table.data('counter');
             var id = $table.data('id');
+            element.id = counter;
             counter += 1;
             $table.data('counter',counter);
-            element.id = counter;
             var table = $table.DataTable();
             table.rows.add([element]);
             table.draw();
@@ -44,6 +44,7 @@
                     data: null,
                     render: function (data, type, row) {
                         html_input.attr("id", col+'-'+row.id);
+                        html_input.attr("x-model", 'form.'+options.name+'['+data.id+'].'+col);
                         return html_input.prop('outerHTML');
                     }
                 }
@@ -75,38 +76,6 @@
 
         $table.on('click', '.delete-btn', function(event) {
             table.row($(this).parents('tr')).remove().draw();
-        });
-        $(document).on('submit-'+options.parent_form.id, function(event,parent_data) {
-            var table_data = table.data().toArray();
-            var upload_table = [];
-            var rowIndex = 0;
-            var columns = Object.keys(options.columns);
-            for(var data in table_data){
-                var row = {};
-                for(var field_key in options.form.fields){
-                    var field = options.form.fields[field_key];
-                    if(field.type=='hidden'){
-                        row[field_key] = table_data[data][field_key];
-                    }
-                    else{
-                        row[field_key] = table.row(rowIndex).node().children[columns.indexOf(field_key)].children[0].value;
-                    }
-                    
-                }
-                rowIndex++;
-                upload_table.push(row);
-            }
-            $.ajax({
-                url: '/table/'+options.id+'/save',
-                method: 'POST',
-                data: {
-                    parent_data: parent_data,
-                    table_data: upload_table
-                },
-                success: function(response) {
-                    alert('Data saved successfully!');
-                }
-            })
         });
     };
 })(jQuery);
