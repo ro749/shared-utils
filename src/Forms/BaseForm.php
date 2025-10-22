@@ -8,10 +8,9 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Ro749\SharedUtils\Models\Model;
 class BaseForm
 {
-    public string $model_class;
+    public string $table;
     public array $fields;
     public string $submit_text;
     public string $redirect='';
@@ -37,7 +36,7 @@ class BaseForm
 
     
     public function __construct(
-        string $model_class = '', 
+        string $table = '', 
         array $fields = [], 
         string $redirect = '', 
         string $popup = 'sharedutils::templates.popup-success',
@@ -53,7 +52,7 @@ class BaseForm
         bool $reset = true
     )
     {
-        $this->model_class = $model_class;
+        $this->table = $table;
         $this->fields = $fields;
         $this->redirect = $redirect;
         $this->popup = $popup;
@@ -71,23 +70,33 @@ class BaseForm
         
     }
 
-    public function get_table(): string
-    {
-        if($this->model_class == '') return '';
-        return ($this->model_class)::make()->getTable();
-    }
-
-    public function get_model(): Model
-    {
-        return ($this->model_class)::make();
-    }
-
     public function rules($rawRequest): array
-    {   
+    {
+        if($rawRequest->filled('id')) {
+            foreach ($this->fields as $key => $field) {
+                if (in_array('unique', $field->rules)) {
+                    foreach ($field->rules as $index => $rule) {
+                        if ($rule === 'unique') {
+                            $field->rules[$index] = Rule::unique($this->table, $key)->ignore($rawRequest->input('id'));
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($this->fields as $key => $field) {
+                if (in_array('unique', $field->rules)) {
+                    foreach ($field->rules as $index => $rule) {
+                        if ($rule === 'unique') {
+                            $field->rules[$index] = "unique:{$this->table},{$key}";
+                        }
+                    }
+                }
+            }
+        }
+        
         $rules = [];
-        $table = $this->get_table();
         foreach ($this->fields as $key=>$value) {
-           $rules[$key] = $value->get_rules($key, $table, $rawRequest);
+           $rules[$key] = $value->get_rules();
         }
         return $rules;
     }
@@ -105,13 +114,16 @@ class BaseForm
     public function prosses(Request $rawRequest): string
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
+        
         $this->before_process($data);
-        if($this->db_id) {
+        if($this->db_id!=0) {
             $data['id'] = $this->db_id;
         }
-        $arrays = [];
         foreach ($this->fields as $key => $field) {
-            if(!isset($data[$key])){
+            if(!array_key_exists($key, $data)) {
+                continue;
+            }
+            if($data[$key] == null){
                 $data[$key] = '';
                 continue;
             }
@@ -123,34 +135,26 @@ class BaseForm
                 $data[$key] = Str::uuid() . '.' . $file->getClientOriginalExtension();
                 $ans = $file->storeAs($field->route, $data[$key], 'public');
                 if($this->db_id!=0){
-                    $prev_image = DB::table($this->get_table())->where('id', $this->db_id)->value($key);
+                    $prev_image = DB::table($this->table)->where('id', $this->db_id)->value($key);
                     if ($prev_image != '') {
                         
                         Storage::disk('public')->delete($field->route . $prev_image);
                     }
                 }
             }
-            if( $field->type == InputType::ARRAY) {
-                $arrays[$key] = $data[$key];
-                unset($data[$key]);
-            }
         }
-
+        
         if(isset($data['id'])) {
-            $model = $this->model_class::update($data, ['id' => $data['id']]);
+            DB::table($this->table)->where('id', $data['id'])->update($data);
+            $id = $data['id'];
         } else {
             if ($this->user !== '') {
                 $data[$this->user] = Auth::guard($this->user)->user()->id;
             }
-            $model = $this->model_class::create($data);
+            $id = DB::table($this->table)->insertGetId($data);
         }
-        foreach ($arrays as $key => $array) {
-            foreach($array as &$value){
-                $value->{$this->fields[$key]->owner_column} = $model->id;
-            }
-            $model = $this->fields[$key]->table->form->model_class::create($array);
-        }
-        $this->after_process($model);
+
+        $this->after_process($id);
         return $this->redirect;
     }
 
@@ -184,7 +188,7 @@ class BaseForm
     public function get_initial_data()
     {
         if($this->db_id!=0) {
-            $query = DB::table($this->get_table());
+            $query = DB::table($this->table);
             $something_selected = false;
             foreach ($this->fields as $key => $field) {
                 if($field->type == InputType::PASSWORD) continue;
@@ -204,7 +208,7 @@ class BaseForm
     }
 
     public function before_process(array &$data){}
-    public function after_process($model){}
+    public function after_process(int $id){}
 
     public static function instanciate(): BaseForm
     {
