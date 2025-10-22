@@ -65,15 +65,23 @@ $initial_data = $form->get_initial_data();
             @endif
             init(){
                 @stack($form->get_id())
+                @foreach ($form->fields as $key=>$field)
+                @if($field->type === Ro749\SharedUtils\Forms\InputType::ARRAY)
+                this.form.{{ $key }} = [];
+                $(document).on('PreviewSale.added', (e, data) => {
+                    this.form.{{ $key }}.push(data);
+                });
+                @endif
+                @endforeach
             },
             submit() {
+                
                 const urlParams = new URLSearchParams(window.location.search);
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
                 }
                 @if($form->has_images)
                 var formData = new FormData();
-                formData.append('test', 'test');
                 Object.entries(this.form).forEach(([key, value]) => {
                     formData.append(key, value);
                 });

@@ -3,17 +3,20 @@
         return this.each(function () {
             const $table = $(this);
             var counter = $table.data('counter');
+            var id = $table.data('id');
             counter += 1;
             $table.data('counter',counter);
             element.id = counter;
             var table = $table.DataTable();
             table.rows.add([element]);
             table.draw();
+            $(document).trigger(id+'.added', [element]);
         });
     };
     $.fn.localSmartTable = function (options = {}) {
         const $table = $(this);
         $table.data('counter',0);
+        $table.data('id',options.id);
         var columns = [];
         
         for (let col in options.columns){

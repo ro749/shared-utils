@@ -104,6 +104,7 @@ class BaseForm
 
     public function prosses(Request $rawRequest): string
     {
+        return '';
         $data = $rawRequest->validate($this->rules($rawRequest));
         $this->before_process($data);
         if($this->db_id) {
