@@ -2,13 +2,14 @@
 
 namespace Ro749\SharedUtils\Getters;
 
+use Illuminate\Database\Query\Builder;
 use Ro749\SharedUtils\Tables\Column;
 use Ro749\SharedUtils\Filters\BaseFilter;
-use Illuminate\Database\Query\Builder;
-
-abstract class BaseGetter
+use Ro749\SharedUtils\Statistics\Statistic;
+use Illuminate\Support\Facades\DB;
+class BaseGetter
 {
-    public string $table;
+    public string $model_class = '';
 
      /** @var Column[] */
     public array $columns;
@@ -16,15 +17,29 @@ abstract class BaseGetter
     /** @var BaseFilter[] */
     public array $filters;
     public array $backend_filters;
-    public bool $debug;
 
-    function __construct(array $filters = [], array $backend_filters = [],array $columns = [],string $table = '',$debug = false)
+    /** @var Statistic[] */
+    public array $statistics = [];
+
+    function __construct(
+        string $model_class = '',
+        array $columns = [],
+        array $statistics = [],
+        array $filters = [], 
+        array $backend_filters = []
+    )
     {
+        $this->model_class = $model_class;
+        $this->columns = $columns;
+        $this->statistics = $statistics;
         $this->filters = $filters;
         $this->backend_filters = $backend_filters;
-        $this->columns = $columns;
-        $this->table = $table;
-        $this->debug = $debug;
+    }
+
+    function get_table(): string {
+        $model_class = $this->model_class;
+        $model = new $model_class();
+        return $model->getTable();
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
@@ -47,24 +62,103 @@ abstract class BaseGetter
         }
         $query->offset($start);
         $query->limit($length);
-        if($this->debug){
-            $ans['query'] = $query->toSql();
-        }
         $ans['data'] = $query->get();
         return $ans;
     }
 
-    abstract function get_query(array &$ans,string $search,array $filters): Builder;
+    function get_query(array &$ans,string $search,array $filters): Builder{
+        $table = $this->get_table();
+        $query = DB::table($table)->select($table.'.id');
+        $joins = [];
+        foreach ($this->statistics as $key => $subquery) {
+            $subquery->get_subquery($query,$table,$key,$filters);
+        }
+        foreach ($this->columns as $key => $column) {
+            //if column needs data from other table
+            if ($column->is_foreign()) {
+                if(array_key_exists($column->logic_modifier->table, $this->statistics)){
+                    $stat_name = $column->logic_modifier->table;
+                    $query->addSelect(DB::raw('COALESCE('.$stat_name.'.'.$key.',0) as '.$key));
+                    continue;
+                }
 
-    abstract function search(Builder $query,string $search): Builder;
+                //if column needs data from other table and its not editable
+                if(!$column->editable){
+                    $modifier = $column->logic_modifier;
+                    //if column needs data from other table and its not editable and this join has not been added, adds it
+                    if(!in_array($modifier->table, $joins)){
+                        $joins[] = $modifier->table;
+                        $query->leftJoin(
+                            $modifier->table, 
+                            $modifier->table . '.id', '=', $table . '.' . $key);
+                    }
+                    $query->addSelect(DB::raw($modifier->get_value($table ,$key) . ' as ' . $key));
+                }
+                //if column needs data from other table and its editable
+                else{
+                    //if column needs data from other table and its editable it does not joins, as the join is going to be done manualy, the data 
+                    //is already collected
+                    $query->addSelect($table . '.' . $key);
+                    //if column needs data from other table and its editable it does not joins, the join was not made, but if it has search it needs to
+                    //be done so that it cans earch proprerly (the search is not aplied)
+                    if ($search!='') {
+                        if(!in_array($column, $joins)){
+                            $joins[] = $column;
+                            $query->leftJoin($column->table, $column->table . '.id', '=', $table . '.' . $key);
+                        }
+                    }
+                }
+            }
+            else {
+                $query->addSelect($table . '.' . $key);
+            }
+        }
+        return $query;
+    }
+
+    public function search(Builder $query,string $search): Builder{
+        $table = $this->get_table();
+        $query->where(function ($query) use ($search,$table) {
+            foreach ($this->columns as $key => $column) {
+                if ($column->is_foreign()) {
+                    $modifier = $column->logic_modifier;
+                    $query->orWhereRaw($modifier->get_value($table ,$key)." LIKE ?", ["%{$search}%"]);
+                }
+                else {
+                    $query->orWhere($table . '.' . $key, 'like', '%' . $search . '%');
+                }
+            }
+        });
+        return $query;
+    }
 
     public function get_selectors(){
-        return [];
+        $ans = [];
+        foreach ($this->columns as $key => $column){
+            if ($column->is_foreign() && $column->editable) {
+                $modifier = $column->logic_modifier;
+                $foreign_column = DB::table($modifier->table)->select('id',$modifier->column)->get();
+                foreach($foreign_column as $foreign_column_key => $foreign_column_value) {
+                    $ans[$key][$foreign_column_value->id] = $foreign_column_value->{$modifier->column};
+                }
+            }
+        }
+        return $ans;
     }
 
     public function needs_selectors(): bool{
+        foreach ($this->columns as $key => $column){
+            if ($column->is_foreign() && $column->editable) {
+                return true;
+            }
+        }
         return false;
     }
 
-    abstract function apply_filters($query, $filters);
+    
+    public function apply_filters($query, $filters){
+        foreach ($this->filters as $filter) {
+            $filter->filter($query, $filters);
+        }
+    }
 }

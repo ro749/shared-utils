@@ -83,7 +83,7 @@ class BaseTable
 
     public function delete(int $id): void
     {
-        DB::table($this->getter->table)->where('id', $id)->delete();
+        DB::table($this->getter->get_table())->where('id', $id)->delete();
     }
 
     public function has_edit(): bool
@@ -134,14 +134,14 @@ class BaseTable
                     options: $this->getter->columns[$key]->logic_modifier->options ?? []
                 );
             }
-            if(in_array('unique:' . $this->getter->table . ',' . $key, $field->rules)){
-                $field->rules = array_diff($field->rules, ['unique:' . $this->getter->table . ',' . $key]);
+            if(in_array('unique:' . $this->getter->get_table() . ',' . $key, $field->rules)){
+                $field->rules = array_diff($field->rules, ['unique:' . $this->getter->get_table() . ',' . $key]);
             }
             
         }
         $this->form->fields["id"] = new FormField(
             type: InputType::TEXT,
-            rules: ['required', 'integer', 'exists:' . $this->getter->table . ',id'],
+            rules: ['required', 'integer', 'exists:' . $this->getter->get_table() . ',id'],
         );
         $this->form->fields = array_filter($this->form->fields, function ($field) {
             return $field->type != InputType::PASSWORD && !$field->encrypt;

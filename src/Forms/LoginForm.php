@@ -14,7 +14,7 @@ abstract class LoginForm extends BaseForm
     public bool $plain_password = false;
 
     public function __construct(
-        string $table = '', 
+        string $model_class = '', 
         array $fields = [], 
         string $redirect = '', 
         string $popup = '', 
@@ -27,7 +27,7 @@ abstract class LoginForm extends BaseForm
     )
     {
         parent::__construct( 
-            table: $table, 
+            model_class: $model_class, 
             fields: $fields, 
             redirect: $redirect, 
             popup: $popup, 
