@@ -18,8 +18,9 @@ class BaseForm
     public string $popup='';
     public string $success_msg='';
     public string $submit_url='';
-    //if needs to register the loged user, fill with the column
+    //if needs to register the loged user, fill with the column, also fill the guard if is not web
     public string $user = '';
+    public string $guard = 'web';
     //if is a form an update, rather than register
     public int $db_id = 0;
     public string $callback='';
@@ -45,6 +46,7 @@ class BaseForm
         string $submit_text = 'Submit', 
         string $submit_url = '',
         string $user = '', 
+        string $guard = 'web',
         string $callback = '',
         string $uploading_message = '',
         int $db_id = 0,
@@ -61,6 +63,7 @@ class BaseForm
         $this->submit_text = $submit_text;
         $this->submit_url = $submit_url;
         $this->user = $user;
+        $this->guard = $guard;
         $this->callback = $callback;
         $this->uploading_message = $uploading_message;
         $this->db_id = $db_id;
@@ -141,16 +144,17 @@ class BaseForm
         }
         
         if(isset($data['id'])) {
-            $model = $this->model_class::update($data, ['id' => $data['id']]);
+            $id = $data['id'];
+            unset($data['id']);
+            $model = $this->model_class::updateOrCreate(['id' => $id], $data);
 
         } else {
             if ($this->user !== '') {
-                $data[$this->user] = Auth()->user()->id;
+                $data[$this->user] = Auth::guard('asesor')->user()->id;
             }
             $model = $this->model_class::create($data);
         }
         foreach ($arrays as $key => $array) {
-            $array_data = [];
             foreach($array as $value){
                 $value[$this->fields[$key]->owner_column] = $model->id;
                 $this->fields[$key]->table->form->model_class::create($value);

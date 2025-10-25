@@ -66,7 +66,7 @@ class FormField
         }
         if($this->unique){
             if($request->filled('id')){
-                $rules[] = Rule::unique($table, $key)->ignore($$request->input('id'));
+                $rules[] = Rule::unique($table, $key)->ignore($request->input('id'));
             }
             else{
                 $rules[] = 'unique:' . $table . ',' . $key;

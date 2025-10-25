@@ -7,7 +7,6 @@ abstract class Controller
     public static function instance(): Controller
     {
         $basename = class_basename(static::class);
-        Log::debug(config('overrides.controllers.'.$basename));
         return config('overrides.controllers.'.$basename) ?? static::class;
     }
 }
