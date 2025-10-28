@@ -9,6 +9,3 @@
 @if($field->view)
 @include($field->view, ["field"=>$field,"name"=>$name,"data"=>$data])
 @endif
-<template x-if="errors['{{ $name }}']">
-    <p class="form-error" x-text="errors['{{ $name }}']"></p>
-</template>
