@@ -13,3 +13,6 @@
     cols="{{ $field->cols }}"
 >
 </textarea>
+<template x-if="errors['{{ $name }}']">
+    <p class="form-error" x-text="errors['{{ $name }}']"></p>
+</template>

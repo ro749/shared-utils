@@ -38,3 +38,6 @@
     $('#{{ $name }}').val(null).trigger('change');
 @endpush
 @endif
+<template x-if="errors['{{ $name }}']">
+    <p class="form-error" x-text="errors['{{ $name }}']"></p>
+</template>

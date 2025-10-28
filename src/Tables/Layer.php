@@ -1,14 +1,14 @@
 <?php
 namespace Ro749\SharedUtils\Tables;
-use Ro749\SharedUtils\Getters\ArrayGetter;
+use Ro749\SharedUtils\Getters\BaseGetter;
 use Closure;
 class Layer{
-    public ArrayGetter $getter;
+    public BaseGetter $getter;
     public string|Closure $title;
     public string $parent;
 
     public function __construct(
-        ArrayGetter $getter,
+        BaseGetter $getter,
         string|Closure $title,
         string $parent = ''
     ){

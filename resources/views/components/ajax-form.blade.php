@@ -55,13 +55,35 @@ $initial_data = $form->get_initial_data();
                 @endif
             },
             errors: {},
-            images: {},
-            @if($form->has_images)
-            // Second function
-            storeImage(event) {
-                this.images[event.target.id] = event.target.files[0];
-            },
+            files: {},
             
+            @if($form->has_files)
+            storeFile(event) {
+                this.files[event.target.id] = event.target.files[0];
+            },
+            previews: {
+                @foreach ($form->fields as $key => $field)
+                    @if( $field->type === Ro749\SharedUtils\Forms\InputType::FILE) 
+                    '{{ $key }}': '{{ $field->preview_table->get_id() }}',
+                    @endif               
+                @endforeach
+            },
+            showPreview(event){
+                var formData = new FormData();
+                formData.append(event.target.id, event.target.files[0]);
+                const self = this; 
+                $.ajax({
+                    url: '{{ '/form/'.$form->get_id().'/preview/' }}'+event.target.id,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (data) {
+                        self.errors['file'] = data;
+                        $('#'+self.previews[event.target.id]).DataTable().ajax.reload();
+                    }
+                });    
+            },
             @endif
             init(){
                 @stack($form->get_id())
@@ -80,12 +102,12 @@ $initial_data = $form->get_initial_data();
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
                 }
-                @if($form->has_images)
+                @if($form->has_files)
                 var formData = new FormData();
                 Object.entries(this.form).forEach(([key, value]) => {
                     formData.append(key, value);
                 });
-                Object.entries(this.images).forEach(([key, file]) => {
+                Object.entries(this.files).forEach(([key, file]) => {
                     formData.append(key, file);
                 });
                 @endif
@@ -96,7 +118,7 @@ $initial_data = $form->get_initial_data();
                 $.ajax({
                     url: '{{ $form->submit_url==""? '/form/'.$form->get_id() : $form->submit_url }}',
                     method: 'POST',
-                    @if($form->has_images)
+                    @if($form->has_files)
                     data: formData,
                     processData: false,
                     contentType: false,
@@ -136,7 +158,11 @@ $initial_data = $form->get_initial_data();
                         @if($form->reload)
                         location.reload();
                         @endif
-
+                        @if($form->has_files)
+                        for (const key in this.previews) {
+                            $('#'+this.previews[key]).DataTable().ajax.reload();
+                        }
+                        @endif
                         this.errors = {};
                     },
                     error: (xhr) => {

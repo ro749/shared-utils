@@ -16,6 +16,8 @@ class Column
 
     public bool $fillable = false;
 
+    public bool $local = false;
+
     public ColumnOrder $order = ColumnOrder::NONE;
 
     public function __construct(
@@ -23,6 +25,7 @@ class Column
         Modifier $modifier = null, 
         LogicModifier $logic_modifier = null,
         bool $fillable = false,
+        bool $local = false,
         $order = ColumnOrder::NONE
     )
     {
@@ -30,6 +33,7 @@ class Column
         $this->modifier = $modifier;
         $this->logic_modifier = $logic_modifier;
         $this->fillable = $fillable;
+        $this->local = $local;
         $this->order = $order;
     }
 

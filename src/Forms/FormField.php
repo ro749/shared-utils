@@ -2,6 +2,7 @@
 
 namespace Ro749\SharedUtils\Forms;
 use Illuminate\Validation\Rule;
+use Closure;
 class FormField
 {
     public InputType $type;
@@ -12,7 +13,10 @@ class FormField
     public array $rules;
     public string $message;
     public string $value;
-    public bool $required = false;
+    /**
+     * @var Closure(): bool|bool
+     */
+    public Closure|bool $required = false;
     public bool $unique = false;
     public int $max_length;
     public int $min_length;
@@ -27,7 +31,7 @@ class FormField
         array $rules=[], 
         string $message="", 
         string $value = "",
-        bool $required = false,
+        Closure|bool $required = false,
         bool $unique = false,
         int $max_length = 0,
         int $min_length = 0,
@@ -52,7 +56,7 @@ class FormField
 
     public function is_required(): bool
     {
-        return $this->required;
+        return is_bool($this->required) && $this->required;
     }
 
     public function get_rules($key,$table,$request): array
@@ -61,8 +65,15 @@ class FormField
         foreach ($this->rules as $rule) {
             $rules[] = $rule->value;
         }
-        if($this->required){
-            $rules[] = 'required';
+        if (is_bool($this->required)) {
+            if($this->required){
+                $rules[] = 'required';
+            }
+        }
+        else{
+            if(($this->required)($request)){
+                $rules[] = 'required';
+            }        
         }
         if($this->unique){
             if($request->filled('id')){

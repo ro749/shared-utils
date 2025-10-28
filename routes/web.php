@@ -66,12 +66,20 @@ Route::middleware('web')->group(function () {
     Route::post('/form/{form}', function (Request $request,$form) {
         $ans = [];
         $formClass = config('overrides.forms.'.$form);
-        $formRequest = new $formClass();
-        $redirect = $formRequest->prosses($request);
+        $form = new $formClass();
+        $redirect = $form->prosses($request);
         if($redirect!="") {  
             $ans = ["redirect" => $redirect];
         }
         return response()->json($ans);
+    });
+
+    Route::post('/form/{form}/preview/{field}', function (Request $request,$form,$field) {
+        $ans = [];
+        $formClass = config('overrides.forms.'.$form);
+        $form = new $formClass();
+        $file = $request->file($field);
+        $form->fields[$field]->preview($file);;
     });
     
     Route::post('/logout', function (Request $request) {

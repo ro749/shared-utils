@@ -32,5 +32,5 @@
     <!-- main css -->
     <link rel="stylesheet"  href="{{ asset('vendor/shared-utils/css/style.css') }}">
     <link rel="stylesheet"  href="{{ asset('vendor/shared-utils/css/shared-style.css') }}">
-    <link rel="stylesheet" href="vendor/shared-utils/fancy-file-uploader/fancy_fileupload.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ asset('vendor/shared-utils/fancy-file-uploader/fancy_fileupload.css') }}" type="text/css" media="all" />
     <link rel="stylesheet"  href="{{ asset('css/style.css') }}">

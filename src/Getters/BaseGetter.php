@@ -7,6 +7,7 @@ use Ro749\SharedUtils\Tables\Column;
 use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Statistics\Statistic;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 class BaseGetter
 {
     public string $model_class = '';
@@ -42,7 +43,7 @@ class BaseGetter
         return $model->getTable();
     }
 
-    public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
+    public function get($start=null, $length=null, $search = '',$order = [],$filters = []): mixed
     {
         $search = $search==null?"":$search;
         $ans = [];
@@ -60,8 +61,10 @@ class BaseGetter
         if(!empty($order)){
             $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         }
-        $query->offset($start);
-        $query->limit($length);
+        if($length != -1){
+            $query->offset($start);
+            $query->limit($length);
+        }
         $ans['data'] = $query->get();
         return $ans;
     }
@@ -74,6 +77,7 @@ class BaseGetter
             $subquery->get_subquery($query,$table,$key,$filters);
         }
         foreach ($this->columns as $key => $column) {
+            if($column->local) continue;
             //if column needs data from other table
             if ($column->is_foreign()) {
                 if(array_key_exists($column->logic_modifier->table, $this->statistics)){

@@ -18,6 +18,7 @@ enum InputType: string
     case HIDDEN = 'hidden';
     case SELECTOR = 'selector';
     case IMAGE = 'image';
+    case FILE = 'file';
     case ARRAY = 'array';
 }
 ?>

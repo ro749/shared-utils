@@ -8,14 +8,14 @@ class DbUpdate extends DbReader
 {
     public string $public_id = '';
     public function __construct(
-        string $table, 
+        string $model_class, 
         string $public_id,
         array $required_columns = [], 
         bool $add_new_columns = false
     )
     {
         parent::__construct(
-            table: $table,
+            model_class: $model_class,
             required_columns: $required_columns,
             add_new_columns: $add_new_columns
         );
@@ -32,10 +32,10 @@ class DbUpdate extends DbReader
         if($this->error_text != '') return;
 
         if(!$this->add_new_columns){
-            $columns = DB::getSchemaBuilder()->getColumnListing($this->table);
+            $columns = DB::getSchemaBuilder()->getColumnListing($this->get_table());
             foreach ($titles as $title){
                 if (!in_array($title, $columns)){
-                    $this->error_text .= "Column $title is not in table $this->table.";
+                    $this->error_text .= "Column $title is not in table {$this->get_table()}.";
                 }
             }
         }
@@ -43,7 +43,7 @@ class DbUpdate extends DbReader
 
     public function process_data(array &$titles,array &$data):void{
         if($this->add_new_columns){
-            $this->migration_text .= "Schema::table('$this->table', function (Blueprint \$table) {\n";
+            $this->migration_text .= "Schema::table('{$this->get_table()}', function (Blueprint \$table) {\n";
             foreach ($titles as $title){
                 if (!in_array($title, $this->required_columns)){
                     $this->migration_text .= $this->get_type($title,$data);
@@ -52,14 +52,13 @@ class DbUpdate extends DbReader
             $this->migration_text .= "});\n";
         }
         foreach ($data as $row){
-            $this->migration_text .= "DB::table('$this->table')->where('".$this->public_id."', '".$row[$this->public_id]."')->update([\n";
+            $this->migration_text .= "DB::table('{$this->get_table()}')->where('".$this->public_id."', '".$row[$this->public_id]."')->update([\n";
             foreach ($row as $column => $value){
                 if($column == $this->public_id) continue;
                 $this->migration_text .= "'$column' => '$value',\n";
             }
             $this->migration_text .= "]);\n";
         }
-
         $this->migration_text = '<?php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -76,9 +75,10 @@ return new class extends Migration
     }
 };';
 
-        $file = date('Y_m_d_His').'_'.$this->table.'_table.php';
+        $file = date('Y_m_d_His').'_'.$this->get_table().'_table.php';
         file_put_contents(database_path('migrations/'.$file),$this->migration_text );
         echo "Migration created: ".database_path('migrations/'.$file);
+        
     }
 
     public function get_type(string $column,array &$data):string{
@@ -105,5 +105,9 @@ return new class extends Migration
                 return "\$table->string('$column');\n";
         }
         return "";
+    }
+
+    public function save_changes(){
+
     }
 }

@@ -41,7 +41,7 @@ class LayeredTable
     public function get_metadata($layer = 0, $selected_id = 0){
         $ans = [
             'id' => $this->get_id(),
-            'table' => $this->layers[$layer]->getter->table,
+            'table' => $this->layers[$layer]->getter->get_table(),
             'columns' => $this->layers[$layer]->getter->columns,
             'filters' => $this->layers[$layer]->getter->filters,
             'backend_filters' => $this->layers[$layer]->getter->backend_filters,
@@ -69,9 +69,7 @@ class LayeredTable
         $ans['title'] = '';
         if($selected_id != 0){
             $prev_layer = $this->layers[$layer-1];
-            $ans['title'] = DB::table($prev_layer->getter->table)
-                ->where('id','=', $selected_id)
-                ->value($prev_layer->title);
+            $ans['title'] = $prev_layer->getter->model_class::where('id','=', $selected_id)->value($prev_layer->title);
         }
         return $ans;
     }

@@ -72,7 +72,7 @@
         $.inArray('Files', dataTransfer.types) !== -1 &&
         this._trigger(type, $.Event(type, { delegatedEvent: e })) !== false
       ) {
-        e.preventDefault();
+        //e.preventDefault();
         if (isDragOver) {
           dataTransfer.dropEffect = 'copy';
         }

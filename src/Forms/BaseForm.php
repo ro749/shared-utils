@@ -4,7 +4,6 @@ use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Ro749\SharedUtils\Models\Model;
@@ -29,7 +28,7 @@ class BaseForm
 
     public $initial_data = null;
 
-    public bool $has_images = false;
+    public bool $has_files = false;
 
     public string $view = '';
 
@@ -69,7 +68,7 @@ class BaseForm
         $this->db_id = $db_id;
         $this->reload = $reload;
         $this->view = $view;
-        $this->has_images = $this->get_has_images();
+        $this->has_files = $this->get_has_files();
         $this->reset = $reset;
         
     }
@@ -114,8 +113,12 @@ class BaseForm
             $data['id'] = $this->db_id;
         }
         $arrays = [];
+        Log::debug('prossesing form');
         foreach ($this->fields as $key => $field) {
             if(!array_key_exists($key, $data)) {
+                if($field->type == InputType::FILE) {
+                    $field->save();
+                }
                 continue;
             }
             if($data[$key] == null){
@@ -142,26 +145,26 @@ class BaseForm
                 unset($data[$key]);
             }
         }
-        
-        if(isset($data['id'])) {
-            $id = $data['id'];
-            unset($data['id']);
-            $model = $this->model_class::updateOrCreate(['id' => $id], $data);
+        if(!empty($this->model_class)){
+            if(isset($data['id'])) {
+                $id = $data['id'];
+                unset($data['id']);
+                $model = $this->model_class::updateOrCreate(['id' => $id], $data);
+            } else {
+                if ($this->user !== '') {
+                    $data[$this->user] = Auth::guard($this->guard)->user()->id;
+                }
+                $model = $this->model_class::create($data);
+            }
+            foreach ($arrays as $key => $array) {
+                foreach($array as $value){
+                    $value[$this->fields[$key]->owner_column] = $model->id;
+                    $this->fields[$key]->table->form->model_class::create($value);
+                }
 
-        } else {
-            if ($this->user !== '') {
-                $data[$this->user] = Auth::guard('asesor')->user()->id;
             }
-            $model = $this->model_class::create($data);
+            $this->after_process($model);
         }
-        foreach ($arrays as $key => $array) {
-            foreach($array as $value){
-                $value[$this->fields[$key]->owner_column] = $model->id;
-                $this->fields[$key]->table->form->model_class::create($value);
-            }
-            
-        }
-        $this->after_process($model);
         return $this->redirect;
     }
 
@@ -174,10 +177,10 @@ class BaseForm
         return false;
     }
 
-    public function get_has_images(): bool
+    public function get_has_files(): bool
     {
         foreach ($this->fields as $key => $field) {
-            if ($field->type == InputType::IMAGE) {
+            if ($field->type == InputType::IMAGE || $field->type == InputType::FILE) {
                 return true;
             }
         }

@@ -15,7 +15,4 @@ $field = $form->fields[$name];
     @if($field->icon)
     </div>
     @endif
-    <template x-if="errors['{{ $name }}']">
-        <p class="form-error" x-text="errors['{{ $name }}']"></p>
-    </template>
 </div>

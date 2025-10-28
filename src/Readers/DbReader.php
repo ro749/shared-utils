@@ -6,24 +6,31 @@ use Illuminate\Support\Facades\DB;
 
 class DbReader extends Reader
 {
-    public string $table = '';
+    public string $model_class = '';
 
     public array $required_columns = [];
 
     public bool $add_new_columns = true;
-
     public string $migration_text='';
 
     public array $titles = [];
 
-    public function __construct(string $table, array $required_columns = [], bool $add_new_columns = false)
+    public function __construct(
+        string $model_class, 
+        array $required_columns = [], 
+        bool $add_new_columns = false
+        )
     {
-        $this->table = $table;
+        $this->model_class = $model_class;
         $this->required_columns = $required_columns;
         $this->add_new_columns = $add_new_columns;
     }
 
-
+    public function get_table(): string
+    {
+        if($this->model_class == '') return '';
+        return ($this->model_class)::make()->getTable();
+    }
 
     public function check_columns(array &$titles):void{
         $this->migration_text = '';
@@ -35,10 +42,10 @@ class DbReader extends Reader
         if($this->error_text != '') return;
 
         if(!$this->add_new_columns){
-            $columns = DB::getSchemaBuilder()->getColumnListing($this->table);
+            $columns = DB::getSchemaBuilder()->getColumnListing($this->get_table());
             foreach ($titles as $title){
                 if (!in_array($title, $columns)){
-                    $this->error_text .= "Column $title is not in table $this->table.";
+                    $this->error_text .= "Column $title is not in table {$this->get_table()}.";
                 }
             }
         }
@@ -46,7 +53,7 @@ class DbReader extends Reader
 
     public function process_data(array &$titles,array &$data):void{
         if($this->add_new_columns){
-            $this->migration_text .= "Schema::table('$this->table', function (Blueprint \$table) {\n";
+            $this->migration_text .= "Schema::table('{$this->get_table()}', function (Blueprint \$table) {\n";
             foreach ($titles as $title){
                 if (!in_array($title, $this->required_columns)){
                     $this->migration_text .= $this->get_type($title,$data);
@@ -55,7 +62,7 @@ class DbReader extends Reader
             $this->migration_text .= "});\n";
         }
         foreach ($data as $row){
-            $this->migration_text .= "DB::table('$this->table')->insert([\n";
+            $this->migration_text .= "DB::table('{$this->get_table()}')->insert([\n";
             foreach ($row as $column => $value){
                 $this->migration_text .= "'$column' => '$value',\n";
             }
@@ -78,7 +85,7 @@ return new class extends Migration
     }
 };';
 
-        $file = date('Y_m_d_His').'_'.$this->table.'_table.php';
+        $file = date('Y_m_d_His').'_'.$this->get_table().'_table.php';
         file_put_contents(database_path('migrations/'.$file),$this->migration_text );
         echo "Migration created: ".database_path('migrations/'.$file);
     }

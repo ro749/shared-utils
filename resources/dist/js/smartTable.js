@@ -24,6 +24,9 @@
                     switch (col_data.logic_modifier.type) {
                         case 'options':
                             renderFn = (data) => {
+                                if(data == null){
+                                    return '';
+                                }
                                 return '<div class="'+col_data.logic_modifier.options+'-'+data+'">'+
                                 window[col_data.logic_modifier.options][data]+
                                 '</div>';

@@ -20,3 +20,6 @@
     @input.debounce.500ms="submit()"
     @endif
 >
+<template x-if="errors['{{ $name }}']">
+    <p class="form-error" x-text="errors['{{ $name }}']"></p>
+</template>
