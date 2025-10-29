@@ -32,7 +32,9 @@ class TableTexts
         string $loadingRecords = 'Cargando...',
         string $processing = '',
         string $search = 'Buscar:',
-        string $zeroRecords = 'Ningun registro encontrado que coincida con su busqueda.'
+        string $zeroRecords = 'Ningun registro encontrado que coincida con su busqueda.',
+        Paginate $paginate = null,
+        Aria $aria = null
     )  {
         $this->decimal = $decimal;
         $this->emptyTable = $emptyTable;
@@ -47,7 +49,7 @@ class TableTexts
         $this->search = $search;
         $this->zeroRecords = $zeroRecords;
 
-        $this->paginate = new Paginate();
-        $this->aria = new Aria();
+        $this->paginate = $paginate ?? new Paginate();
+        $this->aria = $aria ?? new Aria();
     }
 }

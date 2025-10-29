@@ -113,7 +113,6 @@ class BaseForm
             $data['id'] = $this->db_id;
         }
         $arrays = [];
-        Log::debug('prossesing form');
         foreach ($this->fields as $key => $field) {
             if(!array_key_exists($key, $data)) {
                 if($field->type == InputType::FILE) {
