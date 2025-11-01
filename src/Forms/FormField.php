@@ -22,6 +22,7 @@ class FormField
     public int $min_length;
     public bool $encrypt = false;
     public bool $autosave = false;
+    public bool $sufficient = false;
 
     public function __construct(
         InputType $type, 
@@ -36,7 +37,8 @@ class FormField
         int $max_length = 0,
         int $min_length = 0,
         bool $encrypt = false,
-        bool $autosave = false
+        bool $autosave = false,
+        bool $sufficient = false
     )
     {
         $this->type = $type;
@@ -52,6 +54,7 @@ class FormField
         $this->min_length = $min_length;
         $this->encrypt = $encrypt;
         $this->autosave = $autosave;
+        $this->sufficient = $sufficient;
     }
 
     public function is_required(): bool
@@ -59,11 +62,15 @@ class FormField
         return is_bool($this->required) && $this->required;
     }
 
+    public function rules(&$rules,$key,$table,$request){
+        $rules[$key] = $this->get_rules($key,$table,$request);
+    }
+
     public function get_rules($key,$table,$request): array
     {
         $rules = [];
         foreach ($this->rules as $rule) {
-            $rules[] = $rule->value;
+            $rules[] = $rule;
         }
         if (is_bool($this->required)) {
             if($this->required){

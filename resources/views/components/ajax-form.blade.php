@@ -89,9 +89,12 @@ $initial_data = $form->get_initial_data();
                 @stack($form->get_id())
                 @foreach ($form->fields as $key=>$field)
                 @if($field->type === Ro749\SharedUtils\Forms\InputType::ARRAY)
-                this.form.{{ $key }} = [];
-                $(document).on('PreviewSale.added', (e, data) => {
-                    this.form.{{ $key }}.push(data);
+                this.form.{{ $key }} = {};
+                $(document).on('{{ $field->table->get_id() }}.added', (e, data) => {
+                    this.form.{{ $key }}[data[0]] = data[1];
+                });
+                $(document).on('{{ $field->table->get_id() }}.deleted', (e, data) => {
+                    delete this.form.{{ $key }}[data];
                 });
                 @endif
                 @endforeach

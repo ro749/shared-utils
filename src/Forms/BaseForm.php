@@ -89,7 +89,7 @@ class BaseForm
         $rules = [];
         $table = $this->get_table();
         foreach ($this->fields as $key=>$value) {
-           $rules[$key] = $value->get_rules($key, $table, $rawRequest);
+           $value->rules($rules,$key, $table, $rawRequest);
         }
         return $rules;
     }

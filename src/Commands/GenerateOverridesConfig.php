@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use Illuminate\Support\Facades\Log;
 class GenerateOverridesConfig extends Command
 {
     protected $signature = 'generate:overrides';
@@ -22,6 +23,7 @@ class GenerateOverridesConfig extends Command
         $overrides['forms'] = $this->getClassesFromFolder('app/Forms');
         $overrides['models'] = $this->getClassesFromFolder('app/Models');
         $overrides['controllers'] = $this->getClassesFromFolder('app/Http/Controllers');
+        $overrides['views'] = $this->getClassesFromFolder('resources/views',views: true);
         // Procesar Plans e ImageMapPro (solo archivos únicos, no carpetas)
         $plansOverrides = $this->getClassesFromFolder('app/Plans');
         if (!empty($plansOverrides)) {
@@ -46,28 +48,37 @@ class GenerateOverridesConfig extends Command
         $this->info('Total de clases registradas: ' . count($overrides));
     }
 
-    private function getClassesFromFolder($folder)
+    private function getClassesFromFolder($folder,$views = false)
     {
         $classes = [];
         $appPath = base_path($folder);
-
         if (!File::isDirectory($appPath)) {
             return $classes;
         }
-
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($appPath, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::LEAVES_ONLY
         );
-
-        foreach ($iterator as $file) {
-            if ($file->getExtension() === 'php') {
-                $className = $this->getClassNameFromFile($file);
-                if ($className) {
-                    $classes[$className['shortName']] = $className['fullName'];
+        if($views){
+            foreach ($iterator as $file){
+                $init_pos = strrpos($file, '\\')+1;
+                $final_pos = strrpos($file, '.blade.php');
+                $name = substr($file,$init_pos,$final_pos-$init_pos);
+                $classes[$name] = '\''.$name.'\'';
+                //$className = substr($file->getPathname(), strrpos($file->getPathname(), '/') + 1);
+            }
+        }
+        else{
+            foreach ($iterator as $file) {
+                if ($file->getExtension() === 'php') {
+                    $className = $this->getClassNameFromFile($file);
+                    if ($className) {
+                        $classes[$className['shortName']] = $className['fullName'];
+                    }
                 }
             }
         }
+        Log::debug($classes);
 
         return $classes;
     }
@@ -75,7 +86,6 @@ class GenerateOverridesConfig extends Command
     private function getClassNameFromFile(SplFileInfo $file)
     {
         $content = File::get($file->getRealPath());
-        
         // Extraer namespace
         if (preg_match('/namespace\s+([^;]+);/', $content, $namespaceMatch)) {
             $namespace = trim($namespaceMatch[1]);

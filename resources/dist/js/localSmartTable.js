@@ -5,12 +5,13 @@
             var counter = $table.data('counter');
             var id = $table.data('id');
             element.id = counter;
-            counter += 1;
-            $table.data('counter',counter);
+            
             var table = $table.DataTable();
             table.rows.add([element]);
             table.draw();
-            $(document).trigger(id+'.added', [element]);
+            $(document).trigger(id+'.added', [[counter,element]]);
+            counter += 1;
+            $table.data('counter',counter);
         });
     };
     $.fn.localSmartTable = function (options = {}) {
@@ -43,9 +44,15 @@
                 var column = {
                     data: null,
                     render: function (data, type, row) {
+                        let local_id = 'form.'+options.name+'['+data.id+'].'+col;
+                        let error_id = options.name+'.'+data.id+'.'+col;
+                        var div = $('<div></div>');
                         html_input.attr("id", col+'-'+row.id);
-                        html_input.attr("x-model", 'form.'+options.name+'['+data.id+'].'+col);
-                        return html_input.prop('outerHTML');
+                        html_input.attr("x-model", local_id);
+                        html_input.appendTo(div);
+                        var error = $('<template x-if="errors[\''+error_id+'\']"><p class="form-error" x-text="errors[\''+error_id+'\']"></p></template>');
+                        error.appendTo(div);
+                        return div.prop('outerHTML');
                     }
                 }
             }
@@ -66,7 +73,6 @@
                 return buttons;
             }
         });
-        
         var table = $table.DataTable({
             columns: columns,
             data: [],
@@ -75,7 +81,10 @@
         });
 
         $table.on('click', '.delete-btn', function(event) {
+            var id = $table.data('id');
+            $(document).trigger(id+'.deleted', [table.row($(this).parents('tr')).data().id]);
             table.row($(this).parents('tr')).remove().draw();
+            
         });
     };
 })(jQuery);

@@ -3,6 +3,7 @@
 namespace Ro749\SharedUtils\Forms;
 use Ro749\SharedUtils\Tables\BaseTable;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 class TableField extends FormField{
     public BaseTable $table;
     public string $owner_column = '';
@@ -18,9 +19,13 @@ class TableField extends FormField{
         $this->owner_column = $owner_column;
     }
 
-    public function get_rules($key,$table,$request): array
+    public function rules(&$rules,$key,$table,$request)
     {
-        return $this->table->form->rules($request);
+        $table_rules = $this->table->form->rules($request);
+        
+        foreach ($table_rules as $table_key => $rule) {
+            $rules[$key.".*.".$table_key] = $rule;
+        }
     }
 
     public function render(string $name,string $push = "",string $data)

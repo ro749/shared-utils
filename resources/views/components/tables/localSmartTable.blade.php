@@ -11,16 +11,6 @@
             @endif
         </tr>
     </thead>
-    <tfoot>
-        <tr id="{{ $table->get_id() }}-footer">
-            @foreach($table->get_columns() as $key=>$column)
-                <th>{{ $column->display }}</th>
-            @endforeach
-            @if($table->needsButtons())
-                <th></th>
-            @endif
-        </tr>
-    </tfoot>
 </table>
 
 @push('scripts')

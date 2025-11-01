@@ -20,6 +20,7 @@ class LocalTable extends BaseTable{
     }
 
     function get_info(){
+        $this->generate_buttons();
         return [
             'id' => $this->get_id(),
             'columns' => $this->getter->columns,
