@@ -31,6 +31,7 @@
     <script src="{{ asset('vendor/shared-utils/js/smartTable.js') }}"></script>
     <script src="{{ asset('vendor/shared-utils/js/layeredSmartTable.js') }}"></script>
     <script src="{{ asset('vendor/shared-utils/js/localSmartTable.js') }}"></script>
+    <script src="{{ asset('vendor/shared-utils/js/stringUtils.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendor/shared-utils/fancy-file-uploader/jquery.fileupload.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendor/shared-utils/fancy-file-uploader/jquery.iframe-transport.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendor/shared-utils/fancy-file-uploader/jquery.fancy-fileupload.js') }}"></script>

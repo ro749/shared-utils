@@ -5,7 +5,7 @@ use Ro749\SharedUtils\Tables\BaseTable;
 use Ro749\SharedUtils\Tables\Column;
 use Ro749\SharedUtils\Filters\BackendFilters\UserFilter;
 use Ro749\SharedUtils\Forms\BaseForm;
-use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\Field;
 use Ro749\SharedUtils\Forms\Selector;
 use Ro749\SharedUtils\Forms\InputType;
 use Illuminate\Support\Facades\Auth;
@@ -49,9 +49,9 @@ trait ModelTrait
         $table->needs_buttons = $table->needsButtons();
     }
 
-    private function get_field($key,$value): FormField{
+    private function get_field($key,$value): Field{
         return match (true) {
-            $value->logic_modifier === null => new FormField(
+            $value->logic_modifier === null => new Field(
                 type: $value->input_type ?? InputType::TEXT,
                 label: $value->label,
                 icon : $value->icon,

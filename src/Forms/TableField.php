@@ -4,7 +4,7 @@ namespace Ro749\SharedUtils\Forms;
 use Ro749\SharedUtils\Tables\BaseTable;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
-class TableField extends FormField{
+class TableField extends Field{
     public BaseTable $table;
     public string $owner_column = '';
     public function __construct(

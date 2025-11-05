@@ -113,10 +113,14 @@ class BaseForm
             $data['id'] = $this->db_id;
         }
         $arrays = [];
+        $forms = [];
         foreach ($this->fields as $key => $field) {
             if(!array_key_exists($key, $data)) {
                 if($field->type == InputType::FILE) {
                     $field->save();
+                }
+                if($field->type == InputType::COPY) {
+                    $data[$key] = $field->get_value($data);
                 }
                 continue;
             }
@@ -124,24 +128,38 @@ class BaseForm
                 $data[$key] = '';
                 continue;
             }
-            if ($field->type == InputType::PASSWORD || $field->encrypt) {
+            if($field->encrypt){
                 $data[$key] = Hash::make($data[$key]);
             }
-            if ($field->type == InputType::IMAGE) {
-                $file = $rawRequest->file($key);
-                $data[$key] = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                $ans = $file->storeAs($field->route, $data[$key], 'public');
-                if($this->db_id!=0){
-                    $prev_image = DB::table($this->get_table())->where('id', $this->db_id)->value($key);
-                    if ($prev_image != '') {
-                        
-                        Storage::disk('public')->delete($field->route . $prev_image);
+            switch ($field->type) {
+                case InputType::PASSWORD:
+                    $data[$key] = Hash::make($data[$key]);
+                    break;
+                case InputType::SESSION:
+                    $data[$key] = session()->get($key);
+                    break;
+                case InputType::COPY:
+                    $data[$key] = $field->get_value($data);
+                    break;
+                case InputType::IMAGE:
+                    $file = $rawRequest->file($key);
+                    $data[$key] = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                    $ans = $file->storeAs($field->route, $data[$key], 'public');
+                    if($this->db_id!=0){
+                        $prev_image = DB::table($this->get_table())->where('id', $this->db_id)->value($key);
+                        if ($prev_image != '') {
+                            Storage::disk('public')->delete($field->route . $prev_image);
+                        }
                     }
-                }
-            }
-            if( $field->type == InputType::ARRAY) {
-                $arrays[$key] = $data[$key];
-                unset($data[$key]);
+                    break;
+                case InputType::FORM:
+                    $forms[$key] = $data[$key];
+                    unset($data[$key]);
+                    break;
+                case InputType::ARRAY:
+                    $arrays[$key] = $data[$key];
+                    unset($data[$key]);
+                    break;
             }
         }
         if(!empty($this->model_class)){
@@ -155,14 +173,20 @@ class BaseForm
                 }
                 $model = $this->model_class::create($data);
             }
+            foreach ($forms as $key => $form_data){
+                $form_data[$this->fields[$key]->owner_column] = $model->id;
+                $this->fields[$key]->form->model_class::create($form_data);
+            }
             foreach ($arrays as $key => $array) {
                 foreach($array as $value){
                     $value[$this->fields[$key]->owner_column] = $model->id;
                     $this->fields[$key]->table->form->model_class::create($value);
                 }
-
             }
-            $this->after_process($model);
+            $ans = $this->after_process($model);
+            if($ans != null){
+                return $ans;
+            }
         }
         return $this->redirect;
     }

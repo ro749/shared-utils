@@ -4,7 +4,7 @@ namespace Ro749\SharedUtils\Forms;
 use Ro749\SharedUtils\Readers\DbUpdater;
 use Ro749\SharedUtils\Tables\BaseTable;
 use Closure;
-class FileUploader extends FormField
+class FileUploader extends Field
 {
     public string $accept = '';
     public DbUpdater $updater;

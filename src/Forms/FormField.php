@@ -1,130 +1,32 @@
 <?php
 
 namespace Ro749\SharedUtils\Forms;
+use Ro749\SharedUtils\Tables\BaseTable;
 use Illuminate\Validation\Rule;
-use Closure;
-class FormField
-{
-    public InputType $type;
-    public string $label;
-    public string $placeholder;
-    public string $icon;
-    /* @var Rule[] $buttons*/
-    public array $rules;
-    public string $message;
-    public string $value;
-    /**
-     * @var Closure(): bool|bool
-     */
-    public Closure|bool $required = false;
-    public bool $unique = false;
-    public int $max_length;
-    public int $min_length;
-    public bool $encrypt = false;
-    public bool $autosave = false;
-    public bool $sufficient = false;
-
+use Illuminate\Support\Facades\Log;
+class FormField extends Field{
+    public BaseForm $form;
+    public string $owner_column = '';
     public function __construct(
-        InputType $type, 
-        string $label="", 
-        string $placeholder="", 
-        string $icon="", 
-        array $rules=[], 
-        string $message="", 
-        string $value = "",
-        Closure|bool $required = false,
-        bool $unique = false,
-        int $max_length = 0,
-        int $min_length = 0,
-        bool $encrypt = false,
-        bool $autosave = false,
-        bool $sufficient = false
-    )
+        BaseForm $form, 
+        string $owner_column = '',
+    )    
     {
-        $this->type = $type;
-        $this->label = $label;
-        $this->placeholder = $placeholder;
-        $this->icon = $icon;
-        $this->rules = $rules;
-        $this->message = $message;
-        $this->value = $value;
-        $this->required = $required;
-        $this->unique = $unique;
-        $this->max_length = $max_length;
-        $this->min_length = $min_length;
-        $this->encrypt = $encrypt;
-        $this->autosave = $autosave;
-        $this->sufficient = $sufficient;
+        parent::__construct(
+            type: InputType::FORM,
+        );
+        $this->form = $form;
+        $this->owner_column = $owner_column;
     }
 
-    public function is_required(): bool
+    public function rules(&$rules,$key,$table,$request)
     {
-        return is_bool($this->required) && $this->required;
-    }
-
-    public function rules(&$rules,$key,$table,$request){
-        $rules[$key] = $this->get_rules($key,$table,$request);
-    }
-
-    public function get_rules($key,$table,$request): array
-    {
-        $rules = [];
-        foreach ($this->rules as $rule) {
-            $rules[] = $rule;
-        }
-        if (is_bool($this->required)) {
-            if($this->required){
-                $rules[] = 'required';
-            }
-        }
-        else{
-            if(($this->required)($request)){
-                $rules[] = 'required';
-            }        
-        }
-        if($this->unique){
-            if($request->filled('id')){
-                $rules[] = Rule::unique($table, $key)->ignore($request->input('id'));
-            }
-            else{
-                $rules[] = 'unique:' . $table . ',' . $key;
-            }
-        }
-        if($this->max_length!=0){
-            $rules[] = 'max:' . $this->max_length;
-        }
-        if($this->min_length!=0){
-            $rules[] = 'min:' . $this->min_length;
-        }
-        switch ($this->type) {
-            case InputType::EMAIL:
-                $rules[] = 'nullable';
-                $rules[] = 'email';
-                break;
-            case InputType::PHONE:
-                $rules[] = 'phone:MX';
-                break;
-            case InputType::ID_NUMBER:
-                $rules[] = 'regex:/^\d+$/'; // ID_NUMBER should only contain digits
-                break;
-        }
+        $form_rules = $this->form->rules($request);
         
-        if (empty($rules)) {
-            return ['nullable'];
+        foreach ($form_rules as $form_key => $rule) {
+            $rules[$key.".".$form_key] = $rule;
         }
-        return $rules;
     }
 
-    public function get_type(): InputType
-    {
-        if ($this->type === InputType::ID_NUMBER) {
-            return InputType::TEXT; // ID_NUMBER is treated as TEXT for input purposes
-        }
-        return $this->type; // default type
-    }
-
-    public function render(string $name,string $push,string $data)
-    {
-        return view('shared-utils::components.forms.field', ["field"=>$this,"name"=>$name,"data"=>$data]);
-    }
+    
 }

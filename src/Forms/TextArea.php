@@ -2,7 +2,7 @@
 
 namespace Ro749\SharedUtils\Forms;
 
-class TextArea extends FormField
+class TextArea extends Field
 {
     public function __construct(
         string $label="", 

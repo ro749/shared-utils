@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Ro749\SharedUtils\Getters\BaseGetter;
 use Ro749\SharedUtils\Forms\BaseForm;
 use Ro749\SharedUtils\Forms\InputType;
-use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\Field;
 use Ro749\SharedUtils\Forms\Selector;
 use Ro749\SharedUtils\Tables\TableButton;
 use Ro749\SharedUtils\Tables\TableButtonView;
@@ -77,7 +77,7 @@ class BaseTable
     }
 
     function save($request) {
-        $this->form->fields["id"] = new FormField(type: InputType::HIDDEN);
+        $this->form->fields["id"] = new Field(type: InputType::HIDDEN);
         $this->form->prosses($request);
     }
 
@@ -139,7 +139,7 @@ class BaseTable
             }
             
         }
-        $this->form->fields["id"] = new FormField(
+        $this->form->fields["id"] = new Field(
             type: InputType::TEXT,
             rules: ['required', 'integer', 'exists:' . $this->getter->get_table() . ',id'],
         );

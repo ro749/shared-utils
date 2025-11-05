@@ -2,7 +2,7 @@
 
 namespace Ro749\SharedUtils\Forms;
 
-class ImageUploader extends FormField
+class ImageUploader extends Field
 {
     public string $route = '';
     public string $view = '';

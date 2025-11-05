@@ -78,7 +78,6 @@ class GenerateOverridesConfig extends Command
                 }
             }
         }
-        Log::debug($classes);
 
         return $classes;
     }

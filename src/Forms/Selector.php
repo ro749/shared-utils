@@ -4,7 +4,7 @@ namespace Ro749\SharedUtils\Forms;
 use Closure;
 use Illuminate\Support\Facades\DB;
 
-class Selector extends FormField
+class Selector extends Field
 {
     public $options;
     public string $table;

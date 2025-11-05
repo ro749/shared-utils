@@ -3,7 +3,7 @@
 namespace {{ namespace }};
 
 use Ro749\SharedUtils\Forms\LoginFormRequest;
-use Ro749\SharedUtils\Forms\FormField;
+use Ro749\SharedUtils\Forms\Field;
 use Ro749\SharedUtils\Forms\InputType;
 use App\Models\User;
 use App\Models\Client;
@@ -18,12 +18,12 @@ class {{ class }} extends LoginFormRequest
             submit_text: "Entrar",
             redirect: "/",
             fields: [
-                "name" => new FormField(
+                "name" => new Field(
                     placeholder:"Usuario", 
                     type: InputType::TEXT,
                     icon: "bx bx-user"
                 ),
-                "password" => new FormField(
+                "password" => new Field(
                     placeholder:"Contraseña",
                     type: InputType::PASSWORD,
                     icon: "bx bx-lock-alt"

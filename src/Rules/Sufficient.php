@@ -46,22 +46,16 @@ class Sufficient implements DataAwareRule, ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        Log::debug($this->data);
         $exploded_attribute = explode('.', $attribute);
         if (count($exploded_attribute) > 1) {
             $name = $exploded_attribute[0];
             $index = $exploded_attribute[1];
-            Log::debug($name);
-            Log::debug($index);
-            Log::debug($this->id);
             $id = $this->data[$name][$index][$this->id];
         } else {
             $id = $this->data['id'];
         }
-        Log::debug($id);
         $current_value = $this->model_class::where('id', $id)->value($this->column);
         if ($value > $current_value) {
-            Log::debug($current_value);
             $fail('No hay sufficientes. Maximo '.$current_value );
         }
     }
