@@ -33,27 +33,27 @@ class Check extends Command
             }
         }
 
-        //$composer_json = json_decode(file_get_contents(base_path('composer.json')), true);
-        //$fixed_composer_json = false;
-        //foreach($composer_json['repositories'] as $key => $package) {
-        //    if ($composer_json['repositories'][$key]['type'] !== 'vcs') {
-        //        $fixed_composer_json = true;
-        //        $composer_json['repositories'][$key]['type'] = 'vcs';
-        //        $composer_json['repositories'][$key]['url'] = 
-        //        str_replace(
-        //            '..', 
-        //            'https://github.com', 
-        //            $composer_json['repositories'][$key]['url']
-        //        ).'.git';
-        //    }
-        //}
-        //if($fixed_composer_json) {
-        //    file_put_contents(
-        //        base_path('composer.json'), 
-        //        json_encode($composer_json,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-        //    );
-        //    $this->info('fixed composer.json');
-        //}
+        $composer_json = json_decode(file_get_contents(base_path('composer.json')), true);
+        $fixed_composer_json = false;
+        foreach($composer_json['repositories'] as $key => $package) {
+            if ($composer_json['repositories'][$key]['type'] !== 'vcs') {
+                $fixed_composer_json = true;
+                $composer_json['repositories'][$key]['type'] = 'vcs';
+                $composer_json['repositories'][$key]['url'] = 
+                str_replace(
+                    '..', 
+                    'https://github.com', 
+                    $composer_json['repositories'][$key]['url']
+                ).'.git';
+            }
+        }
+        if($fixed_composer_json) {
+            file_put_contents(
+                base_path('composer.json'), 
+                json_encode($composer_json,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            );
+            $this->info('fixed composer.json');
+        }
 
         $vendor_folder = base_path('public\vendor');
         $vendor_dirs = File::directories($vendor_folder);
