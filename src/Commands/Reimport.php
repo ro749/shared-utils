@@ -33,7 +33,11 @@ class Reimport extends Command
         foreach($vendor_dirs as $dir) {
             $package_name = basename($dir);
             File::deleteDirectory($dir);
-            $this->call('php artisan vendor:publish --tag='.$package_name.'-assets --force');
+            $this->info('Importando '.$package_name);
+            $this->call('vendor:publish', [
+                '--tag' => $package_name.'-assets',
+                '--force' => true
+            ]);
         }
         return 0;
     }

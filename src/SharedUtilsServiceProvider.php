@@ -13,6 +13,7 @@ use Ro749\SharedUtils\Commands\MakeCrud;
 use Ro749\SharedUtils\Commands\ReadCsv;
 use Ro749\SharedUtils\Commands\GenerateOverridesConfig;
 use Ro749\SharedUtils\Commands\Check;
+use Ro749\SharedUtils\Commands\Reimport;
 use Illuminate\Support\Facades\Blade;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
@@ -41,7 +42,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 MakeCrud::class,
                 ReadCsv::class,
                 Check::class,
-                GenerateOverridesConfig::class
+                GenerateOverridesConfig::class,
+                Reimport::class
             ])
             ->hasRoutes('web');
     }
