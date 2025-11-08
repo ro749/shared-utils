@@ -42,7 +42,7 @@ class Check extends Command
                 $composer_json['repositories'][$key]['url'] = 
                 str_replace(
                     '..', 
-                    'https://github.com', 
+                    'git@github.com:ro749', 
                     $composer_json['repositories'][$key]['url']
                 ).'.git';
             }

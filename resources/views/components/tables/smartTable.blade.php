@@ -1,5 +1,3 @@
-
-
 <table id="{{ $table->get_id() }}" class="table bordered-table mb-0">
     <thead>
         <tr id="{{ $table->get_id() }}-header">
@@ -7,7 +5,7 @@
                 <th>{{ $column->display }}</th>
             @endforeach
             @if($table->needsButtons())
-                <th></th>
+                <th>{{ $table->buttons_label }}</th>
             @endif
         </tr>
     </thead>

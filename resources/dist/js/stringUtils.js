@@ -44,10 +44,16 @@
                 $(this).val('$'+val);
             }
             else {
-                $(this).html('$'+val);
+                $(this).html('$'+val+$.fn.set_money.defaults.suffix);
             }
         });
     }
+
+    $.fn.set_money.defaults = {
+        prefix: '$',
+        suffix: '',
+        decimals: 2
+    };
 
     $.fn.percent_input = function () {
         return this.each(function () {

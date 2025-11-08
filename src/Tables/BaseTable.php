@@ -30,6 +30,8 @@ class BaseTable
     public int $page_length = 0;
 
     public ?TableTexts $texts = null;
+
+    public string $buttons_label = '';
     public function __construct(
         BaseGetter $getter,
         View $view = null, 
@@ -38,7 +40,8 @@ class BaseTable
         View $edit_url = null,
         array $buttons = [],
         int $page_length = 0,
-        TableTexts $texts = new TableTexts()
+        TableTexts $texts = new TableTexts(),
+        string $buttons_label = ''
     )
     {
         $this->getter = $getter;
@@ -49,6 +52,7 @@ class BaseTable
         $this->page_length = $page_length;
         $this->texts = $texts;
         $this->buttons = $buttons;
+        $this->buttons_label = $buttons_label;
     }
 
     public function getColumn(string $key): ?Column
@@ -63,7 +67,7 @@ class BaseTable
 
     public function needsButtons(): bool
     {
-        return count($this->buttons) > 0;//$this->view || $this->delete || $this->is_editable || $this->edit_url;
+        return count($this->buttons) > 0 || $this->view || $this->delete || $this->is_editable || $this->edit_url;
     }
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
