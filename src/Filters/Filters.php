@@ -1,7 +1,7 @@
 <?php
 
 namespace Ro749\SharedUtils\Filters;
-use \Illuminate\Database\Query\Builder; 
+use \Illuminate\Database\Eloquent\Builder; 
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 class Filters extends BaseFilter

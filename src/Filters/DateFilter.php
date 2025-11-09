@@ -1,6 +1,6 @@
 <?php
 namespace Ro749\SharedUtils\Filters;
-use \Illuminate\Database\Query\Builder; 
+use \Illuminate\Database\Eloquent\Builder; 
 use Ro749\SharedUtils\Inputs\Selector;
 use Illuminate\Http\Request;
 use Illuminate\View\View;

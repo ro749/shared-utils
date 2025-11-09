@@ -3,7 +3,7 @@ namespace Ro749\SharedUtils\Tables;
 use Illuminate\Support\Facades\DB;
 use Ro749\SharedUtils\Tables\TableButton;
 use Ro749\SharedUtils\Enums\Icon;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Ro749\SharedUtils\Filters\BackendFilters\BasicFilter;
 class LayeredTable
 {

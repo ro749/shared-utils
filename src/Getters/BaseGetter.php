@@ -2,7 +2,7 @@
 
 namespace Ro749\SharedUtils\Getters;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Ro749\SharedUtils\Tables\Column;
 use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Statistics\Statistic;
@@ -65,13 +65,15 @@ class BaseGetter
             $query->offset($start);
             $query->limit($length);
         }
+        DB::enableQueryLog();
         $ans['data'] = $query->get();
+        Log::debug(DB::getQueryLog());
         return $ans;
     }
 
     function get_query(array &$ans,string $search,array $filters): Builder{
         $table = $this->get_table();
-        $query = DB::table($table)->select($table.'.id');
+        $query = $this->model_class::query()->select($table.'.id');//DB::table($table)->select($table.'.id');
         $joins = [];
         foreach ($this->statistics as $key => $subquery) {
             $subquery->get_subquery($query,$table,$key,$filters);

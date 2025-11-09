@@ -1,7 +1,7 @@
 <?php
 
 namespace Ro749\SharedUtils\Filters\BackendFilters;
-use \Illuminate\Database\Query\Builder;
+use \Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 abstract class BackendFilter
