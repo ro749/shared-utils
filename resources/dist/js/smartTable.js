@@ -68,7 +68,7 @@
                     case '':
                     case null:
                         column.render = (data) => {
-                            return renderFn ? renderFn(data) : data;
+                            return renderFn ? renderFn(data) : '<p class="data-'+col+'">'+data+'</p>';
                         }
                         break;
                     
