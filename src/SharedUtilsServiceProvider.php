@@ -14,6 +14,7 @@ use Ro749\SharedUtils\Commands\ReadCsv;
 use Ro749\SharedUtils\Commands\GenerateOverridesConfig;
 use Ro749\SharedUtils\Commands\Check;
 use Ro749\SharedUtils\Commands\Reimport;
+use Ro749\SharedUtils\Commands\Local;
 use Illuminate\Support\Facades\Blade;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
@@ -43,7 +44,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 ReadCsv::class,
                 Check::class,
                 GenerateOverridesConfig::class,
-                Reimport::class
+                Reimport::class,
+                Local::class
             ])
             ->hasRoutes('web');
     }
