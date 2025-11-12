@@ -1,4 +1,4 @@
-<span id="text-{{ $id }}">
+<span class="text-{{ $id }}">
     @if(!empty($unit))
         {{ $unit->{$id} }}
     @endif
@@ -6,6 +6,6 @@
 
 @if(empty($unit))
 @push('fill')
-    $('#text-{{ $id }}').html(data['{{ $id }}']);
+    $('.text-{{ $id }}').html(data['{{ $id }}']);
 @endpush
 @endif

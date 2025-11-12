@@ -77,4 +77,10 @@ class LayeredTable
     function get_id(){
         return class_basename($this);
     }
+
+    public static function instance(): LayeredTable
+    {
+        $basename = class_basename(static::class);
+        return new (config('overrides.tables.'.$basename));
+    }
 }
