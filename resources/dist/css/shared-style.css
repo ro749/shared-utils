@@ -96,6 +96,9 @@
     .responsive-row > div {
         width: 100% !important; 
     }
+    .responsive-padding {
+        padding: 1rem !important;
+    }
 }
 
 .icon{

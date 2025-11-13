@@ -6,7 +6,7 @@ use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Filters\BackendFilters\BackendFilter;
 //used for generate subqueries for statistics
 class Statistic{
-    public string $table = "";
+    public string $model_class = "";
 
     public string $group_column = "";
 
@@ -22,14 +22,14 @@ class Statistic{
     public ?StatisticLink $link;
 
     public function __construct(
-            string $table, 
+            string $model_class, 
             string|StatisticLink $group_column, 
             array $columns, 
             array $filters = [], 
             array $backend_filters = [],
             StatisticLink $link = null
         ){
-        $this->table = $table;
+        $this->model_class = $model_class;
         $this->group_column = $group_column;
         $this->columns = $columns;
         $this->filters = $filters;
@@ -37,20 +37,25 @@ class Statistic{
         $this->backend_filters = $backend_filters;
     }
 
+    public function get_table(): string
+    {
+        return ($this->model_class)::make()->getTable();
+    }
+
     public function get_subquery($query,$table,$name,$filters){
         
         if(empty($this->link)){
             $subquery = 
-                DB::table($this->table)->
+                ($this->model_class)::query()->
                 select($this->group_column)->
                 groupBy($this->group_column);
         }
         else{
             $subquery = 
-                DB::table($this->link->table)->
+                ($this->model_class)::query()->
                 select($this->link->column)->
                 groupBy($this->link->column)->
-                join($this->table, $this->link->table.'.id', '=', $this->table.'.'.$this->group_column);
+                join(($this->model_class)::make()->getTable(), $this->link->get_table().'.id', '=', $this->get_table().'.'.$this->group_column);
         }
         
         foreach ($this->filters as $filter) {

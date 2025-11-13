@@ -51,13 +51,13 @@ class BaseGetter
         foreach ($this->backend_filters as $filter) {
             $filter->filter($query, $filters);
         }
-        $ans['recordsTotal'] = 1;//$query->count();
+        $ans['recordsTotal'] = $query->count();
         $this->apply_filters($query, $filters);
         
         if ($search!="") {
             $query = $this->search($query,$search);
         }
-        $ans['recordsFiltered'] = 1;//$query->count();
+        $ans['recordsFiltered'] = $query->count();
         if(!empty($order)){
             $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         }
@@ -65,9 +65,7 @@ class BaseGetter
             $query->offset($start);
             $query->limit($length);
         }
-        DB::enableQueryLog();
         $ans['data'] = $query->get();
-        Log::debug(DB::getQueryLog());
         return $ans;
     }
 

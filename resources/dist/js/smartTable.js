@@ -61,6 +61,7 @@
                     case 'date':
                         column.render = (data) => {
                             let value = renderFn ? renderFn(data) : data;
+                            value = value.split('T')[0];
                             const [y, m, d] = value.split("-");
                             return `${m}/${d}/${y}`;
                         }
