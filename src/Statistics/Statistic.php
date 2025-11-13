@@ -52,7 +52,7 @@ class Statistic{
         }
         else{
             $subquery = 
-                ($this->model_class)::query()->
+                ($this->link->model_class)::query()->
                 select($this->link->column)->
                 groupBy($this->link->column)->
                 join(($this->model_class)::make()->getTable(), $this->link->get_table().'.id', '=', $this->get_table().'.'.$this->group_column);
