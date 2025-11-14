@@ -50,6 +50,7 @@
                         html_input.attr("id", col+'-'+row.id);
                         html_input.attr("x-model", local_id);
                         html_input.appendTo(div);
+                        html_input.addClass('form-control');
                         var error = $('<template x-if="errors[\''+error_id+'\']"><p class="form-error" x-text="errors[\''+error_id+'\']"></p></template>');
                         error.appendTo(div);
                         return div.prop('outerHTML');
