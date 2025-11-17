@@ -43,13 +43,16 @@ class BaseGetter
         return $model->getTable();
     }
 
-    public function get($start=null, $length=null, $search = '',$order = [],$filters = []): mixed
+    public function get($start=null, $length=null, $search = '',$order = [],$filters = [], $start_date = null, $end_date = null): mixed
     {
         $search = $search==null?"":$search;
         $ans = [];
         $query = $this->get_query($ans,$search,$filters);
         foreach ($this->backend_filters as $filter) {
             $filter->filter($query, $filters);
+        }
+        if(!empty($start_date) && !empty($end_date)) {
+            $query->whereDateBetween($this->get_table().'.created_at', $start_date, $end_date);
         }
         $ans['recordsTotal'] = $query->count();
         $this->apply_filters($query, $filters);

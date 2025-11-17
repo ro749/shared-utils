@@ -45,6 +45,7 @@ class LayeredTable
             'columns' => $this->layers[$layer]->getter->columns,
             'filters' => $this->layers[$layer]->getter->filters,
             'backend_filters' => $this->layers[$layer]->getter->backend_filters,
+            'autoload' => true,
             'view' => null,
             'delete' => null,
             'needs_buttons' => true,

@@ -32,6 +32,7 @@ class BaseTable
     public ?TableTexts $texts = null;
 
     public string $buttons_label = '';
+    public bool $autoload = true;
     public function __construct(
         BaseGetter $getter,
         View $view = null, 
@@ -41,7 +42,8 @@ class BaseTable
         array $buttons = [],
         int $page_length = 0,
         TableTexts $texts = new TableTexts(),
-        string $buttons_label = ''
+        string $buttons_label = '',
+        bool $autoload = true
     )
     {
         $this->getter = $getter;
@@ -53,6 +55,7 @@ class BaseTable
         $this->texts = $texts;
         $this->buttons = $buttons;
         $this->buttons_label = $buttons_label;
+        $this->autoload = $autoload;
     }
 
     public function getColumn(string $key): ?Column
@@ -70,9 +73,9 @@ class BaseTable
         return count($this->buttons) > 0 || $this->view || $this->delete || $this->is_editable || $this->edit_url;
     }
 
-    public function get($start = 0, $length = 10, $search = '',$order = [],$filters = []): mixed
+    public function get($start = 0, $length = 10, $search = '',$order = [],$filters = [], $start_date = null, $end_date = null): mixed
     {
-        return $this->getter->get($start, $length, $search,$order,$filters);
+        return $this->getter->get($start, $length, $search,$order,$filters,$start_date,$end_date);
     }
 
     public function get_selectors()
@@ -122,7 +125,8 @@ class BaseTable
             'order' => $this->get_order(),
             'page_length' => $this->page_length==0?null:$this->page_length,
             'texts' => $this->texts,
-            'view' => ($this->view&&$this->view->full_row)?$this->view:null
+            'view' => ($this->view&&$this->view->full_row)?$this->view:null,
+            'autoload' => $this->autoload,
         ];
     }
 

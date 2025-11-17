@@ -43,5 +43,6 @@ $(function() {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+    $(document).init_string_utils();
 });
 </script>

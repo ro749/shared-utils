@@ -38,19 +38,23 @@
             }
             else{
                 field.class = 'input-'+col;
-                
+                let field_type = field.type;
                 let html_input = InputFactory.createInput(field);
-                
                 var column = {
                     data: null,
                     render: function (data, type, row) {
                         let local_id = 'form.'+options.name+'['+data.id+'].'+col;
                         let error_id = options.name+'.'+data.id+'.'+col;
                         var div = $('<div></div>');
-                        html_input.attr("id", col+'-'+row.id);
-                        html_input.attr("x-model", local_id);
+                        html_input.attr("id", options.name+'-'+row.id+'-'+col);
                         html_input.appendTo(div);
                         html_input.addClass('form-control');
+                        if(field_type=='money'){
+                            html_input.addClass('input-money');
+                        }
+                        else{
+                            html_input.attr("x-model", local_id);
+                        }
                         var error = $('<template x-if="errors[\''+error_id+'\']"><p class="form-error" x-text="errors[\''+error_id+'\']"></p></template>');
                         error.appendTo(div);
                         return div.prop('outerHTML');

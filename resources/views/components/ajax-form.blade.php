@@ -167,6 +167,8 @@ $initial_data = $form->get_initial_data();
                         }
                         @endif
                         this.errors = {};
+                        this.files = {};
+                        this.$dispatch('{{$form->get_id()}}-submitted',  response);
                     },
                     error: (xhr) => {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {

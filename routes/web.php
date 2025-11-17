@@ -12,7 +12,9 @@ Route::middleware('web')->group(function () {
             $request->get('length'),
             $request->get('search')['value'],
             $request->get('order')[0]??null,
-            $request->get('filters')?? []
+            $request->get('filters')?? [],
+            $request->get('start_date')?? null,
+            $request->get('end_date')?? null
         ));
     });
 
@@ -67,11 +69,12 @@ Route::middleware('web')->group(function () {
         $ans = [];
         $formClass = config('overrides.forms.'.$form);
         $form = new $formClass();
-        $redirect = $form->prosses($request);
-        if($redirect!="") {  
-            $ans = ["redirect" => $redirect];
+        $data = $form->prosses($request);
+        if($data!="" && is_string($data)) { 
+            $ans = ["redirect" => $data];
+            return response()->json(data: $ans);
         }
-        return response()->json($ans);
+        return response()->json(data: $data);
     });
 
     Route::post('/form/{form}/preview/{field}', function (Request $request,$form,$field) {

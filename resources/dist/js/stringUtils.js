@@ -39,7 +39,15 @@
                 if(typeof Alpine !== 'undefined'){
                     var form = $(this).closest('[x-data]');
                     var alpine_form = Alpine.$data(form[0]);
-                    alpine_form.form[$(this).attr('id').replace(/-/g, '_')] = value;
+                    var id_path = $(this).attr('id').split('-');
+                    var field = alpine_form.form;
+                    for (var i = 0; i < id_path.length-1; i++) {
+                        if (!(id_path[i] in field)) {
+                            field[id_path[i]] = {};
+                        }
+                        field = field[id_path[i]];
+                    }
+                    field[id_path[i]] = value;
                 }
                 $(this).val('$'+val);
             }
@@ -94,8 +102,31 @@
                 }
             });
             $(this).on('input', function () {
-                $(this).set_money(extract_number($(this).val()));
-            })
+                $(this).set_money($(this).get_number());
+            });
+        });
+    }
+
+    $.fn.init_string_utils = function () {
+        $(document).on('input','.input-percent', function(e) {
+            $(this).set_percent($(this).get_number());
+        });
+        $(document).on('input','.input-money', function(e) {
+            $(this).set_money($(this).get_number());
+        });
+        $(document).on('keydown','.input-money', function(e) {
+            var charToDelete = '';
+            if (e.keyCode === 8) { // backspace key
+                var val = $(this).val();
+                var start = $(this).get(0).selectionStart;
+                var end = $(this).get(0).selectionEnd;
+                if (start === end) {
+                    charToDelete = val.charAt(start - 1);
+                    if (charToDelete !== '' && isNaN(charToDelete) && charToDelete !== '.') {
+                        $(this).get(0).setSelectionRange(start - 1, start - 1);
+                    }
+                }
+            }
         });
     }
 })(jQuery);

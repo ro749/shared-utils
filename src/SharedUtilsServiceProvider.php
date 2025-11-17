@@ -16,6 +16,8 @@ use Ro749\SharedUtils\Commands\Check;
 use Ro749\SharedUtils\Commands\Reimport;
 use Ro749\SharedUtils\Commands\Local;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
 {
@@ -50,6 +52,17 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
             ->hasRoutes('web');
     }
 
+    public function register()
+    {
+        parent::register();
+        Builder::macro('whereDateBetween', function (string $column, $startDate, $endDate) {
+            $start = Carbon::parse($startDate)->startOfDay();
+            $end = Carbon::parse($endDate)->endOfDay();
+            
+            return $this->whereBetween($column, [$start, $end]);
+        });
+    }
+
     public function packageBooted(): void
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sharedutils');
@@ -58,6 +71,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
         Blade::component('sharedutils::components.forms.base-field', 'field');
         Blade::component('sharedutils::components.fillables.fillable-text', 'f-text');
+        Blade::component('sharedutils::components.fillables.fillable-money', 'f-money');
         Blade::component('sharedutils::components.fillables.fillable-image', 'f-image');
         Blade::component('sharedutils::components.fillables.fillable-conditional', 'f-conditional');
         Blade::component('sharedutils::components.ajax-form', 'smartForm');

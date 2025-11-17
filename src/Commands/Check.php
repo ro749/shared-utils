@@ -10,6 +10,9 @@ use function Laravel\Prompts\select;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter;
 use Illuminate\Support\Facades\Process;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\Node;
 class Check extends Command
 {
     /**
@@ -135,7 +138,35 @@ class Check extends Command
             }
         }
         foreach($model_tables as $model => $table) {
-            $this->info('Assigning table '.$table.' to '.$model);
+            $code = file_get_contents(base_path($model).'.php');
+            $ast = $parser->parse($code);
+            $traverser = new NodeTraverser();
+            $traverser->addVisitor(new class($table) extends NodeVisitorAbstract {
+                private $table;
+                public function __construct($table) {
+                    $this->table = $table;
+                }
+                public function leaveNode(Node $node) {
+                    // Aquí modificamos los nodos
+                    if ($node instanceof Node\Stmt\Class_) {
+                        $propiedad = new Node\Stmt\Property(
+                            Node\Stmt\Class_::MODIFIER_PROTECTED,
+                            [
+                                new Node\Stmt\PropertyProperty(
+                                    'table',
+                                    new Node\Scalar\String_($this->table)
+                                )
+                            ]
+                        );
+
+                        // Agregarla al inicio de la clase
+                        array_unshift($node->stmts, $propiedad);
+                    }
+                }
+            });
+            $ast = $traverser->traverse($ast);
+            $new_code = $printer->prettyPrintFile($ast);
+            file_put_contents(base_path($model).'.php', $new_code);
         }
         
     }
@@ -145,7 +176,7 @@ class Check extends Command
         $this->generate_overrides();
         $this->fix_composer_json();
         $this->fix_gitignore();
-        //$this->model_fix();
+        $this->model_fix();
 
         $this->info('✓ Everything fixed!');
     }

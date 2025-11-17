@@ -104,7 +104,7 @@ class BaseForm
         return $messages;
     }
 
-    public function prosses(Request $rawRequest): string
+    public function prosses(Request $rawRequest)
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
         

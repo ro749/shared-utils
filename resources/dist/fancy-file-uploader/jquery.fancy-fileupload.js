@@ -388,7 +388,6 @@
 		};
 
 		var UploadFailed = function(e, data) {
-			console.log(data);
 			if (data.ff_info.lastresult && !data.ff_info.lastresult.success)
 			{
 				data.result = data.ff_info.lastresult;

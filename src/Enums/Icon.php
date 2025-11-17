@@ -7,8 +7,8 @@ enum Icon: string{
     case ACCEPT = "iconamoon:check-circle-1";
     case CANCEL = "iconamoon:close-circle-1";
     case FOLDER = "iconamoon:folder-duotone";
-    case PREV = "iconamoon:arrow-left-6-circle-thin";
-    case NEXT = "iconamoon:arrow-right-6-circle-thin";
+    case PREV = "ic:round-navigate-before";
+    case NEXT = "ic:round-navigate-next";
     case UP = "iconamoon:arrow-up-6-circle-thin";
     case DOWN = "iconamoon:arrow-down-6-circle-thin";
     case USER = "iconamoon:profile";

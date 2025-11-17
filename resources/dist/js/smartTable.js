@@ -1,4 +1,8 @@
 (function ($) {
+    $.fn.set_dates = function (start_date, end_date) {
+        $(this).data('start_date', start_date);
+        $(this).data('end_date', end_date);
+    }
     $.fn.smartTable = function (options = {}) {
         function cancer_edit(){
             $('.edit-buttons').css('display', 'none');
@@ -139,6 +143,12 @@
                     type: 'GET',
                     data: function (d) {
                         d.filters = filters; 
+                        let start_date = $table.data('start_date');
+                        let end_date = $table.data('end_date');
+                        if(start_date && end_date){
+                            d.start_date = start_date;
+                            d.end_date = end_date;
+                        }
                     },
                     
                 },
@@ -147,6 +157,7 @@
                 order: options.order?[options.order]:[],
                 pageLength: options.page_length??10,
                 language: options.texts,
+                deferLoading: options.autoload?null:0,
                 initComplete: function () {
                     for (const [key, filter] of Object.entries(options.filters)) {
                         
@@ -286,7 +297,6 @@
                                     _token: $('meta[name="csrf-token"]').attr('content')
                                 },
                                 success: function(response) {
-                                    console.log("success");
                                     if(button.reload){
                                         table.ajax.reload(null, false);
                                     }
@@ -423,7 +433,7 @@
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="number" class="form-control" >';
                                         break;
                                     case 'tel':
-                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="tel" class="form-control" oninput="console.log(this.value.replace(/\D/g, \'\'))" >';
+                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="tel" class="form-control">';
                                         break;
                                     case 'email':
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" oninput="this.value = this.value.toLowerCase()" >';
