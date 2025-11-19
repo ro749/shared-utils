@@ -47,6 +47,9 @@
                     case 'money':
                         column.render = (data) => {
                             let value = renderFn ? renderFn(data) : data;
+                            if(value == null || value === '') {
+                                return '';
+                            }
                             return `$${Number(value).toLocaleString('es-MX')}`+$.fn.set_money.defaults.suffix;
                         }
                         break;
