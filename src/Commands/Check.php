@@ -267,9 +267,9 @@ class Check extends Command
 
     public function handle(): void
     {
-        //$this->generate_overrides();
-        //$this->fix_composer_json();
-        //$this->fix_gitignore();
+        $this->generate_overrides();
+        $this->fix_composer_json();
+        $this->fix_gitignore();
         $this->model_fix();
         
 

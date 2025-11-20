@@ -65,6 +65,12 @@
 
     $.fn.percent_input = function () {
         return this.each(function () {
+            $(this).on('focus click', function (e) {
+                if ($(this).val() === '0%') {
+                    e.preventDefault();
+                    this.setSelectionRange(1, 1);
+                }
+            });
             $(this).on('keydown', function (e) {
                 var charToDelete = '';
                 if (e.keyCode === 8) { // backspace key
@@ -87,6 +93,12 @@
 
     $.fn.money_input = function () {
         return this.each(function () {
+            $(this).on('focus click', function (e) {
+                if ($(this).val() === '$0') {
+                    e.preventDefault();
+                    this.setSelectionRange(2, 2);
+                }
+            });
             $(this).on('keydown', function (e) {
                 var charToDelete = '';
                 if (e.keyCode === 8) { // backspace key
@@ -114,6 +126,12 @@
         $(document).on('input','.input-money', function(e) {
             $(this).set_money($(this).get_number());
         });
+        $(document).on('focus click','.input-money', function (e) {
+                if ($(this).val() === '$0') {
+                    e.preventDefault();
+                    this.setSelectionRange(2, 2);
+                }
+            });
         $(document).on('keydown','.input-money', function(e) {
             var charToDelete = '';
             if (e.keyCode === 8) { // backspace key
