@@ -55,6 +55,7 @@ class Local extends Command
     {
         $this->call('reimport');
         $this->fix_composer_json();
+        $this->call('migrate');
         $this->info('✓ Everything local!');
     }
 
