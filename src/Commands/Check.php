@@ -29,6 +29,27 @@ class Check extends Command
      */
     protected $description = 'Makes a check of all the project and helps to fix them.';
 
+    public array $default_tables = [
+        'cache',
+        'cache_locks',
+        'failed_jobs',
+        'job_batches',
+        'jobs',
+        'migrations',
+        'password_reset_tokens',
+        'sessions',
+        'settings'
+    ];
+
+    public array $default_columns = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
+    public array $model_tables = [];
+
     function generate_overrides(){
         $this->call('generate:overrides');
     }
@@ -90,93 +111,167 @@ class Check extends Command
         }
     }
 
-    function model_fix(){
+    function check_model($model){
+        $model = new $model;
+        if(Schema::hasTable($model->getTable())) {
+            return;
+        }
+        if($this->confirm('Create table for '.$model->getTable().'?')) {
+            $name = $this->ask('Name for the table: (Empty for auto generate)');
+            $this->call('make:migration', [
+                'name' => 'create_models_tables',
+                '--create' => empty($name)?$model->getTable():$name
+            ]);
+            if(!empty($name)){
+                $this->model_tables[$model::class] = $name;
+            }
+        }
+        else{
+            if($this->confirm('Assign table for '.$model->getTable().'?')){
+                if(empty($tables)){
+                    $tables = DB::select('SHOW TABLES');
+                    $db = "Tables_in_".env('DB_DATABASE');
+                    $tables = array_column($tables, $db);
+                    $tables = array_diff($tables, $this->default_tables);
+                }
+                $table_id = select('Choose table to assign it to', $tables);
+                $model_tables[$model::class] = $tables[$table_id];
+            }
+        }
+
         
-        $models = config('overrides.models');
-        $model_tables = [];
+        
+    }
+    function fix_model($model, $table){
         $parser_factory = new ParserFactory();
         $parser = $parser_factory->createForHostVersion();
         $printer = new PrettyPrinter\Standard();
-        $this->info(json_encode($models, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-        foreach($models as $model) {
-            
-            $model = new $model;
-            if(Schema::hasTable($model->getTable())) {
-                continue;
+        $code = file_get_contents(base_path($model).'.php');
+        $ast = $parser->parse($code);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new class($table) extends NodeVisitorAbstract {
+            private $table;
+            public function __construct($table) {
+                $this->table = $table;
             }
-            if($this->confirm('Create table for '.$model->getTable().'?')) {
-                $name = $this->ask('Name for the table: (Empty for auto generate)');
-                $this->call('make:migration', [
-                    'name' => 'create_models_tables',
-                    '--create' => empty($name)?$model->getTable():$name
-                ]);
-                if(!empty($name)){
-                    $model_tables[$model::class] = $name;
+            public function leaveNode(Node $node) {
+                // Aquí modificamos los nodos
+                if ($node instanceof Node\Stmt\Class_) {
+                    $propiedad = new Node\Stmt\Property(
+                        Node\Stmt\Class_::MODIFIER_PROTECTED,
+                        [
+                            new Node\Stmt\PropertyProperty(
+                                'table',
+                                new Node\Scalar\String_($this->table)
+                            )
+                        ]
+                    );
+
+                    // Agregarla al inicio de la clase
+                    array_unshift($node->stmts, $propiedad);
                 }
             }
-            else{
-                if($this->confirm('Assign table for '.$model->getTable().'?')){
-                    if(empty($tables)){
-                        $tables = DB::select('SHOW TABLES');
-                        $db = "Tables_in_".env('DB_DATABASE');
-                        $tables = array_column($tables, $db);
-                        $tables = array_diff($tables, [
-                            'cache',
-                            'cache_locks',
-                            'failed_jobs',
-                            'job_batches',
-                            'jobs',
-                            'migrations',
-                            'password_reset_tokens',
-                            'sessions',
-                            'settings'
-                        ]);
-                    }
-                    $table_id = select('Choose table to assign it to', $tables);
-                    $model_tables[$model::class] = $tables[$table_id];
-                }
-            }
-        }
-        foreach($model_tables as $model => $table) {
-            $code = file_get_contents(base_path($model).'.php');
+        });
+        $ast = $traverser->traverse($ast);
+        $new_code = $printer->prettyPrintFile($ast);
+        file_put_contents(base_path($model).'.php', $new_code);
+    }
+
+    function check_fillable($model){
+        $table_columns = Schema::getColumnListing($model->getTable());
+        $table_columns = array_diff($table_columns,$this->default_columns);
+        
+        $fillable_columns = $model->getFillable();
+        
+        $unfillable_columns = array_diff($table_columns,$fillable_columns);
+        if(count($unfillable_columns) > 0){
+            $this->info('The following columns of '.$model->getTable().' are not fillable: '.implode(', ',$unfillable_columns));
+            $this->info('Making them fillable...');
+            $parser_factory = new ParserFactory();
+            $parser = $parser_factory->createForHostVersion();
+            $printer = new PrettyPrinter\Standard();
+            $code = file_get_contents(base_path($model::class).'.php');
             $ast = $parser->parse($code);
             $traverser = new NodeTraverser();
-            $traverser->addVisitor(new class($table) extends NodeVisitorAbstract {
-                private $table;
-                public function __construct($table) {
-                    $this->table = $table;
+            $traverser->addVisitor(new class($table_columns) extends NodeVisitorAbstract {
+                private array $table_columns;
+                public bool $fillableFound = false;
+                public function __construct($table_columns) {
+                    $this->table_columns = $table_columns;
                 }
                 public function leaveNode(Node $node) {
                     // Aquí modificamos los nodos
                     if ($node instanceof Node\Stmt\Class_) {
-                        $propiedad = new Node\Stmt\Property(
-                            Node\Stmt\Class_::MODIFIER_PROTECTED,
-                            [
-                                new Node\Stmt\PropertyProperty(
-                                    'table',
-                                    new Node\Scalar\String_($this->table)
-                                )
-                            ]
-                        );
+                        foreach ($node->stmts as $key => $stmt) {
+                            if ($stmt instanceof Node\Stmt\Property 
+                                && $stmt->props[0]->name->toString() === 'fillable') {
+                                // REEMPLAZAR el fillable existente
+                                $stmt->props[0]->default = new Node\Expr\Array_(
+                                    array_map(
+                                        fn($col) => new Node\ArrayItem(new Node\Scalar\String_($col)),
+                                        $this->table_columns
+                                    )
+                                );
+                                $this->fillableFound = true;
+                                return null;
+                            }
+                        }
 
-                        // Agregarla al inicio de la clase
-                        array_unshift($node->stmts, $propiedad);
+                        // Si no existe, CREAR la propiedad $fillable
+                        if (!$this->fillableFound) {
+                            $fillableProperty = new Node\Stmt\Property(
+                                Node\Stmt\Class_::MODIFIER_PROTECTED,
+                                [
+                                    new Node\Stmt\PropertyProperty(
+                                        'fillable',
+                                        new Node\Expr\Array_(
+                                            array_map(
+                                                fn($col) => new Node\ArrayItem(new Node\Scalar\String_($col)),
+                                                $this->table_columns
+                                            )
+                                        )
+                                    )
+                                ]
+                            );
+
+                            // Insertar después del "use HasFactory;"
+                            array_push($node->stmts, $fillableProperty);
+                        }
                     }
                 }
             });
             $ast = $traverser->traverse($ast);
             $new_code = $printer->prettyPrintFile($ast);
-            file_put_contents(base_path($model).'.php', $new_code);
+            file_put_contents(base_path($model::class).'.php', $new_code);
+        } 
+    }
+
+    function model_fix(){
+        
+        
+        $models = config('overrides.models');
+        
+        $this->info(json_encode($models, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        foreach($models as $model) {
+            $this->check_model($model);
+        }
+        foreach($this->model_tables as $model => $table) {
+            $this->fix_model($model,$table);
+        }
+        $this->call('migrate');
+        foreach($models as $model) {
+            $this->check_fillable(new $model);
         }
         
     }
 
     public function handle(): void
     {
-        $this->generate_overrides();
-        $this->fix_composer_json();
-        $this->fix_gitignore();
+        //$this->generate_overrides();
+        //$this->fix_composer_json();
+        //$this->fix_gitignore();
         $this->model_fix();
+        
 
         $this->info('✓ Everything fixed!');
     }
