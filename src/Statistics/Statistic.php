@@ -98,6 +98,10 @@ class Statistic{
             $filter->filter($subquery, $filters);
         }
 
+        if (method_exists($this->model_class, 'applyScopes')) {
+            $this->model_class::applyScopes($subquery);
+        }
+
         if(empty($this->link)){
             $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
                 $join->on($name.'.'.$this->group_column, '=', $table . '.id');
