@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Ro749\SharedUtils\Models\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
 class BaseForm
 {
     public string $model_class = '';
@@ -104,6 +105,18 @@ class BaseForm
         return $messages;
     }
 
+    public function validate_field(Request $request)
+    {
+        $data = Arr::dot($request->all());
+        $field_key = array_keys($data)[0];
+        $pattern = preg_replace('/\.\d+\./', '.*.', $field_key);
+        $rules = [
+            $pattern => $this->rules($request)[$pattern]
+        ];
+        Log::debug($rules);
+        return $request->validate($rules);
+    }
+
     public function prosses(Request $rawRequest)
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
@@ -117,7 +130,11 @@ class BaseForm
         foreach ($this->fields as $key => $field) {
             if(!array_key_exists($key, $data)) {
                 if($field->type == InputType::FILE) {
-                    $field->save();
+                    
+                    if(!$field->autosave){
+                        $field->save();
+                    }
+                    
                 }
                 if($field->type == InputType::COPY) {
                     $data[$key] = $field->get_value($data);
@@ -152,6 +169,14 @@ class BaseForm
                         }
                     }
                     break;
+                case InputType::FILE:
+                    
+                    if($field->autosave){
+                        Log::info('key: '.$key);
+                        $file = $rawRequest->file($key);
+                        $field->read($file,$key);
+                    }
+                    break;
                 case InputType::FORM:
                     $forms[$key] = $data[$key];
                     unset($data[$key]);
@@ -171,6 +196,8 @@ class BaseForm
                 if ($this->user !== '') {
                     $data[$this->user] = Auth::guard($this->guard)->user()->id;
                 }
+                Log::info($this->model_class);
+                Log::info($data);
                 $model = $this->model_class::create($data);
             }
             foreach ($forms as $key => $form_data){
