@@ -34,6 +34,7 @@ class BaseForm
     public string $view = '';
 
     public bool $reset = true;
+    public bool $session = false;
 
 
     
@@ -52,7 +53,8 @@ class BaseForm
         int $db_id = 0,
         bool $reload = false,
         string $view = '',
-        bool $reset = true
+        bool $reset = true,
+        bool $session = false
     )
     {
         $this->model_class = $model_class;
@@ -71,6 +73,7 @@ class BaseForm
         $this->view = $view;
         $this->has_files = $this->get_has_files();
         $this->reset = $reset;
+        $this->session = $session;
         
     }
 
@@ -120,8 +123,13 @@ class BaseForm
     public function prosses(Request $rawRequest)
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
-        
         $this->before_process($data);
+        if($this->session) {
+            foreach ($data as $key => $value) {
+                session()->put($key, $value);
+            }
+            return;
+        }
         if($this->db_id!=0) {
             $data['id'] = $this->db_id;
         }
@@ -259,6 +267,15 @@ class BaseForm
             if(!$something_selected) return [];
             $ans = $query->where('id', $this->db_id)->first();
             return $ans;//json_decode(json_encode($ans), true);
+        }
+        if($this->session) {
+            $data = [];
+            foreach ($this->fields as $key => $field) {
+                if(session()->has($key)){
+                    $data[$key] = session()->get($key);
+                }
+            }
+            return $data;
         }
         return $this->initial_data;
     }

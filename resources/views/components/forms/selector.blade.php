@@ -11,7 +11,7 @@
         $class ?? '',
     ]) }}
     @if($selector->autosave)
-    @input.debounce.500ms="submit()"
+    x-effect="submit()"
     @endif
 >
     <option disabled selected value>select</option>
@@ -26,15 +26,23 @@
 
 @if($selector->search)
 @push($push_init)
-    $('#{{ $name }}').select2({theme: "bootstrap-5",width: '100%'});
+    $('#{{ $name }}').select2({
+        theme: "bootstrap-5",
+        dropdownAutoWidth: true,
+        width: 'auto'
+    });
     $('#{{ $name }}').on('change', () => {
         this.form.{{ $name }} = $('#{{ $name }}').val();
     });
     @if(!empty($value))
     $('#{{ $name }}').val('{{ $value }}').trigger('change');
     @endif
+    @if(!empty($initial_data) && array_key_exists($name, $initial_data))
+    $('#{{ $name }}').val('{{ $initial_data[$name] }}').trigger('change');
+    @endif
 @endpush
 @push($push_reset)
     $('#{{ $name }}').val(null).trigger('change');
 @endpush
+
 @endif
