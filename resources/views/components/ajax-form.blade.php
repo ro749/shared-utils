@@ -4,6 +4,7 @@ $initial_data = $form->get_initial_data();
 @endphp
 
 <div x-data="{{$form->get_id()}}_submit()" id="{{ $form->get_id() }}"  {{ $attributes }}>
+
 @if (!$slot->isEmpty())
 {{ $slot }}
 @else
@@ -48,8 +49,8 @@ $initial_data = $form->get_initial_data();
     function {{$form->get_id()}}_submit() {
         return {
             form: {
-                @if($form->get_initial_data() != null)
-                @foreach ($form->get_initial_data() as $key => $value)
+                @if($initial_data != null)
+                @foreach ($initial_data as $key => $value)
                 {{ $key }}: `{{ $value }}`,
                 @endforeach
                 @endif
@@ -63,7 +64,7 @@ $initial_data = $form->get_initial_data();
             },
             previews: {
                 @foreach ($form->fields as $key => $field)
-                    @if( $field->type === Ro749\SharedUtils\Forms\InputType::FILE) 
+                    @if( $field->type === Ro749\SharedUtils\Forms\InputType::FILE && $field->preview_table) 
                     '{{ $key }}': '{{ $field->preview_table->get_id() }}',
                     @endif               
                 @endforeach
@@ -99,6 +100,11 @@ $initial_data = $form->get_initial_data();
                 @endif
                 @endforeach
             },
+
+            hasAnyError() {
+                return Object.values(this.errors).some(error => error !== '');
+            },
+
             submit() {
                 
                 const urlParams = new URLSearchParams(window.location.search);
