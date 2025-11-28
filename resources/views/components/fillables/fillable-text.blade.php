@@ -1,10 +1,10 @@
 <span class="text-{{ $id }}">
-    @if(!empty($unit))
-        {{ $unit->{$id} }}
+    @if(!empty($data))
+        {{ $data->get($id) }}
     @endif
 </span>
 
-@if(empty($unit))
+@if(empty($data))
 @push('fill')
     $('.text-{{ $id }}').html(data['{{ $id }}']);
 @endpush

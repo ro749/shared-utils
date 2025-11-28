@@ -4,6 +4,7 @@ namespace Ro749\SharedUtils\Statistics;
 use Illuminate\Support\Facades\DB;
 use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Filters\BackendFilters\BackendFilter;
+use Illuminate\Database\Eloquent\Builder;
 //used for generate subqueries for statistics
 class Statistic{
     public string $model_class = "";
@@ -42,8 +43,8 @@ class Statistic{
         return ($this->model_class)::make()->getTable();
     }
 
-    public function get_subquery($query,$table,$name,$filters){
-        
+    public function get_query()
+    {
         if(empty($this->link)){
             $subquery = 
                 ($this->model_class)::query()->
@@ -57,6 +58,20 @@ class Statistic{
                 groupBy($this->link->column)->
                 join(($this->model_class)::make()->getTable(), $this->link->get_table().'.id', '=', $this->get_table().'.'.$this->group_column);
         }
+        return $subquery;
+    }
+    
+    /**
+     * Summary of get_subquery
+     * @param mixed $query: the parent query, the statistics will be added as subqueries
+     * @param mixed $table the name of the table to use as a join, is going to be used as  join $table.id
+     * @param mixed $name
+     * @param mixed $filters
+     * @return void
+     */
+    public function get_subquery($query,$table,$name,$filters){
+        
+        $subquery = $this->get_query();
         
         foreach ($this->filters as $filter) {
             $filter->filter($subquery, $filters);
@@ -102,6 +117,14 @@ class Statistic{
             $this->model_class::applyScopes($subquery);
         }
 
+        $subquery = $this->extra_process($subquery);
+
+        $this->apply_join($query,$subquery,$table,$name);
+    }
+
+    public function extra_process($query){return $query;}
+
+    public function apply_join($query,$subquery,$table,$name){
         if(empty($this->link)){
             $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
                 $join->on($name.'.'.$this->group_column, '=', $table . '.id');
@@ -112,6 +135,5 @@ class Statistic{
                 $join->on($name.'.'.$this->link->column, '=', $table . '.id');
             });
         }
-        
     }
 }

@@ -10,4 +10,10 @@ class Authenticable extends Authenticatable
         $basename = class_basename(static::class);
         return new (config('overrides.models.'.$basename));
     }
+
+    public static function get_class(): string
+    {
+        $basename = class_basename(static::class);
+        return config('overrides.models.'.$basename);
+    }
 }
