@@ -5,7 +5,12 @@
     }
 
     $.fn.get_number = function (value) {
-        return extract_number($(this[0]).val());
+        if ($(this[0]).is('input')) {
+            return extract_number($(this[0]).val());
+        }
+        else{
+            return extract_number($(this[0]).text());
+        }
     }
 
     $.fn.set_percent = function (value) {
