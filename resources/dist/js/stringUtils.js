@@ -32,7 +32,7 @@
     }
 
     $.fn.set_money = function (raw_value) {
-        var value = Number(Number(raw_value).toFixed(2));
+        var value = Number(raw_value).toFixed(2);
         var val = value.toLocaleString('en-US');
         return this.each(function () {
             if ($(this).is('input')) {
