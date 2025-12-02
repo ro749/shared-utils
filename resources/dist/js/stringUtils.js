@@ -33,7 +33,7 @@
 
     $.fn.set_money = function (raw_value) {
         var value = Number(Number(raw_value).toFixed(2));
-        var val = value.toLocaleString('en-US');
+        var val = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         return this.each(function () {
             if ($(this).is('input')) {
                 if(typeof Alpine !== 'undefined'){
