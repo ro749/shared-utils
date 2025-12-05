@@ -11,10 +11,11 @@ function get_{{ $data->get_id() }}() {
         url: "/data/{{ $data->get_id() }}",
         method: "GET",
         success: function (data) {
-            Alpine.$data($('#{{ $data->get_id() }}')[0]).data = data;
+            @stack('fill')
         }
     });
 }
+console.log("getting: {{ $data->get_id() }}");
 get_{{ $data->get_id() }}();
 </script>
 @endpush

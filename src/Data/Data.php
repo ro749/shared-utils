@@ -10,11 +10,7 @@ abstract class Data
     {
         $this->dynamic = $dynamic;
     }
-    public static function instance(): Data
-    {
-        $basename = class_basename(static::class);
-        return new (config('overrides.data.'.$basename));
-    }
+    
     public abstract function init_data();
 
     public function get_data(){
@@ -29,5 +25,15 @@ abstract class Data
             $this->data = $this->init_data();
         }
         return $this->data[$attribute] ?? null;
+    }
+
+    public static function instance(): Data
+    {
+        $basename = class_basename(static::class);
+        return new (config('overrides.data.'.$basename));
+    }
+
+    function get_id(){
+        return class_basename($this);
     }
 }
