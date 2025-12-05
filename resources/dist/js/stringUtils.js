@@ -5,7 +5,12 @@
     }
 
     $.fn.get_number = function (value) {
-        return extract_number($(this[0]).val());
+        if ($(this[0]).is('input')) {
+            return extract_number($(this[0]).val());
+        }
+        else{
+            return extract_number($(this[0]).text());
+        }
     }
 
     $.fn.set_percent = function (value) {
@@ -32,8 +37,8 @@
     }
 
     $.fn.set_money = function (raw_value) {
-        var value = Number(raw_value).toFixed(2);
-        var val = value.toLocaleString('en-US');
+        var value = Number(Number(raw_value).toFixed(2));
+        var val = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         return this.each(function () {
             if ($(this).is('input')) {
                 if(typeof Alpine !== 'undefined'){
