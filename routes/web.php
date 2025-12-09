@@ -82,7 +82,22 @@ Route::middleware('web')->group(function () {
         $formClass = config('overrides.forms.'.$form);
         $form = new $formClass();
         $file = $request->file($field);
-        $form->fields[$field]->preview($file);;
+        $form->fields[$field]->preview($file);
+    });
+
+    
+    Route::post('/form/{form}/validate', function (Request $request,$form) {
+        $ans = [];
+        $formClass = config('overrides.forms.'.$form);
+        $form = new $formClass();
+        return $form->validate_field($request);
+    });
+
+    Route::get('/data/{data}', function (Request $request,$data) {
+        $fullClass = config('overrides.data.'.$data);
+        $data = new $fullClass();
+        Log::debug($data->get_data());
+        return response()->json($data->get_data());
     });
     
     Route::post('/logout', function (Request $request) {
