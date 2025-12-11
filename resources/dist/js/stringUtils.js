@@ -13,6 +13,16 @@
         }
     }
 
+    $.fn.get_real_value= function () {
+        if ($(this[0]).is('input')) {
+            if(typeof Alpine !== 'undefined'){
+                var form = $(this[0]).closest('[x-data]');
+                var alpine_form = Alpine.$data(form[0]);
+                return alpine_form.form[$(this).attr('id').replace(/-/g, '_')];
+            }
+        }
+    }
+
     $.fn.set_percent = function (value) {
         var val = Number(value.toFixed(2));
         if(val > 100){
@@ -68,6 +78,25 @@
         decimals: 2
     };
 
+    $.fn.set_value = function (value) {
+        return this.each(function () {
+            if ($(this).is('input')) {
+                if($(this).hasClass('input-money')) {
+                    $(this).set_money(value);
+                }
+                else if($(this).hasClass('input-percent')) {
+                    $(this).set_percent(value);
+                }
+                else {
+                    $(this).val(value);
+                }
+            }
+            else {
+                $(this).html(value);
+            }
+        });
+    }
+
     $.fn.percent_input = function () {
         return this.each(function () {
             $(this).on('focus click', function (e) {
@@ -121,6 +150,7 @@
             $(this).on('input', function () {
                 $(this).set_money($(this).get_number());
             });
+
         });
     }
 
@@ -129,14 +159,28 @@
             $(this).set_percent($(this).get_number());
         });
         $(document).on('input','.input-money', function(e) {
+            var real_value = $(this).get_real_value();
+            var start = $(this).get(0).selectionStart;
+            var comas = $(this).val().split(',').length - 1;
+            var real_position = start-comas;
             $(this).set_money($(this).get_number());
+            if(start !== $(this).get(0).selectionStart){
+                if(typeof real_value === 'undefined'){
+                    $(this).get(0).setSelectionRange(2,2);
+                    return;
+                }
+                var new_comas = $(this).val().split(',').length - 1;
+                var new_real_position = real_position+new_comas;
+                
+                $(this).get(0).setSelectionRange(new_real_position,new_real_position);
+            }
         });
         $(document).on('focus click','.input-money', function (e) {
-                if ($(this).val() === '$0') {
-                    e.preventDefault();
-                    this.setSelectionRange(2, 2);
-                }
-            });
+            if ($(this).val() === '$0' || $(this).val() === '$0.00') {
+                e.preventDefault();
+                this.setSelectionRange(2, 2);
+            }
+        });
         $(document).on('keydown','.input-money', function(e) {
             var charToDelete = '';
             if (e.keyCode === 8) { // backspace key

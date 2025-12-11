@@ -1,6 +1,12 @@
 <input
     type="{{ $field->get_type() }}"
-    class="form-control"
+    class="form-control
+    @if($field->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE)
+    input-percent
+    @elseif($field->type === \Ro749\SharedUtils\Forms\InputType::MONEY)
+    input-money
+    @endif
+    "
     id="{{ $name }}"
     name="{{ $name }}"
     @if($field->type !== \Ro749\SharedUtils\Forms\InputType::PERCENTAGE && $field->type !== \Ro749\SharedUtils\Forms\InputType::MONEY)
@@ -23,18 +29,4 @@
     @input.debounce.500ms="submit()"
     @endif
 >
-@if($field->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE)
-@push('scripts')
-<script>
-    $('#{{ $name }}').percent_input();
-</script>
-@endpush
-@endif
-@if($field->type === \Ro749\SharedUtils\Forms\InputType::MONEY)
-@push('scripts')
-<script>
-    $('#{{ $name }}').money_input();
-</script>
-@endpush
-@endif
 
