@@ -24,7 +24,7 @@
     }
 
     $.fn.set_percent = function (value) {
-        var val = Number(value.toFixed(2));
+        var val = Number(Number(value).toFixed(2));
         if(val > 100){
             val = 100;
         }
@@ -65,6 +65,7 @@
                     field[id_path[i]] = value;
                 }
                 $(this).val('$'+val);
+                
             }
             else {
                 $(this).html('$'+val+$.fn.set_money.defaults.suffix);
@@ -163,9 +164,10 @@
             var start = $(this).get(0).selectionStart;
             var comas = $(this).val().split(',').length - 1;
             var real_position = start-comas;
+            //var real_number = $(this).get_number();
             $(this).set_money($(this).get_number());
             if(start !== $(this).get(0).selectionStart){
-                if(typeof real_value === 'undefined'){
+                if(typeof real_value === 'undefined' || real_value === null || real_value === 0){
                     $(this).get(0).setSelectionRange(2,2);
                     return;
                 }
@@ -175,10 +177,31 @@
                 $(this).get(0).setSelectionRange(new_real_position,new_real_position);
             }
         });
+        $(document).on('focus click','.input-percent', function (e) {
+            if ($(this).val() === '0%' || $(this).val() === '0.00%') {
+                e.preventDefault();
+                this.setSelectionRange(1, 1);
+            }else{
+                var length = $(this).val().length;
+                var start = $(this).get(0).selectionStart;
+                if(length==start){
+                    e.preventDefault();
+                    this.setSelectionRange(length-1, length-1);
+                }
+            }
+        });
         $(document).on('focus click','.input-money', function (e) {
             if ($(this).val() === '$0' || $(this).val() === '$0.00') {
                 e.preventDefault();
                 this.setSelectionRange(2, 2);
+            }
+            else{
+                var length = $(this).val().length;
+                var start = $(this).get(0).selectionStart;
+                if(length-start <= 2){
+                    e.preventDefault();
+                    this.setSelectionRange(length-3, length-3);
+                }
             }
         });
         $(document).on('keydown','.input-money', function(e) {

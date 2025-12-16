@@ -116,7 +116,6 @@ class BaseForm
         $rules = [
             $pattern => $this->rules($request)[$pattern]
         ];
-        Log::debug($rules);
         return $request->validate($rules);
     }
 
@@ -204,8 +203,6 @@ class BaseForm
                 if ($this->user !== '') {
                     $data[$this->user] = Auth::guard($this->guard)->user()->id;
                 }
-                Log::info($this->model_class);
-                Log::info($data);
                 $model = $this->model_class::create($data);
             }
             foreach ($forms as $key => $form_data){
