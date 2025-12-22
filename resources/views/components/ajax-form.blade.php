@@ -1,4 +1,6 @@
 @props(['form' => null])
+@if($form != null)
+    
 @php
 $initial_data = $form->get_initial_data();
 @endphp
@@ -197,3 +199,6 @@ $initial_data = $form->get_initial_data();
     }
 </script>
 @endpush
+@else
+{{ $slot }}
+@endif

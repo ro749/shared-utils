@@ -36,7 +36,7 @@ class BaseForm
     public bool $reset = true;
     public bool $session = false;
 
-
+    public bool $debug = false;
     
     public function __construct(
         string $model_class = '', 
@@ -54,7 +54,8 @@ class BaseForm
         bool $reload = false,
         string $view = '',
         bool $reset = true,
-        bool $session = false
+        bool $session = false,
+        bool $debug = false
     )
     {
         $this->model_class = $model_class;
@@ -74,7 +75,7 @@ class BaseForm
         $this->has_files = $this->get_has_files();
         $this->reset = $reset;
         $this->session = $session;
-        
+        $this->debug = $debug;
     }
 
     public function get_table(): string
@@ -195,13 +196,29 @@ class BaseForm
             }
         }
         if(!empty($this->model_class)){
+            if($this->debug){
+                DB::enableQueryLog();
+                Log::debug($data);
+            }
+            
             if(isset($data['id'])) {
                 $id = $data['id'];
                 unset($data['id']);
+                if($this->debug){
+                    Log::debug('Updating id: '.$id);
+                    $model_instance = new $this->model_class;
+                    Log::debug($model_instance->getFillable());
+                }
                 $model = $this->model_class::updateOrCreate(['id' => $id], $data);
+                if($this->debug){
+                    Log::debug('Updated model: '.$model );
+                }
             } else {
                 if ($this->user !== '') {
                     $data[$this->user] = Auth::guard($this->guard)->user()->id;
+                }
+                if($this->debug){
+                    Log::debug('Creating: ');
                 }
                 $model = $this->model_class::create($data);
             }
@@ -215,7 +232,12 @@ class BaseForm
                     $this->fields[$key]->table->form->model_class::create($value);
                 }
             }
+            if($this->debug){
+                Log::debug(DB::getQueryLog());
+            }
+            
             $ans = $this->after_process($model);
+
             if($ans != null){
                 return $ans;
             }
