@@ -441,13 +441,17 @@
                                     case 'email':
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" oninput="this.value = this.value.toLowerCase()" >';
                                         break;
-                                    
+                                    case 'money':
+                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control input-money" >';
+                                        break;
                                     case 'text':
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" >';
                                         break;
                                 }
                             }
-                            
+                            if(field.type == 'hidden'){
+                                continue;
+                            }
                             hidden += '<p class="form-error" x-text="errors[\''+key+'\']"></p>';
                             changes.push({key: colnum, value: hidden});
                         }

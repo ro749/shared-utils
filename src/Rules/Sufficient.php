@@ -52,7 +52,11 @@ class Sufficient implements DataAwareRule, ValidationRule
             $index = $exploded_attribute[1];
             $id = $this->data[$name][$index][$this->id];
         } else {
-            $id = $this->data[$this->id];
+            if (array_key_exists($this->id, $this->data)) {
+                $id = $this->data[$this->id];
+            } else {
+                $id = null;
+            }
         }
         $current_value = $this->model_class::where($this->id, $id)->value($this->column);
         if ($value > $current_value) {
