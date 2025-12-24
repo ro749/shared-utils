@@ -10,6 +10,7 @@ $initial_data = $form->get_initial_data();
 @if (!$slot->isEmpty())
 {{ $slot }}
 @else
+    <div id="{{ $form->get_id() }}-fields">
     @foreach ($form->fields as $name => $field)
         @if($field->type === Ro749\SharedUtils\Forms\InputType::HIDDEN)
         @continue
@@ -18,11 +19,13 @@ $initial_data = $form->get_initial_data();
         <x-field :name="$name" :form="$form"/>
         
     @endforeach
-    
+    </div>
     @if($form->submit_text==!"")
-    <button class="btn btn-light" @click="submit">
-        {{ $form->submit_text }}
-    </button>
+    <div id="{{ $form->get_id() }}-button">
+        <button class="btn btn-light" @click="submit">
+            {{ $form->submit_text }}
+        </button>
+    </div>
     @endif
 @endif
 </div>

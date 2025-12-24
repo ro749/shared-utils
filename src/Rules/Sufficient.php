@@ -52,9 +52,9 @@ class Sufficient implements DataAwareRule, ValidationRule
             $index = $exploded_attribute[1];
             $id = $this->data[$name][$index][$this->id];
         } else {
-            $id = $this->data['id'];
+            $id = $this->data[$this->id];
         }
-        $current_value = $this->model_class::where('id', $id)->value($this->column);
+        $current_value = $this->model_class::where($this->id, $id)->value($this->column);
         if ($value > $current_value) {
             $fail('No hay sufficientes. Maximo '.$current_value );
         }
