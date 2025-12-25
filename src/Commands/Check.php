@@ -102,12 +102,22 @@ class Check extends Command
         $gitignore_path = base_path('.gitignore');
         $gitignore_content = file_get_contents($gitignore_path);
         if (strpos($gitignore_content, 'composer.lock') === false) {
+            $gitignore_content = $gitignore_content.PHP_EOL . 'composer.lock';
             file_put_contents(
                 $gitignore_path, 
-                $gitignore_content.PHP_EOL . 'composer.lock'
+                $gitignore_content
             );
             Process::run('git rm --cached composer.lock');
             $this->info('Added composer.lock to .gitignore');
+        }
+        if (strpos($gitignore_content, '/public/vendor') === false) {
+            $gitignore_content = $gitignore_content.PHP_EOL . '/public/vendor';
+            file_put_contents(
+                $gitignore_path, 
+                $gitignore_content
+            );
+            Process::run('git rm --cached /public/vendor');
+            $this->info('Added /public/vendor to .gitignore');
         }
     }
 
