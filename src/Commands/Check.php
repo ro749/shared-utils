@@ -110,14 +110,14 @@ class Check extends Command
             Process::run('git rm --cached composer.lock');
             $this->info('Added composer.lock to .gitignore');
         }
-        if (strpos($gitignore_content, '/public/vendor') === false) {
-            $gitignore_content = $gitignore_content.PHP_EOL . '/public/vendor';
+        if (strpos($gitignore_content, '/public/vendor/') === false) {
+            $gitignore_content = $gitignore_content.PHP_EOL . '/public/vendor/';
             file_put_contents(
                 $gitignore_path, 
                 $gitignore_content
             );
-            Process::run('git rm --cached /public/vendor');
-            $this->info('Added /public/vendor to .gitignore');
+            Process::run('git rm -r --cached public/vendor');
+            $this->info('Added public/vendor to .gitignore');
         }
     }
 
