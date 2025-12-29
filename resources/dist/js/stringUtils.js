@@ -25,12 +25,6 @@
 
     $.fn.set_percent = function (value) {
         var val = Number(Number(value).toFixed(2));
-        if(val > 100){
-            val = 100;
-        }
-        if(val < 0){
-            val = 0;
-        }
         return this.each(function () {
             if ($(this).is('input')) {
                 if(typeof Alpine !== 'undefined'){
