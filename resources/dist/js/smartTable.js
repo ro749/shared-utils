@@ -163,7 +163,6 @@
                 deferLoading: options.autoload?null:0,
                 initComplete: function () {
                     for (const [key, filter] of Object.entries(options.filters)) {
-                        
                         if(filter.selector){
                             const selector = document.createElement('div');
                             selector.classList.add('filter');
@@ -202,7 +201,7 @@
                                 });
                             }
 
-                            $("#"+options.id+"_wrapper .dt-layout-cell.dt-end").first().prepend(selector);
+                            $("#"+options.id+"_wrapper .dt-layout-cell.dt-layout-end").first().prepend(selector);
                         }
                         else{
                             const filters_div = document.createElement('div');
@@ -229,10 +228,10 @@
                                 button.textContent = filter_button.display;
                                 filters_div.appendChild(button);
                             }
-                            $("#"+options.id+"_wrapper .dt-layout-cell.dt-end").first().prepend(filters_div);
+                            $("#"+options.id+"_wrapper .dt-layout-cell.dt-layout-end").first().prepend(filters_div);
                         }
                     }
-                    $("#"+options.id+"_wrapper .dt-layout-cell.dt-end").first().css("display", "flex").css("flex-direction", "row").css("justify-content", "flex-end").css("gap", "6px");
+                    $("#"+options.id+"_wrapper .dt-layout-cell.dt-layout-end").first().css("display", "flex").css("flex-direction", "row").css("justify-content", "flex-end").css("gap", "6px");
                     setTimeout(function() {
                         if(options.filters!=[]){
                             $('.filter-button').on('click', function () {
