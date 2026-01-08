@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 class Options extends Command
 {
-    protected $signature = 'generate:option';
+    protected $signature = 'generate:options';
     protected $description = 'Genera un archivo JS con las opciones globales desde config/options.php';
 
     protected function generateEnum(array $keys): void
@@ -38,6 +38,9 @@ class Options extends Command
 
     public function handle()
     {
+        if (!File::exists(app_path('Enums'))) {
+            File::makeDirectory(app_path('Enums'), 0755, true);
+        }
         $options = config('options');
 
         $jsContent = '';
