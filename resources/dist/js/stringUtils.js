@@ -154,21 +154,24 @@
             $(this).set_percent($(this).get_number());
         });
         $(document).on('input','.input-money', function(e) {
-            var real_value = $(this).get_real_value();
-            var start = $(this).get(0).selectionStart;
-            var comas = $(this).val().split(',').length - 1;
-            var real_position = start-comas;
-            //var real_number = $(this).get_number();
+            var text = $(this).val();
             $(this).set_money($(this).get_number());
-            if(start !== $(this).get(0).selectionStart){
-                if(typeof real_value === 'undefined' || real_value === null || real_value === 0){
-                    $(this).get(0).setSelectionRange(2,2);
-                    return;
+            var position = $(this).data('position');
+            var current_count = 0;
+            var current_position = 0;
+            
+            while(current_count != position && current_position <= text.length){
+                var char = text[current_position];
+                if(char == '.' || isDigit(char) ){
+                    current_count+=1;
                 }
-                var new_comas = $(this).val().split(',').length - 1;
-                var new_real_position = real_position+new_comas;
-                
-                $(this).get(0).setSelectionRange(new_real_position,new_real_position);
+                current_position+=1;
+            }
+            if(current_count == position ){
+                $(this).get(0).setSelectionRange(current_position,current_position);
+            }
+            if($(this).data('prev_value') == '$0.00'){
+                $(this).get(0).setSelectionRange(text.length-3,text.length-3);
             }
         });
         $(document).on('focus click','.input-percent', function (e) {
@@ -199,8 +202,23 @@
             }
         });
         $(document).on('keydown','.input-money', function(e) {
+            var start = $(this).get(0).selectionStart;
+            
+            var count = 0;
+            var value = $(this).val();
+            $(this).data('prev_value',value);
+            for(var i=start-1; i>=0; i--){
+                if(value[i] === '.' || !isNaN(value[i])){
+                    count++;
+                }
+            }
+            
+            if (e.keyCode >= 48 && e.keyCode <= 57) {
+                $(this).data('position',count+1);
+            } 
             var charToDelete = '';
             if (e.keyCode === 8) { // backspace key
+                $(this).data('position',count-1);
                 var val = $(this).val();
                 var start = $(this).get(0).selectionStart;
                 var end = $(this).get(0).selectionEnd;
