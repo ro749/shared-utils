@@ -18,17 +18,21 @@ class Getter{
     /** @var Statistic[] */
     public array $statistics = [];
 
+    public bool $debug = false;
+
     function __construct(
         array $columns = [],
         array $statistics = [],
         array $filters = [], 
-        array $backend_filters = []
+        array $backend_filters = [],
+        bool $debug = false
     )
     {
         $this->columns = $columns;
         $this->statistics = $statistics;
         $this->filters = $filters;
         $this->backend_filters = $backend_filters;
+        $this->debug = $debug;
     }
 
     function apply_statistics($query,$table,$filters = []){

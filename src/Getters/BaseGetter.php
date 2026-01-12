@@ -16,14 +16,16 @@ class BaseGetter extends Getter{
         array $columns = [],
         array $statistics = [],
         array $filters = [], 
-        array $backend_filters = []
+        array $backend_filters = [],
+        bool $debug = false
     )
     {
         parent::__construct(
             $columns, 
             $statistics, 
             $filters, 
-            $backend_filters
+            $backend_filters,
+            $debug
         );
         $this->model_class = $model_class;
     }
@@ -41,7 +43,8 @@ class BaseGetter extends Getter{
         $order = [],
         $filters = [], 
         $start_date = null, 
-        $end_date = null)
+        $end_date = null
+        )
     {
         $search = $search==null?"":$search;
         $ans = [];
@@ -66,7 +69,15 @@ class BaseGetter extends Getter{
             $query->offset($start);
             $query->limit($length);
         }
-        $ans['data'] = $query->get();
+        if($this->debug){
+            DB::enableQueryLog();
+            $ans['data'] = $query->get();
+            Log::debug(DB::getQueryLog());
+        }
+        else{
+            $ans['data'] = $query->get();
+        }
+        
         return $ans;
     }
 
