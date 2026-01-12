@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Filters\BackendFilters\BackendFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 //used for generate subqueries for statistics
 class Statistic{
     public string $model_class = "";
@@ -113,8 +114,8 @@ class Statistic{
             $filter->filter($subquery, $filters);
         }
 
-        if (method_exists($this->model_class, 'applyScopes')) {
-            $this->model_class::applyScopes($subquery);
+        if (method_exists($this->model_class, 'scope')) {
+            $this->model_class::scope($subquery);
         }
 
         $subquery = $this->extra_process($subquery);

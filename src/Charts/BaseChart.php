@@ -7,17 +7,37 @@ use Ro749\SharedUtils\Statistics\ChartTime;
 class BaseChart
 {
     public TimeGetter $getter;
+    public string $data_column = '';
+    public string $label_column = '';
 
-    public function __construct(TimeGetter $getter)
+    private array $categories = [];
+
+    public function __construct(
+        TimeGetter $getter, 
+        string $data_column,
+        string $label_column
+    )
     {
         $this->getter = $getter;
+        $this->data_column = $data_column;
+        $this->label_column = $label_column;
     }
 
     public function get(ChartTime $interval, int $number): array
     {
         $data = $this->getter->get($interval, $number);
-        Log::debug($data);
-        return $data;
+        $this->categories = $data[$this->label_column];
+        return $data[$this->data_column];
+    }
+
+    public function get_series_name(): string
+    {
+        return array_values($this->getter->columns)[0]->display;
+    }
+
+    public function get_categories(): array
+    {
+        return $this->categories;
     }
 
     public static function instance(): BaseChart

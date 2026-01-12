@@ -12,6 +12,8 @@ class Chart extends Statistic
 
     public int $number = 0;
 
+    public bool $cumulative = false;
+
     public function __construct(
         string $model_class, 
         array $columns, 
@@ -19,7 +21,8 @@ class Chart extends Statistic
         array $backend_filters = [],
         StatisticLink $link = null,
         ChartTime $interval = ChartTime::DAY,
-        int $number = 0
+        int $number = 0,
+        bool $cumulative = false
     )
     {
         parent::__construct(
@@ -32,6 +35,7 @@ class Chart extends Statistic
         );
         $this->interval = $interval;
         $this->number = $number;
+        $this->cumulative = $cumulative;
     }
 
     public function get_query()
@@ -53,23 +57,35 @@ class Chart extends Statistic
     {
         switch ($this->interval) {
             case ChartTime::DAY:
-                $query->addSelect(DB::raw('DATE_FORMAT('.$this->group_column.', \'%Y-%m-%d\') as '.$this->group_column.''));
+                $query->addSelect(DB::raw('DATE_FORMAT('.$this->group_column.', \'%Y-%m-%d\') as '.$this->group_column.'_label'));
                 $startDate = Carbon::now()->subDays($this->number)->startOfDay();
                 break;
             case ChartTime::WEEK:
-                $query->addSelect(DB::raw('DATE_FORMAT('.$this->group_column.', \'%Y-%u\') as '.$this->group_column.''));
+                $query->addSelect(DB::raw('DATE_FORMAT('.$this->group_column.', \'%Y-%u\') as '.$this->group_column.'_label'));
                 $startDate = Carbon::now()->subWeeks($this->number)->startOfWeek();
                 break;
             case ChartTime::MONTH:
-                $query->addSelect(DB::raw('DATE_FORMAT('.$this->group_column.', \'%Y-%m\') as '.$this->group_column.''));
+                $query->addSelect(DB::raw('DATE_FORMAT('.$this->group_column.', \'%Y-%m\') as '.$this->group_column.'_label'));
                 $startDate = Carbon::now()->subMonths($this->number)->startOfMonth();
                 break;
             case ChartTime::YEAR:
-                $query->addSelect(DB::raw('YEAR('.$this->group_column.') as '.$this->group_column.''));
+                $query->addSelect(DB::raw('YEAR('.$this->group_column.') as '.$this->group_column.'_label'));
                 $startDate = Carbon::now()->subYears($this->number)->startOfYear();
                 break;
         }
         $query->whereRaw($this->group_column.' >= \''.$startDate.'\'');
+        $this->group_column = $this->group_column.'_label';
         return $query;
+    }
+
+    public function apply_join($query,$subquery,$table,$name){
+        parent::apply_join($query,$subquery,$table,$name);
+        if($this->cumulative){
+            foreach($this->columns as $key=>$column){
+                $query->addSelect(DB::raw(
+                    'SUM('.$name.'.'.$key.') OVER (ORDER BY '.$name.'.'.$this->group_column.' ROWS UNBOUNDED PRECEDING) as '.$key.''
+                ));
+            }
+        }
     }
 }

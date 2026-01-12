@@ -12,12 +12,11 @@ var options = {
   }],
   chart: {
           type: 'area',
-          width: 80,
-          height: 42,
+          width: '100%',
+          height: 162,
           sparkline: {
-            enabled: true // Remove whitespace
+            enabled: false // Remove whitespace
           },
-
           toolbar: {
               show: false
           },
@@ -39,7 +38,7 @@ var options = {
       },
       grid: {
           show: true,
-          borderColor: 'transparent',
+          borderColor: 'red',
           strokeDashArray: 0,
           position: 'back',
           xaxis: {
@@ -61,9 +60,9 @@ var options = {
               opacity: 0.5
           },  
           padding: {
-              top: -3,
+              top: -30,
               right: 0,
-              bottom: 0,
+              bottom: -10,
               left: 0
           },  
       },
@@ -76,7 +75,7 @@ var options = {
               shadeIntensity: 0.5, // Intensity of the gradient shading
               gradientToColors: [`${chartColor}00`], // Bottom gradient color (with transparency)
               inverseColors: false, // Do not invert colors
-              opacityFrom: .75, // Starting opacity
+              opacityFrom: .6, // Starting opacity
               opacityTo: 0.3,  // Ending opacity
               stops: [0, 100],
           },
@@ -84,10 +83,10 @@ var options = {
       // Customize the circle marker color on hover
       markers: {
         colors: [chartColor],
-        strokeWidth: 2,
+        strokeWidth: 3,
         size: 0,
         hover: {
-          size: 8
+          size: 10
         }
       },
       xaxis: {
@@ -98,11 +97,22 @@ var options = {
           tooltip: {
               enabled: false,
           },
+          tooltip: {
+            enabled: false
+          },
+          labels: {
+            formatter: function (value) {
+              return value;
+            },
+            style: {
+              fontSize: "14px"
+            }
+          },
       },
       yaxis: {
           labels: {
               show: false
-          }
+          },
       },
       tooltip: {
           x: {
