@@ -7,6 +7,14 @@
 @push('scripts')
 <script>
 function get_{{ $data->get_id() }}() {
+    @if(count($data->request_data) != 0)
+    var data = {};
+    @endif
+    @foreach ($data->request_data as $form) 
+    data['{{ $form }}'] = $('#{{ $form }}').;
+    @endforeach
+    
+    @endforeach
     $.ajax({
         url: "/data/{{ $data->get_id() }}",
         method: "GET",

@@ -15,6 +15,15 @@ trait TraitFormatChartTime {
             self::YEAR => '%Y',
         };
     }
+
+    public function label_format(): string {
+        return match($this) {
+            self::DAY => '%d/%b/%Y',
+            self::WEEK => '%Y-%u',
+            self::MONTH => '%b/%Y',
+            self::YEAR => '%Y',
+        };
+    }
 }
 
 enum ChartTime: string implements InterfaceChartTime {
