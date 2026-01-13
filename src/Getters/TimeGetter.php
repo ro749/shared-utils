@@ -12,14 +12,16 @@ class TimeGetter extends Getter{
         array $columns = [],
         array $statistics = [],
         array $filters = [], 
-        array $backend_filters = []
+        array $backend_filters = [],
+        bool $debug = false
     )
     {
         parent::__construct(
             columns: $columns,
             statistics: $statistics,
             filters: $filters,
-            backend_filters: $backend_filters
+            backend_filters: $backend_filters,
+            debug: $debug
         );
     }
 
@@ -40,8 +42,13 @@ class TimeGetter extends Getter{
         //generates the selects
         $this->prosses_columns($query,'last_dates',$joins,'');
         $query = $query->orderBy('id');
-        Log::debug($query->toRawSql());
+        if($this->debug){
+            DB::enableQueryLog();
+        }
         $ans = $query->get();
+        if($this->debug){
+            Log::debug(DB::getQueryLog());
+        }
         
         $ans = collect($ans)->reduce(function ($carry, $item) {
             foreach ($item as $key => $value) {
@@ -49,7 +56,6 @@ class TimeGetter extends Getter{
             }
             return $carry;
         }, []);
-        Log::debug($ans);
 //
         //$ans = $query->pluck(array_keys($this->columns)[0])->toArray();
         //if(!$this->statistics[array_key_first($this->statistics)]->cumulative){

@@ -43,7 +43,7 @@ class Chart extends Statistic
         if(empty($this->link)){
             $subquery = 
                 ($this->model_class)::query()->
-                groupBy($this->group_column);
+                groupBy($this->group_column.'_label');
         }
         else{
             $subquery = 
@@ -83,7 +83,7 @@ class Chart extends Statistic
         if($this->cumulative){
             foreach($this->columns as $key=>$column){
                 $query->addSelect(DB::raw(
-                    'SUM('.$name.'.'.$key.') OVER (ORDER BY '.$name.'.'.$this->group_column.' ROWS UNBOUNDED PRECEDING) as '.$key.''
+                    'SUM(COALESCE('.$name.'.'.$key.',0)) OVER (ORDER BY last_dates.id ROWS UNBOUNDED PRECEDING) as '.$key.'_cumulative'
                 ));
             }
         }

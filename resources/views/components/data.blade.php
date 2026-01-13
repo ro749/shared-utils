@@ -14,7 +14,6 @@ function get_{{ $data->get_id() }}() {
     data['{{ $form }}'] = $('#{{ $form }}').;
     @endforeach
     
-    @endforeach
     $.ajax({
         url: "/data/{{ $data->get_id() }}",
         method: "GET",
