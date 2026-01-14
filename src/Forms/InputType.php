@@ -19,6 +19,7 @@ enum InputType: string
     case PASSWORD = 'password';
     case DATE = 'date';
     case HIDDEN = 'hidden';
+    case CHECKBOX = 'checkbox';
     //for data that is in the session
     case SESSION = 'session';
     case COPY = 'copy';
