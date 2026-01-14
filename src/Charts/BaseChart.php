@@ -27,6 +27,9 @@ class BaseChart
     {
         $data = $this->getter->get($interval, $number);
         $this->categories = $data[$this->label_column];
+        if(!empty($this->getter->statistics[array_key_first($this->getter->statistics)]->cumulative)){
+            return $data[$this->data_column.'_cumulative'];
+        }
         return $data[$this->data_column];
     }
 

@@ -22,12 +22,13 @@ class Chart extends Statistic
         StatisticLink $link = null,
         ChartTime $interval = ChartTime::DAY,
         int $number = 0,
-        bool $cumulative = false
+        bool $cumulative = false,
+        string $group_column = 'created_at'
     )
     {
         parent::__construct(
             $model_class, 
-            'created_at', 
+            $group_column, 
             $columns, 
             $filters, 
             $backend_filters,
