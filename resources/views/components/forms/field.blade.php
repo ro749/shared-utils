@@ -1,6 +1,6 @@
 <input
     type="{{ $field->get_type() }}"
-    class="form-control
+    class="form-control 
     @if($field->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE)
     input-percent
     @elseif($field->type === \Ro749\SharedUtils\Forms\InputType::MONEY)
@@ -26,7 +26,11 @@
     oninput="this.value = this.value.toLowerCase()"
     @endif
     @if($field->autosave)
-    @input.debounce.500ms="submit()"
+        @if($field->type === \Ro749\SharedUtils\Forms\InputType::CHECKBOX)
+        @change="submit()"
+        @else
+        @input.debounce.500ms="submit()"
+        @endif
     @endif
 >
 

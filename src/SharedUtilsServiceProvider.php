@@ -80,5 +80,6 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.tables.layeredSmartTable', 'layeredSmartTable');
         Blade::component('sharedutils::components.data', 'data');
         Blade::component('sharedutils::components.charts.chart', 'chart');
+        Blade::component('sharedutils::components.charts.chart2', 'chart2');
     }
 }

@@ -55,7 +55,7 @@ class BaseForm
         string $view = '',
         bool $reset = true,
         bool $session = false,
-        bool $debug = false
+        bool $debug = false,
     )
     {
         $this->model_class = $model_class;
