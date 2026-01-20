@@ -42,7 +42,10 @@ class Options extends Command
             File::makeDirectory(app_path('Enums'), 0755, true);
         }
         $options = config('options');
-
+        if (!$options) {
+            $this->error('No se encontró el archivo de configuración de opciones.');
+            return;
+        }
         $jsContent = '';
 
         foreach ($options as $var_name => $optionArray) {
@@ -65,7 +68,9 @@ class Options extends Command
             File::put(app_path('Enums/'.$var_name.'.php'), implode("\n", $phpContent));
 
         }
-
+        if (!File::exists(public_path('js'))) {
+            File::makeDirectory(public_path('js'), 0755, true);
+        }
         File::put(public_path('js/options.js'), $jsContent);
 
         

@@ -104,6 +104,11 @@ class Statistic{
                         $str_stat = 'AVG(CASE WHEN '.$column->filter.' THEN '.$col.' ELSE 0 END)';
                     }
                     break;
+                case StatisticType::PERCENTAGE:
+                    if(empty($column->filter)){
+                        $str_stat = 'COUNT(*)*100.0/(SELECT COUNT(*) FROM '.$this->model_class::make()->getTable().')';
+                    }
+                    break;
             }
             $str_stat .= ' AS ' . $key;
             $subquery->addSelect(DB::Raw($str_stat));

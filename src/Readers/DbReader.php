@@ -15,6 +15,8 @@ class DbReader extends Reader
 
     public array $titles = [];
 
+    public array $types = [];
+
     public function __construct(
         string $model_class, 
         array $required_columns = [], 
@@ -35,6 +37,7 @@ class DbReader extends Reader
     public function check_columns(array &$titles):void{
         $this->migration_text = '';
         foreach ($this->required_columns as $column){
+            
             if (!in_array($column, $titles)){
                 $this->error_text .= "Column $column is required.";
             }
@@ -55,8 +58,9 @@ class DbReader extends Reader
         if($this->add_new_columns){
             $this->migration_text .= "Schema::table('{$this->get_table()}', function (Blueprint \$table) {\n";
             foreach ($titles as $title){
+                $this->types[$title] = $this->get_type($title,$data);
                 if (!in_array($title, $this->required_columns)){
-                    $this->migration_text .= $this->get_type($title,$data);
+                    $this->migration_text .= $this->get_text_for_type($title,$this->types[$title]);
                 }
             }
             $this->migration_text .= "});\n";
@@ -64,7 +68,16 @@ class DbReader extends Reader
         foreach ($data as $row){
             $this->migration_text .= "DB::table('{$this->get_table()}')->insert([\n";
             foreach ($row as $column => $value){
-                $this->migration_text .= "'$column' => '$value',\n";
+                if($this->types[$column] == 'int' && $value === ''){
+                    $value = 0;
+                }
+                else if($this->types[$column] == 'float' && $value === ''){
+                    $value = 0.0;
+                }
+                if($this->types[$column] == 'string'){
+                    $value = "'".$value."'";
+                }
+                $this->migration_text .= "'$column' => $value,\n";
             }
             $this->migration_text .= "]);\n";
         }
@@ -93,6 +106,7 @@ return new class extends Migration
     public function get_type(string $column,array &$data):string{
         $ans = 'int';
         foreach($data as &$row){
+            if($row[$column] === '') continue;
             if($ans == 'int'){
                 if(!is_numeric($row[$column])){
                     $ans = 'string';
@@ -105,7 +119,12 @@ return new class extends Migration
                 $ans = 'int';
             }
         }
-        switch ($ans) {
+        return $ans;
+    }
+
+    public function get_text_for_type(string $column,string $type): string
+    {
+        switch ($type) {
             case 'int':
                 return "\$table->integer('$column');\n";
             case 'float':
@@ -115,4 +134,5 @@ return new class extends Migration
         }
         return "";
     }
+    
 }

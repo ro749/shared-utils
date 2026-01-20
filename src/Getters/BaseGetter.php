@@ -65,8 +65,10 @@ class BaseGetter extends Getter{
         if(!empty($order)){
             $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         }
-        if($length != -1){
+        if(!empty($start)){
             $query->offset($start);
+        }
+        if($length != -1 ){
             $query->limit($length);
         }
         if($this->debug){

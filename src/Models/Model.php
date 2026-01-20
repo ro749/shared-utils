@@ -16,4 +16,11 @@ class Model extends BaseModel
         $basename = class_basename(static::class);
         return config('overrides.models.'.$basename);
     }
+
+    static function get_columns(array $columns): array{
+        return array_intersect_key(
+        static::allColumns(),
+        array_flip($columns)
+        );
+    }
 }

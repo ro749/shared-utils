@@ -15,6 +15,7 @@ use Ro749\SharedUtils\Commands\GenerateOverridesConfig;
 use Ro749\SharedUtils\Commands\Check;
 use Ro749\SharedUtils\Commands\Reimport;
 use Ro749\SharedUtils\Commands\Local;
+use Ro749\SharedUtils\Commands\Normalize;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
@@ -47,7 +48,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 Check::class,
                 GenerateOverridesConfig::class,
                 Reimport::class,
-                Local::class
+                Local::class,
+                Normalize::class
             ])
             ->hasRoutes('web');
     }

@@ -11,7 +11,6 @@ class Reader
     {
         $raw_lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $titles = explode(',', $raw_lines[0]);
-        $titles[0] = mb_substr($titles[0], 1, mb_strlen($titles[0]) - 1);
         foreach ($titles as $k => &$title) {
             $title = trim($title);
             $title = str_replace('.', '', $title);
