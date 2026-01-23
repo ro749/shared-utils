@@ -18,11 +18,12 @@ class Field
      */
     public Closure|bool $required = false;
     public bool $unique = false;
-    public int $max_length;
-    public int $min_length;
+    public ?int $max;
+    public ?int $min;
     public bool $encrypt = false;
     public bool $autosave = false;
     public bool $sufficient = false;
+    public string $field_class = "";
 
     public function __construct(
         InputType $type, 
@@ -34,11 +35,12 @@ class Field
         string $value = "",
         Closure|bool $required = false,
         bool $unique = false,
-        int $max_length = 0,
-        int $min_length = 0,
+        int $max = null,
+        int $min = null,
         bool $encrypt = false,
         bool $autosave = false,
-        bool $sufficient = false
+        bool $sufficient = false,
+        string $field_class = ""
     )
     {
         $this->type = $type;
@@ -50,11 +52,12 @@ class Field
         $this->value = $value;
         $this->required = $required;
         $this->unique = $unique;
-        $this->max_length = $max_length;
-        $this->min_length = $min_length;
+        $this->max = $max;
+        $this->min = $min;
         $this->encrypt = $encrypt;
         $this->autosave = $autosave;
         $this->sufficient = $sufficient;
+        $this->field_class = $field_class;
     }
 
     public function is_required(): bool
@@ -90,11 +93,11 @@ class Field
                 $rules[] = 'unique:' . $table . ',' . $key;
             }
         }
-        if($this->max_length!=0){
-            $rules[] = 'max:' . $this->max_length;
+        if($this->max!=0){
+            $rules[] = 'max:' . $this->max;
         }
-        if($this->min_length!=0){
-            $rules[] = 'min:' . $this->min_length;
+        if($this->min!=0){
+            $rules[] = 'min:' . $this->min;
         }
         switch ($this->type) {
             case InputType::EMAIL:

@@ -56,7 +56,11 @@ $initial_data = $form->get_initial_data();
             form: {
                 @if($initial_data != null)
                 @foreach ($initial_data as $key => $value)
+                    @if($form->fields[$key]->type === Ro749\SharedUtils\Forms\InputType::CHECKBOX)
+                {{ $key }}: {{ $value ? 'true' : 'false' }},
+                    @else
                 {{ $key }}: `{{ $value }}`,
+                    @endif
                 @endforeach
                 @endif
             },

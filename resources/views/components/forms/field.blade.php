@@ -13,9 +13,25 @@
     x-model="form.{{ $name }}"
     @endif
     placeholder="{{ $field->placeholder }}"
-    @if($field->max_length!=0)
-    maxlength="{{ $field->max_length }}"
+    @if(
+        $field->type === \Ro749\SharedUtils\Forms\InputType::TEXT ||
+        $field->type === \Ro749\SharedUtils\Forms\InputType::PASSWORD
+        )
+        @if(!empty($field->max))
+    maxlength="{{ $field->max }}"
+        @endif
     @endif
+
+    @if($field->type === \Ro749\SharedUtils\Forms\InputType::NUMBER)
+        @if($field->max!==null)
+    max="{{ $field->max }}"
+        @endif
+        @if($field->min!==null)
+    min="{{ $field->min }}"
+        @endif
+    @endif
+
+
     @if(
         $field->type === \Ro749\SharedUtils\Forms\InputType::ID_NUMBER ||
         $field->type === \Ro749\SharedUtils\Forms\InputType::PHONE
