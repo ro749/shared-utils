@@ -53,11 +53,12 @@ class Statistic{
                 groupBy($this->group_column);
         }
         else{
+            $link_table = $this->link->get_table();
             $subquery = 
                 ($this->link->model_class)::query()->
-                select($this->link->column)->
-                groupBy($this->link->column)->
-                join(($this->model_class)::make()->getTable(), $this->link->get_table().'.id', '=', $this->get_table().'.'.$this->group_column);
+                select($link_table.'.'.$this->group_column)->
+                groupBy($link_table.'.'.$this->group_column)->
+                join(($this->model_class)::make()->getTable(), $this->link->get_table().'.id', '=', $this->get_table().'.'.$this->link->column);
         }
         return $subquery;
     }
@@ -131,15 +132,8 @@ class Statistic{
     public function extra_process($query){return $query;}
 
     public function apply_join($query,$subquery,$table,$name){
-        if(empty($this->link)){
-            $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
-                $join->on($name.'.'.$this->group_column, '=', $table . '.id');
-            });
-        }
-        else{
-            $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
-                $join->on($name.'.'.$this->link->column, '=', $table . '.id');
-            });
-        }
+        $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
+            $join->on($name.'.'.$this->group_column, '=', $table . '.id');
+        });
     }
 }
