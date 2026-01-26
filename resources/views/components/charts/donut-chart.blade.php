@@ -1,11 +1,6 @@
-@props(['data' => []])
-@php
-  $data = $data->toArray();
-  $names = array_column($data, 'name');
-  $percents = array_column($data, 'modelo_percent');
-  $colors = array_column($data, 'color');
-@endphp
-<div id="dunut-chart"></div>
+@props(['id' => '', 'names' => [], 'percents' => [], 'colors' => []])
+
+<div id="{{ $id }}"></div>
 @push('scripts')
 <script>
 var options = { 
@@ -77,7 +72,7 @@ var options = {
       },
     };
 
-    var chart = new ApexCharts(document.querySelector("#dunut-chart"), options);
+    var chart = new ApexCharts(document.querySelector("#{{ $id }}"), options);
     chart.render();
 </script>
 @endpush
