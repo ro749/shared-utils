@@ -184,6 +184,9 @@ $initial_data = $form->get_initial_data();
                         this.errors = {};
                         this.files = {};
                         this.$dispatch('{{$form->get_id()}}-submitted',  response);
+                        @if($form->soft_reload)
+                        reset();
+                        @endif
                     },
                     error: (xhr) => {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {

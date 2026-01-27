@@ -1,16 +1,4 @@
-<table id="{{ $table->get_id() }}" class="table bordered-table mb-0" style ="width:{{ 3500/36 }}% !important;">
-    <thead>
-        <tr id="{{ $table->get_id() }}-header">
-            @foreach($table->get_columns() as $key=>$column)
-                <th>{{ $column->display }}</th>
-            @endforeach
-            @if($table->needsButtons())
-                <th>{{ $table->buttons_label }}</th>
-            @endif
-        </tr>
-    </thead>
-    
-</table>
+@include('sharedutils::components.tables.table', ['table' => $table])
 
 @if($table->delete)
 <x-sharedutils::modal id="delete-popup" onclose="closePopup('delete-popup');">
@@ -36,3 +24,16 @@
     $('#{{ $table->get_id() }}').smartTable(@json($table->get_info()));
 </script>
 @endpush
+<script>
+@push('reset')
+$('#{{ $table->get_id() }}').DataTable().destroy();
+$.ajax({
+    url: '/table/{{ $table->get_id() }}/metadata',
+    success: function(data) {
+        $('#{{ $table->get_id() }}').html(data['view']);
+        $('#{{ $table->get_id() }}').smartTable(data);
+    }
+})
+//$('#{{ $table->get_id() }}').DataTable().ajax.reload();
+@endpush
+</script>

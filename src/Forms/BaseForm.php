@@ -34,6 +34,7 @@ class BaseForm
     public string $view = '';
 
     public bool $reset = true;
+    public bool $soft_reload = false;
     public bool $session = false;
 
     public bool $debug = false;
@@ -54,6 +55,7 @@ class BaseForm
         bool $reload = false,
         string $view = '',
         bool $reset = true,
+        $soft_reload = false,
         bool $session = false,
         bool $debug = false,
     )
@@ -74,6 +76,7 @@ class BaseForm
         $this->view = $view;
         $this->has_files = $this->get_has_files();
         $this->reset = $reset;
+        $this->soft_reload = $soft_reload;
         $this->session = $session;
         $this->debug = $debug;
     }

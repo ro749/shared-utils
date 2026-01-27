@@ -193,10 +193,9 @@ class BaseTable
         }
     }
 
-    function get_metadata(Request $request){
-        foreach ($this->getter->columns as $key => $value) {
-            $ans[] = ['key' => $key, 'label' => $value->display];
-        }
+    function get_metadata(int $layer = 0, int $selected_id = 0): array {
+        $ans = $this->get_info();
+        $ans['view'] = view('shared-utils::components.tables.table', ['table' => $this])->render();
         return $ans;
     }
 
