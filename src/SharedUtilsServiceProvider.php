@@ -87,5 +87,6 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.charts.chart3', 'chart3');
         Blade::component('sharedutils::components.charts.donut-chart', 'donut-chart');
         Blade::component('sharedutils::components.charts.multi-radial-chart', 'multi-radial-chart');
+        Blade::component('sharedutils::components.layout', 'layout');
     }
 }
