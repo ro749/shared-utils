@@ -1,4 +1,4 @@
-@props(['chart' => null, 'color' => '#000000'])
+@props(['chart' => null, 'color' => '#000000', 'data' => null])
 <div id="{{ $chart->get_id() }}"></div>
 
 @push('scripts')
@@ -7,7 +7,7 @@ var options = {
       series: [{
           name: '{{ $chart->get_series_name() }}',
         @php
-        $data = $chart->get(interval: Ro749\SharedUtils\Statistics\ChartTime::MONTH,number: 12);
+        $data = $chart->get($data);
         $labels = $chart->get_categories();
         @endphp
           data: [

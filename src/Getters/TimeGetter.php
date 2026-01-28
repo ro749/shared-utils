@@ -5,7 +5,7 @@ namespace Ro749\SharedUtils\Getters;
 use Ro749\SharedUtils\Statistics\ChartTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+//for statistics of time, the main table is a time table of the last $number $interval
 class TimeGetter extends Getter{
 
     public function __construct(
@@ -56,11 +56,6 @@ class TimeGetter extends Getter{
             }
             return $carry;
         }, []);
-//
-        //$ans = $query->pluck(array_keys($this->columns)[0])->toArray();
-        //if(!$this->statistics[array_key_first($this->statistics)]->cumulative){
-        //    $ans = array_reverse($ans);
-        //}
         return $ans;
     }
 

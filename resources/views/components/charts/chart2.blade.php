@@ -1,4 +1,4 @@
-@props(['chart' => null, 'color' => '#000000'])
+@props(['chart' => null, 'color' => '#000000', 'data' => null])
 <div id="{{ $chart->get_id() }}"></div>
 
 @push('scripts')
@@ -8,7 +8,7 @@ var currentYear = new Date().getFullYear();
 var options = {
   series: [{
     name: '{{ $chart->get_series_name() }}',
-    data: @json($chart->get(interval: Ro749\SharedUtils\Statistics\ChartTime::MONTH,number: 12))
+    data: @json($chart->get($data))
   }],
   chart: {
           type: 'area',

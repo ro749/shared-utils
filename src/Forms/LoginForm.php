@@ -79,6 +79,8 @@ abstract class LoginForm extends BaseForm
         }
         RateLimiter::clear($key);
         $rawRequest->session()->regenerate();
+        Log::info('User logged in: '. now());
+        Auth::guard($this->guard)->user()->update(['last_session_register' => now()]);
         return $this->redirect;
     }
 }

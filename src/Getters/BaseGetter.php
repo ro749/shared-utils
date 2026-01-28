@@ -8,6 +8,7 @@ use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Statistics\Statistic;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+//for when getting data normally from a table
 class BaseGetter extends Getter{
     public string $model_class = '';
 

@@ -9,5 +9,5 @@ enum Modifier: string
     case PERCENT = 'percent';
     case DATE = 'date';
     case NUMBER = 'number';
-    case ENCAPSULATE = 'encapsulate';
+    case TIME_SINCE = 'time_since';
 }
