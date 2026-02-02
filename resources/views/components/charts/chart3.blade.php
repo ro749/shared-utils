@@ -11,7 +11,7 @@ var options = {
         $labels = $chart->get_categories();
         @endphp
           data: [
-            @for($i = 0; $i < 12; $i++)
+            @for($i = 0; $i < count($labels); $i++)
             {
               x: '{{ $labels[$i] }}',
               y: {{ $data[$i] }}
@@ -61,20 +61,6 @@ var options = {
           type: 'category',
           categories: @json($labels)
       },
-      yaxis: {
-          labels: {
-              formatter: function (value) {
-                  return (value / 1000).toFixed(0) + 'k';
-              }
-          }
-      },
-      tooltip: {
-          y: {
-              formatter: function (value) {
-                  return value / 1000 + 'k';
-              }
-          }
-      }
     };
 
     var chart = new ApexCharts(document.querySelector("#{{ $chart->get_id() }}"), options);

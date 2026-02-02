@@ -1,8 +1,7 @@
 <?php
 
 namespace Ro749\SharedUtils\Charts;
-use Ro749\SharedUtils\Getters\Getter;
-use Ro749\SharedUtils\Statistics\ChartTime;
+use Illuminate\Support\Facades\Log;
 
 class BaseChart extends Chart
 {
