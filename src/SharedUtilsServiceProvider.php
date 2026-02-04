@@ -16,6 +16,8 @@ use Ro749\SharedUtils\Commands\Check;
 use Ro749\SharedUtils\Commands\Reimport;
 use Ro749\SharedUtils\Commands\Local;
 use Ro749\SharedUtils\Commands\Normalize;
+use Ro749\SharedUtils\Commands\FixView;
+use Ro749\SharedUtils\Commands\OverrideView;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
@@ -49,7 +51,9 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 GenerateOverridesConfig::class,
                 Reimport::class,
                 Local::class,
-                Normalize::class
+                Normalize::class,
+                FixView::class,
+                OverrideView::class
             ])
             ->hasRoutes('web');
     }
@@ -63,6 +67,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
             
             return $this->whereBetween($column, [$start, $end]);
         });
+        require_once __DIR__ . '/Helpers.php';
     }
 
     public function packageBooted(): void

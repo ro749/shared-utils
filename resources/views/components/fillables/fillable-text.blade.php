@@ -1,6 +1,11 @@
+
 <span class="text-{{ $id }}">
     @if(!empty($data))
-        {{ $data->get($id) }}
+        @if($data instanceof \Ro749\SharedUtils\Data\Data)
+            {{ $data->get($id) }}
+        @else
+            {{ $data->{$id} }}
+        @endif
     @endif
 </span>
 

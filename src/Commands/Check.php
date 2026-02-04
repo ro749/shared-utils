@@ -280,7 +280,7 @@ class Check extends Command
         $this->generate_overrides();
         $this->fix_composer_json();
         $this->fix_gitignore();
-        $this->model_fix();
+        //$this->model_fix();
         
 
         $this->info('✓ Everything fixed!');
