@@ -227,7 +227,13 @@ class BaseForm
             }
             foreach ($forms as $key => $form_data){
                 $form_data[$this->fields[$key]->owner_column] = $model->id;
-                $this->fields[$key]->form->model_class::create($form_data);
+                if(empty($this->fields[$key]->form->model_class)){
+                    DB::table($key)->insert($form_data);
+                }
+                else{
+                    $this->fields[$key]->form->model_class::create($form_data);
+                }
+                
             }
             foreach ($arrays as $key => $array) {
                 foreach($array as $value){

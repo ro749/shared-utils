@@ -45,21 +45,7 @@
         var val = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         return this.each(function () {
             if ($(this).is('input')) {
-                if(typeof Alpine !== 'undefined'){
-                    var form = $(this).closest('[x-data]');
-                    var alpine_form = Alpine.$data(form[0]);
-                    var id_path = $(this).attr('id').split('-');
-                    var field = alpine_form.form;
-                    for (var i = 0; i < id_path.length-1; i++) {
-                        if (!(id_path[i] in field)) {
-                            field[id_path[i]] = {};
-                        }
-                        field = field[id_path[i]];
-                    }
-                    field[id_path[i]] = value;
-                }
                 $(this).val('$'+val);
-                
             }
             else {
                 $(this).html('$'+val+$.fn.set_money.defaults.suffix);
@@ -76,6 +62,19 @@
     $.fn.set_value = function (value) {
         return this.each(function () {
             if ($(this).is('input')) {
+                if(typeof Alpine !== 'undefined'){
+                    var form = $(this).closest('[x-data]');
+                    var alpine_form = Alpine.$data(form[0]);
+                    var id_path = $(this).attr('id').split('-');
+                    var field = alpine_form.form;
+                    for (var i = 0; i < id_path.length-1; i++) {
+                        if (!(id_path[i] in field)) {
+                            field[id_path[i]] = {};
+                        }
+                        field = field[id_path[i]];
+                    }
+                    field[id_path[i]] = value;
+                }
                 if($(this).hasClass('input-money')) {
                     $(this).set_money(value);
                 }
