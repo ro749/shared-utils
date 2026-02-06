@@ -148,7 +148,12 @@ $initial_data = $form->get_initial_data();
                         @else
 
                         @if($form->redirect)
-                        window.location.href = response.redirect;
+                        if(response.redirect){
+                            window.location.href = response.redirect;
+                        }
+                        else{
+                            return;
+                        }
                         @elseif(!empty($form->popup))
 
                         let success = '{{ $form->success_msg ?? 'Datos guardados correctamente.' }}';
