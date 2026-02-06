@@ -18,9 +18,13 @@ class Model extends BaseModel
     }
 
     static function get_columns(array $columns): array{
-        return array_intersect_key(
-        static::allColumns(),
-        array_flip($columns)
-        );
+        $model_columns = static::allColumns();
+        $ans = [];
+        foreach ($columns as $column) {
+            if (isset($model_columns[$column])) {
+                $ans[$column] = $model_columns[$column];
+            }
+        }
+        return $ans;
     }
 }
