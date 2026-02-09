@@ -4,8 +4,9 @@ namespace Ro749\SharedUtils\Readers;
 
 class MigrationHelper 
 {
-    public static function generate_migration_for_table($table__name,$columns_data,$table_data) {
-        $migration_text = "Schema::create('".$table__name."', function (Blueprint \$table) {\n";
+    //creates a new table
+    public static function generate_migration_for_table($table_name,$columns_data,$table_data) {
+        $migration_text = "Schema::create('".$table_name."', function (Blueprint \$table) {\n";
 
         $migration_text .= "\$table->id();\n";
         // Assuming $table_data is an associative array with column names as keys and data types as values
@@ -26,7 +27,7 @@ class MigrationHelper
         $migration_text .= "});\n";
 
         foreach ($table_data as $row) {
-            $migration_text .= "DB::table('".$table__name."')->insert([\n";
+            $migration_text .= "DB::table('".$table_name."')->insert([\n";
             foreach ($row as $column => $value) {
                 $migration_text .= "'$column' => '$value',\n";
             }
@@ -36,12 +37,12 @@ class MigrationHelper
         return $migration_text;
         
     }   
-
-    public static function generate_migration_for_alter_data($table__name,$table_data) {
+    //modifies data of a table of normalized values
+    public static function generate_migration_for_alter_data($table_name,$table_data) {
         $migration_text = "";
 
         foreach ($table_data as $row) {
-            $migration_text .= "DB::table('".$table__name."')->where('".$row[0]."', '".$row[1]."')->update(['".$row[0]."' => '".$row[2]."']);\n";
+            $migration_text .= "DB::table('".$table_name."')->where('".$row[0]."', '".$row[1]."')->update(['".$row[0]."' => '".$row[2]."']);\n";
         }
 
         $migration_text .= "\n";
@@ -49,9 +50,9 @@ class MigrationHelper
         return $migration_text;
         
     }
-
-    public static function generate_migration_for_alter_table($table__name,$columns_data) {
-        $migration_text = "Schema::table('".$table__name."', function (Blueprint \$table) {\n";
+    //changes a column of a table
+    public static function generate_migration_for_alter_table($table_name,$columns_data) {
+        $migration_text = "Schema::table('".$table_name."', function (Blueprint \$table) {\n";
 
         // Assuming $columns_data is an associative array with column names as keys and data types as values
         foreach ($columns_data as $column_name => $data_type) {
@@ -72,6 +73,41 @@ class MigrationHelper
 
         return $migration_text;
         
+    }
+
+    public static function generate_migration_for_add_rows($table_name,$columns_data) {
+        $migration_text = "Schema::table('".$table_name."', function (Blueprint \$table) {\n";
+
+        // Assuming $columns_data is an associative array with column names as keys and data types as values
+        foreach ($columns_data as $column_name => $data_type) {
+            switch ($data_type) {
+                case 'int':
+                    $migration_text .= "\$table->integer('".$column_name."');\n";
+                    break;
+                case 'float':
+                    $migration_text .= "\$table->float('".$column_name."');\n";
+                    break;
+                case 'string':
+                default:
+                    $migration_text .= "\$table->string('".$column_name."');\n";
+                    break;
+            }
+        }
+        $migration_text .= "});\n";
+
+        return $migration_text;
+    }
+
+    public static function generate_migration_for_remove_rows($table_name,$columns_data) {
+        $migration_text = "Schema::table('".$table_name."', function (Blueprint \$table) {\n";
+
+        // Assuming $columns_data is an associative array with column names as keys and data types as values
+        foreach ($columns_data as $column_name) {
+            $migration_text .= "\$table->dropColumn('".$column_name."');\n";
+        }
+        $migration_text .= "});\n";
+
+        return $migration_text;
     }
 
     public static function create_migration_file($migration_name,$migration_text) {

@@ -18,6 +18,7 @@ use Ro749\SharedUtils\Commands\Local;
 use Ro749\SharedUtils\Commands\Normalize;
 use Ro749\SharedUtils\Commands\FixView;
 use Ro749\SharedUtils\Commands\OverrideView;
+use Ro749\SharedUtils\Commands\Absorb;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
@@ -53,7 +54,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 Local::class,
                 Normalize::class,
                 FixView::class,
-                OverrideView::class
+                OverrideView::class,
+                Absorb::class
             ])
             ->hasRoutes('web');
     }
