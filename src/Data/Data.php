@@ -39,4 +39,9 @@ abstract class Data
     function get_id(){
         return class_basename($this);
     }
+    public static function get_class(): string
+    {
+        $basename = class_basename(static::class);
+        return config('overrides.data.'.$basename);
+    }
 }
