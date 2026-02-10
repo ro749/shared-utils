@@ -11,9 +11,6 @@ class TextArea extends Field
         array $rules=[], 
         string $message="", 
         string $value = "",
-        int $max_length = 0,
-        int $min_length = 0,
-        bool $encrypt = false,
         bool $autosave = false,
         int $rows = 3,
         int $cols = 50
