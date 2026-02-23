@@ -27,7 +27,7 @@ abstract class Data
         if($this->data === null){
             $this->data = $this->init_data();
         }
-        return $this->data[$attribute] ?? null;
+        return $this->data->{$attribute} ?? null;
     }
 
     public static function instance(): Data
