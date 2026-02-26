@@ -27,4 +27,8 @@ class Model extends BaseModel
         }
         return $ans;
     }
+
+    public static function getTableName() {
+        return with(new static)->getTable();
+    }
 }

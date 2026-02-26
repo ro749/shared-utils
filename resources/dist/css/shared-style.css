@@ -162,3 +162,9 @@ p{
 .selection{
     width: 100%;
 }
+
+.dt-search{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
