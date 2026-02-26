@@ -1,78 +1,37 @@
 @props(['id' => '', 'names' => [], 'percents' => [], 'colors' => []])
-
 <div id="{{ $id }}"></div>
 @push('scripts')
 <script>
-var options = { 
-      series: @json($percents),
-      colors: @json($colors),
-      labels: @json($names),
-      legend: {
-          show: false 
-      },
-      chart: {
-        type: 'donut',    
-        height: 300,
-        sparkline: {
-          enabled: true // Remove whitespace
+var options = {
+        series: @json($percents),
+        labels: @json($names),
+        chart: {
+            height: 264,
+            type: 'donut',
         },
-        margin: {
-            top: -100,
-            right: -100,
-            bottom: -100,
-            left: -100
+        colors: @json($colors),
+        dataLabels: {
+            enabled: false
         },
-        padding: {
-          top: -100,
-          right: -100,
-          bottom: -100,
-          left: -100
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                width: 200
+                },
+                legend: {
+                show: false
+                }
+            }
+        }],
+        legend: {
+            position: 'right',
+            offsetY: 0,
+            height: 230,
+            show: false
         }
-      },
-      stroke: {
-        width: 0,
-      },
-      dataLabels: {
-        enabled: false
-      },
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }],
-      plotOptions: {
-        pie: {
-          startAngle: -90,
-          endAngle: 90,
-          offsetY: 10,
-          customScale: 0.8,
-          donut: {
-            size: '70%',
-            labels: {
-              show: true,
-              total: {
-                showAlways: true,
-                show: true,
-                label: 'Customer Report',
-                // formatter: function (w) {
-                //     return w.globals.seriesTotals.reduce((a, b) => {
-                //         return a + b;
-                //     }, 0);
-                // }
-              }
-            },
-          }
-        }
-      },
-    };
-
-    var chart = new ApexCharts(document.querySelector("#{{ $id }}"), options);
-    chart.render();
+};
+var chart = new ApexCharts(document.querySelector("#{{ $id }}"), options);
+chart.render();
 </script>
 @endpush

@@ -1,4 +1,5 @@
-@props(['selector'])
+@props(['selector'=>null, 'form_id'=> ''])
+
 <select 
     id="{{ $name }}"
     name="{{ $name }}"
@@ -8,6 +9,7 @@
         'form-select',
         'w-auto',
         $selector->search ? 'select2' : '',
+        $form_id != '' ? $form_id.'-field' : '',
         $class ?? '',
     ]) }}
     @if($selector->autosave)
@@ -29,10 +31,13 @@
     $('#{{ $name }}').select2({
         theme: "bootstrap-5",
         dropdownAutoWidth: true,
-        width: 'auto'
+        width: '{{ $selector->max_length == 0 ? 'auto' : $selector->max_length.'px' }}',
+        allowClear: true,
+        placeholder: '{{ $selector->placeholder }}', 
+        
     });
     $('#{{ $name }}').on('change', () => {
-        this.form.{{ $name }} = $('#{{ $name }}').val();
+        this.form.{{ str_replace('-', '_', $name) }} = $('#{{ $name }}').val();
     });
     @if(!empty($value))
     $('#{{ $name }}').val('{{ $value }}').trigger('change');

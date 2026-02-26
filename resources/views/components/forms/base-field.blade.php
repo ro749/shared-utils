@@ -23,7 +23,7 @@ else{
             <iconify-icon icon="{{ $field->icon }}"></iconify-icon>
         </span>
     @endif
-    {!! $field->render($name,$form_id,$initial_data) !!}
+    {!! $field->render($name,$form_id,$initial_data,) !!}
     @if($field->icon)
     </div>
     @endif

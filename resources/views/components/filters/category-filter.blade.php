@@ -5,6 +5,15 @@
         'selector' => $filter->selector, 
         'name' => 'cf-' . $filter->id, 
         'class' => 'category-filter', 
-        'id' => 'cf-' . $filter->id]
-        )
+        'id' => 'cf-' . $filter->id,
+        'push_init'=>'filters',
+        'push_reset' => 'filters-reset',
+    ])
 </div>
+@push($push_init)
+<script>
+    $('#cf-{{ $filter->id }}').on('change', function() {
+        console.log('category filter changed');
+    });
+</script>
+@endpush

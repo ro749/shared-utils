@@ -37,6 +37,8 @@ class BaseForm
     public bool $soft_reload = false;
     public bool $session = false;
 
+    public bool $autosave = false;
+
     public bool $debug = false;
     
     public function __construct(
@@ -53,6 +55,7 @@ class BaseForm
         string $uploading_message = '',
         int $db_id = 0,
         bool $reload = false,
+        bool $autosave = false,
         string $view = '',
         bool $reset = true,
         $soft_reload = false,
@@ -78,6 +81,7 @@ class BaseForm
         $this->reset = $reset;
         $this->soft_reload = $soft_reload;
         $this->session = $session;
+        $this->autosave = $autosave;
         $this->debug = $debug;
     }
 

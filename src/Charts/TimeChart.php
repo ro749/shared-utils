@@ -5,9 +5,9 @@ namespace Ro749\SharedUtils\Charts;
 class TimeChart extends Chart
 {
 
-    public function get(ChartGetData $data): array
+    public function get(ChartGetData $data, $filters = []): array
     {
-        $data = $this->getter->get($data->interval, $data->number);
+        $data = $this->getter->get($data->interval, $data->number, $filters);
         $this->categories = $data[$this->label_column];
         $ans = [];
         if(!empty($this->getter->statistics[array_key_first($this->getter->statistics)]->cumulative)){

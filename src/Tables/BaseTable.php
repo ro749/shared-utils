@@ -108,9 +108,9 @@ class BaseTable
         }
         $this->generate_buttons();
         $filters = $this->getter->filters;
-        foreach($this->getter->statistics as $stat){
-            $filters = array_merge($filters,$stat->filters);
-        }
+        //foreach($this->getter->statistics as $stat){
+        //    $filters = array_merge($filters,$stat->filters);
+        //}
         return [
             'id' => $this->get_id(),
             'columns' => $this->getter->columns,

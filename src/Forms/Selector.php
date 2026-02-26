@@ -3,6 +3,7 @@
 namespace Ro749\SharedUtils\Forms;
 use Closure;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Selector extends Field
 {
@@ -12,6 +13,7 @@ class Selector extends Field
     public string $value_column;
     public bool $search = false;
     public string $hot_reload = '';
+    public int $length = 0;
 
     public function __construct(
         $options, 
@@ -29,7 +31,8 @@ class Selector extends Field
         string $label_column = "", 
         string $value_column = "id",
         bool $autosave = false,
-        string $hot_reload = ''
+        string $hot_reload = '',
+        int $max_length = 0
     )    
     {
         parent::__construct(
@@ -57,6 +60,7 @@ class Selector extends Field
         $this->label_column = $label_column;
         $this->value_column = $value_column;
         $this->hot_reload = $hot_reload;
+        $this->max_length = $max_length;
     }
 
     public static function fromDB(
@@ -85,9 +89,12 @@ class Selector extends Field
         $rows = $query->get();
 
         $options = [];
+        $max = 0;
         foreach ($rows as $row) {
             $options[$row->$value_column] = $row->$label_column;
+            $max = strlen($row->$label_column) > $max ? strlen($row->$label_column) : $max;
         }
+        $max = $max*12+48;
         return new self(
             id: $id,
             value: $value,
@@ -104,7 +111,8 @@ class Selector extends Field
             rules:$rules, 
             message:$message,
             autosave: $autosave,
-            hot_reload: $hot_reload
+            hot_reload: $hot_reload,
+            max_length: $max
         );
     }
 
@@ -113,15 +121,16 @@ class Selector extends Field
         return $this->table.".".$this->value_column;
     }
 
-    public function render(string $name,string $push = "",string $data)
+    public function render(string $name,string $form_id = "",string $data = '')
     {
         return view('shared-utils::components.forms.selector',[
             "selector"=>$this,
             "name"=>$name,
-            "push_init"=>$push,
-            "push_reset"=>$push.'_reset',
+            "push_init"=>$form_id,
+            "push_reset"=>$form_id.'_reset',
             "hot_reload"=>$this->hot_reload,
-            "value"=>$data
+            "value"=>$data,
+            "form_id"=>$form_id,
         ]);
     }
 }

@@ -90,11 +90,16 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.tables.localSmartTable', 'localSmartTable');
         Blade::component('sharedutils::components.tables.layeredSmartTable', 'layeredSmartTable');
         Blade::component('sharedutils::components.data', 'data');
+        Blade::component('sharedutils::components.charts.base-chart', 'base-chart');
         Blade::component('sharedutils::components.charts.chart', 'chart');
         Blade::component('sharedutils::components.charts.chart2', 'chart2');
         Blade::component('sharedutils::components.charts.chart3', 'chart3');
+        Blade::component('sharedutils::components.charts.line-chart', 'line-chart');
         Blade::component('sharedutils::components.charts.donut-chart', 'donut-chart');
+        Blade::component('sharedutils::components.charts.semi-donut-chart', 'semi-donut-chart');
         Blade::component('sharedutils::components.charts.multi-radial-chart', 'multi-radial-chart');
         Blade::component('sharedutils::components.layout', 'layout');
+
+        Blade::component('sharedutils::components.filters.base-filters', 'base-filters');
     }
 }

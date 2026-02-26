@@ -6,13 +6,12 @@ use Ro749\SharedUtils\Tables\Column;
 use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Statistics\Statistic;
 use Illuminate\Support\Facades\DB;
+use Ro749\SharedUtils\Filters\BaseFilters;
 class Getter{
 
      /** @var Column[] */
     public array $columns;
-
-    /** @var BaseFilter[] */
-    public array $filters;
+    public ?BaseFilters $filters;
     public array $backend_filters;
 
     /** @var Statistic[] */
@@ -23,7 +22,7 @@ class Getter{
     function __construct(
         array $columns = [],
         array $statistics = [],
-        array $filters = [], 
+        BaseFilters $filters = null, 
         array $backend_filters = [],
         bool $debug = false
     )
@@ -33,6 +32,10 @@ class Getter{
         $this->filters = $filters;
         $this->backend_filters = $backend_filters;
         $this->debug = $debug;
+    }
+
+    function get_table(): string {
+        return '';
     }
 
     function apply_statistics($query,$table,$filters = []){
@@ -58,11 +61,28 @@ class Getter{
                     //if column needs data from other table and its not editable and this join has not been added, adds it
                     if(!in_array($modifier->table, $joins)){
                         $joins[] = $modifier->table;
-                        $query->leftJoin(
-                            $modifier->table, 
-                            $modifier->table . '.id', '=', $table . '.' . $key);
+                        if($modifier->table == $this->get_table()){
+                            $query->leftJoin(
+                                $modifier->table.' as '.$modifier->table.'_'.$key, 
+                                $modifier->table.'_'.$key.'.id', '=', $table . '.' . $key
+                            );
+                        }
+                        else{
+                            $query->leftJoin(
+                                $modifier->table, 
+                                $modifier->table . '.id', '=', $table . '.' . $key
+                            );
+                        }
+                        
                     }
-                    $query->addSelect(DB::raw($modifier->get_value($table ,$key) . ' as ' . $key));
+                    if($modifier->table == $this->get_table()){
+                        $value = $modifier->table.'_'.$key.'.'.$modifier->column;
+                    }
+                    else{
+                        $value = $modifier->get_value($table ,$key);
+                    }
+                    
+                    $query->addSelect(DB::raw($value . ' as ' . $key));
                 }
                 //if column needs data from other table and its editable
                 else{

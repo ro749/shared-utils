@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 class BaseChart extends Chart
 {
 
-    public function get(ChartGetData $data = null): array
+    public function get(ChartGetData $data = null, $filters = []): array
     {
         $data = $data==null?new ChartGetData():$data;
         $data = $this->getter->get($data->start, $data->length);

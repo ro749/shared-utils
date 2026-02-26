@@ -49,6 +49,10 @@ $initial_data = $form->get_initial_data();
 @include($form->popup, ['class' => $form->get_id()])
 @endif
 
+@else
+{{ $slot }}
+@endif
+
 @push('scripts')
 <script>
     function {{$form->get_id()}}_submit() {
@@ -108,6 +112,16 @@ $initial_data = $form->get_initial_data();
                 });
                 @endif
                 @endforeach
+
+                @if($form->autosave)
+                $('.{{ $form->get_id() }}-field').on('change', function(e) {
+                    if(typeof Alpine !== 'undefined'){
+                        var form = $(e.target).closest('[x-data]');
+                        var alpine_form = Alpine.$data(form[0]);
+                        alpine_form.submit();
+                    }
+                });
+                @endif
             },
 
             hasAnyError() {
@@ -115,7 +129,6 @@ $initial_data = $form->get_initial_data();
             },
 
             submit() {
-                
                 const urlParams = new URLSearchParams(window.location.search);
                 for (const key of urlParams.keys()) {
                     this.form[key] = urlParams.get(key);
@@ -214,6 +227,3 @@ $initial_data = $form->get_initial_data();
     }
 </script>
 @endpush
-@else
-{{ $slot }}
-@endif

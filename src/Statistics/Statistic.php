@@ -7,6 +7,7 @@ use Ro749\SharedUtils\Filters\BackendFilters\BackendFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 //used for generate subqueries for statistics
+//this is for grouping the data table, the category table is the one that goes in the getter
 class Statistic{
     public string $model_class = "";
 
@@ -21,21 +22,22 @@ class Statistic{
     /** @var BackendFilter[] */
     public array $backend_filters;
 
-    public ?StatisticLink $link;
+    /** @var StatisticLink[] */
+    public array $links = [];
 
     public function __construct(
             string $model_class, 
-            string|StatisticLink $group_column, 
+            string $group_column, 
             array $columns, 
             array $filters = [], 
             array $backend_filters = [],
-            StatisticLink $link = null
+            array $links = [],
         ){
         $this->model_class = $model_class;
         $this->group_column = $group_column;
         $this->columns = $columns;
         $this->filters = $filters;
-        $this->link = $link;
+        $this->links = $links;
         $this->backend_filters = $backend_filters;
     }
 
@@ -45,20 +47,25 @@ class Statistic{
     }
 
     public function get_query()
-    {
-        if(empty($this->link)){
-            $subquery = 
-                ($this->model_class)::query()->
-                select($this->group_column)->
-                groupBy($this->group_column);
-        }
-        else{
-            $link_table = $this->link->get_table();
-            $subquery = 
-                ($this->link->model_class)::query()->
-                select($link_table.'.'.$this->group_column)->
-                groupBy($link_table.'.'.$this->group_column)->
-                join(($this->model_class)::make()->getTable(), $this->link->get_table().'.id', '=', $this->get_table().'.'.$this->link->column);
+    {   
+        $prev_table = ($this->model_class)::make()->getTable();
+        $subquery = 
+            ($this->model_class)::query()->
+            select($prev_table.'.'.$this->group_column)->
+            groupBy($prev_table.'.'.$this->group_column);
+        $prev_table = ($this->model_class)::make()->getTable();
+        $prev_tables = [$prev_table];
+        foreach($this->links as $link){
+            $link_table = $link->get_table();
+            $as_table = $link_table;
+            if(in_array($link_table,$prev_tables)){
+
+                $as_table = $link_table.' as '.$link_table . '_' . count($prev_tables);
+                $link_table .= '_' . count($prev_tables);
+            }
+            $subquery->join($as_table, $link_table.'.'.$link->column, '=', $prev_table.'.id');
+            $prev_table = $link_table;
+            $prev_tables[] = $link_table;
         }
         return $subquery;
     }
@@ -75,9 +82,9 @@ class Statistic{
         
         $subquery = $this->get_query();
         
-        foreach ($this->filters as $filter) {
-            $filter->filter($subquery, $filters);
-        }
+        //foreach ($this->filters as $filter) {
+        //    $filter->filter($subquery, $filters);
+        //}
         foreach ($this->columns as $key => $column) {
             $col = empty($column->column)?$key:$column->column;
             switch ($column->type) {

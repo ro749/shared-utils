@@ -19,7 +19,7 @@ class Chart extends Statistic
         array $columns, 
         array $filters = [], 
         array $backend_filters = [],
-        StatisticLink $link = null,
+        array $links = [],
         ChartTime $interval = ChartTime::DAY,
         int $number = 0,
         bool $cumulative = false,
@@ -32,7 +32,7 @@ class Chart extends Statistic
             $columns, 
             $filters, 
             $backend_filters,
-            $link
+            $links
         );
         $this->interval = $interval;
         $this->number = $number;

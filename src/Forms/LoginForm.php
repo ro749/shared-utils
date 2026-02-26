@@ -67,7 +67,7 @@ abstract class LoginForm extends BaseForm
             }
         }
         if($this->column_status != ''){
-            if(Auth::guard($this->guard)->user()->{$this->column_status} != '0'){
+            if(!empty(Auth::guard($this->guard)->user()->{$this->column_status})){
                 Auth::guard($this->guard)->logout();
                 throw ValidationException::withMessages([
                     'password' => ['Usuario bloqueado.'],

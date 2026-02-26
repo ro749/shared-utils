@@ -134,12 +134,6 @@
             params.forEach((value, key) => {
                 filters[key] = value;
             });
-            for (const [key, filter] of Object.entries(options.filters)){
-                if (filter.session) {
-                    const sessionValue = sessionStorage.getItem(filter.session)??1;
-                    filters["cf-"+key] = sessionValue;
-                } 
-            }
             if(options.needs_selectors){
                 $.ajax({
                     url: '/table/'+options.id+'/selectors',

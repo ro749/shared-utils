@@ -1,10 +1,14 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Ro749\SharedUtils\Charts\TimeChartGetData;
+use Ro749\SharedUtils\Statistics\ChartTime;
+
+use Illuminate\Support\Facades\Log;
 Route::middleware('web')->group(function () {
     
-    Route::get('/table/{table}/get', function (Request $request,string $table) {
-        $fullClass = config('overrides.tables.'.$table);
+    Route::get('/table/{table}/get', function (Request $request,string $table) {  
+        $fullClass = config('overrides.tables.'.$table) ?? 'App\\Tables\\' . $table;
         $table = new $fullClass();
         $table->make_it_modifiable();
         return response()->json($table->get(
@@ -107,5 +111,16 @@ Route::middleware('web')->group(function () {
         $request->session()->regenerateToken(); // CSRF protection
     
         return response()->json(['redirect' => '/']);
+    });
+
+    Route::get('/chart/{chart}', function (Request $request,$chart) {
+        $chart_class = $chart;
+        $chart_object = new ('App\\Charts\\'.$chart_class)();
+        $filters = $request->all();
+        $ans = $chart_object->get(new TimeChartGetData(
+            ChartTime::MONTH,
+            12
+        ), $filters);
+        return response()->json(data: $ans);
     });
 });

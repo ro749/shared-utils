@@ -4,7 +4,7 @@ namespace Ro749\SharedUtils\Getters;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Ro749\SharedUtils\Filters\BaseFilters;
 //for when there is no main table, just statistics
 class CategoryGetter extends Getter{
     public string $option_name;
@@ -12,7 +12,7 @@ class CategoryGetter extends Getter{
         string $option_name,
         array $columns = [],
         array $statistics = [],
-        array $filters = [], 
+        BaseFilters $filters = null, 
         array $backend_filters = [],
         bool $debug = false
     ){

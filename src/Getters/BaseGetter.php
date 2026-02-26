@@ -8,6 +8,7 @@ use Ro749\SharedUtils\Filters\BaseFilter;
 use Ro749\SharedUtils\Statistics\Statistic;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Ro749\SharedUtils\Filters\BaseFilters;
 //for when getting data normally from a table
 class BaseGetter extends Getter{
     public string $model_class = '';
@@ -16,7 +17,7 @@ class BaseGetter extends Getter{
         string $model_class = '',
         array $columns = [],
         array $statistics = [],
-        array $filters = [], 
+        BaseFilters $filters = null, 
         array $backend_filters = [],
         bool $debug = false
     )
@@ -134,9 +135,9 @@ class BaseGetter extends Getter{
 
     
     public function apply_filters($query, $filters){
-        foreach ($this->filters as $filter) {
-            $filter->filter($query, $filters);
-        }
+        //foreach ($this->filters as $filter) {
+        //    $filter->filter($query, $filters);
+        //}
     }
 
 }

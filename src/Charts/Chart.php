@@ -9,7 +9,6 @@ class Chart
     public Getter $getter;
     public string $data_column = '';
     public string $label_column = '';
-
     public array $categories = [];
 
     //if is inverted in the way of $inverted-x
@@ -28,7 +27,7 @@ class Chart
         $this->inverted = $inverted;
     }
 
-    public function get(ChartGetData $data): array{
+    public function get(ChartGetData $data, $filters = []): array{
         return [];
     }
 
