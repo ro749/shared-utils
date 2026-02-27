@@ -101,5 +101,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.layout', 'layout');
 
         Blade::component('sharedutils::components.filters.base-filters', 'base-filters');
+
+        Blade::component('sharedutils::components.carousel', 'carousel');
     }
 }

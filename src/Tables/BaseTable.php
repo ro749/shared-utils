@@ -18,7 +18,7 @@ class BaseTable
     public ?View $view = null;
     public ?Delete $delete = null;
     public ?BaseForm $form;
-
+    public array $filters = [];
     public bool $needs_buttons = false;
     public bool $is_editable = false;
 
@@ -43,7 +43,8 @@ class BaseTable
         int $page_length = 0,
         TableTexts $texts = new TableTexts(),
         string $buttons_label = '',
-        bool $autoload = true
+        bool $autoload = true,
+        array $filters = []
     )
     {
         $this->getter = $getter;
@@ -56,6 +57,7 @@ class BaseTable
         $this->buttons = $buttons;
         $this->buttons_label = $buttons_label;
         $this->autoload = $autoload;
+        $this->filters = $filters;
     }
 
     public function getColumn(string $key): ?Column
@@ -114,7 +116,7 @@ class BaseTable
         return [
             'id' => $this->get_id(),
             'columns' => $this->getter->columns,
-            'filters' => $filters,
+            'filters' => $this->filters,
             'delete' => $this->delete,
             'needs_buttons' => $this->needsButtons(),
             'is_editable' => $this->is_editable,

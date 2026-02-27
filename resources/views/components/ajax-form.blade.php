@@ -49,9 +49,6 @@ $initial_data = $form->get_initial_data();
 @include($form->popup, ['class' => $form->get_id()])
 @endif
 
-@else
-{{ $slot }}
-@endif
 
 @push('scripts')
 <script>
@@ -227,3 +224,10 @@ $initial_data = $form->get_initial_data();
     }
 </script>
 @endpush
+
+
+@else
+{{ $slot }}
+@endif
+
+
