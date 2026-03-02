@@ -11,7 +11,7 @@ var options = {
         data: @json($chart->get($data))
     }],
     chart: {
-        height: 264,
+        height: 528,
         type: 'line',
         colors: '#000',
         zoom: {
