@@ -46,12 +46,9 @@ class TimeGetter extends Getter{
         $this->prosses_columns($query,'last_dates',$joins,'');
         $query = $query->orderBy('id');
         if($this->debug){
-            DB::enableQueryLog();
+            Log::debug($query->toRawSql());
         }
         $ans = $query->get();
-        if($this->debug){
-            Log::debug(DB::getQueryLog());
-        }
         
         $ans = collect($ans)->reduce(function ($carry, $item) {
             foreach ($item as $key => $value) {

@@ -33,7 +33,7 @@ class Chart
 
     public function get_series_name(): string
     {
-        return array_values($this->getter->columns)[0]->display;
+        return $this->getter->columns[$this->data_column]->display;
     }
 
     public function get_categories(): array

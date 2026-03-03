@@ -68,7 +68,7 @@ var options = {
             labels: {
                 align: 'right',
                 formatter: function (value) {
-                    return value/1000 + "k";
+                    return "$" + value.toLocaleString();
                 },
                 style: {
                     fontSize: "14px"
