@@ -1,6 +1,6 @@
 @props(['chart' => null, 'color' => '#000000', 'data' => null])
 <style>
-#{{ $chart->get_id() }} text {
+#{{ $chart->get_id() }} .apexcharts-yaxis-label {
     transform: translateX(36px);
 }
 </style>
