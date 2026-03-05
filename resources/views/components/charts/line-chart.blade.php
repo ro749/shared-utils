@@ -1,10 +1,14 @@
 @props(['chart' => null, 'color' => '#000000', 'data' => null])
+<style>
+#{{ $chart->get_id() }} text {
+    transform: translateX(36px);
+}
+</style>
 <x-base-chart :chart="$chart">
     <div id="{{ $chart->get_id() }}"></div>
 </x-base-chart>
 @push('scripts')
 <script>
-    console.log('line-chart');
 var options = {
       series: [{
         name: '{{ $chart->get_series_name() }}',
@@ -47,7 +51,10 @@ var options = {
         row: {
           colors: ['#f3f3f3', 'transparent'],
           opacity: 0,
-        }
+        },
+        padding: {
+            //left: 216  // add space on the right for the labels
+        },
     },
     // Customize the circle marker color on hover
     markers: {
@@ -65,22 +72,25 @@ var options = {
         }
     },
     yaxis: {
-            labels: {
-                align: 'right',
-                formatter: function (value) {
-                    return "$" + value.toLocaleString();
-                },
-                style: {
-                    fontSize: "14px"
-                },
-                minWidth: 0,
-                maxWidth: 1000,
-                offsetX: 0,
+        opposite: false,
+        labels: {
+            //offsetX: 216,
+            //offsetY: 36,
+            floating: false,
+            formatter: function (value) {
+                return "$" + value.toLocaleString();
             },
+            style: {
+                fontSize: "14px"
+            },
+            minWidth: 0,
+            maxWidth: 1000,
+        },
     },
 };
 var chart = new ApexCharts(document.querySelector("#{{ $chart->get_id() }}"), options);
 chart.render();
+
 
 $("#{{ $chart->get_id() }}").on('reset', function(event, data) {
     $.ajax({

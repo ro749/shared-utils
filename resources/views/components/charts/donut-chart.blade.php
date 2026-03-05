@@ -11,7 +11,7 @@ var options = {
         },
         colors: @json($colors),
         dataLabels: {
-            enabled: false
+            enabled: false,
         },
         responsive: [{
             breakpoint: 480,
@@ -29,6 +29,13 @@ var options = {
             offsetY: 0,
             height: 230,
             show: false
+        },
+        tooltip: {
+          y: {
+            formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+              return '$' + value.toLocaleString();
+            }
+          }
         }
 };
 var chart = new ApexCharts(document.querySelector("#{{ $id }}"), options);
