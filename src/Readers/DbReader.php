@@ -3,6 +3,7 @@
 namespace Ro749\SharedUtils\Readers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DbReader extends Reader
 {
@@ -108,17 +109,18 @@ return new class extends Migration
         foreach($data as &$row){
             if($row[$column] === '') continue;
             if($ans == 'int'){
-                if(!is_numeric($row[$column])){
+                if(!is_numeric($row[$column]) || preg_match('/^0[0-9]/', $row[$column])){
                     $ans = 'string';
                 }
                 else if (strpos($row[$column], '.')){
                     $ans = 'float';
                 }
             }
-            else if($ans == 'float' && is_numeric($row[$column])){
+            else if($ans == 'float' && is_numeric($row[$column]) && !preg_match('/^0[0-9]/', $row[$column])){
                 $ans = 'int';
             }
         }
+        
         return $ans;
     }
 
