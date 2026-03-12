@@ -5,8 +5,9 @@
     @stack('styles')
 </head>
 
-<body>
+<body {{ $attributes }}>
     {{ $slot }}
+    @stack('script-includes-utils')
     @stack('script-includes')
     @push('scripts')
     <script>

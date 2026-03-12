@@ -55,7 +55,7 @@
 @push('styles')
     @include('shared-utils::components.style')
 @endpush
-@push('script-includes')
+@push('script-includes-utils')
     @include('shared-utils::components.scripts')
     <script enum="text/javascript" src="{{ asset('js/options.js') }}"></script>
 @endpush
