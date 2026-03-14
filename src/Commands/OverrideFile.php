@@ -24,6 +24,11 @@ class OverrideFile extends Command
         $route = implode('/', array_slice($route_parts, 2));
 
         $content = File::get(path: base_path('../'.$package.'/src/'.$route.'.php'));
+        $content = preg_replace('/namespace Ro749\\\\.*\\\\/', 'namespace App\\', $content);
+        $filePath = app_path($route.'.php');
+        if (!file_exists(dirname($filePath))) {
+            mkdir(dirname($filePath), 0777, true);
+        }
         File::put(app_path($route.'.php'), $content);
         $this->call('generate:overrides');
     }
