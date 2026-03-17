@@ -12,6 +12,7 @@ abstract class LoginForm extends BaseForm
     public string $column_status = '';
 
     public bool $plain_password = false;
+    public bool $blocked = false;
 
     public function __construct(
         string $model_class = '', 
@@ -37,6 +38,7 @@ abstract class LoginForm extends BaseForm
         $this->guard = $guard;
         $this->plain_password = $plain_password;
         $this->column_status = $column_status;
+        $this->blocked = config('login.blocked')??false;
     }
     
     function incorrect_credentials($key)
@@ -49,6 +51,11 @@ abstract class LoginForm extends BaseForm
 
     public function prosses(Request $rawRequest): string
     {
+        if($this->blocked){
+            throw ValidationException::withMessages([
+                'password' => ['Acceso bloqueado, contacte al administrador.'],
+            ]);
+        }
         $credentials = $rawRequest->validate($this->rules($rawRequest));
         $user = array_values($credentials)[0];
         $key = "login-attempts:".$this->guard.$user;
@@ -79,7 +86,6 @@ abstract class LoginForm extends BaseForm
         }
         RateLimiter::clear($key);
         $rawRequest->session()->regenerate();
-        Log::info('User logged in: '. now());
         Auth::guard($this->guard)->user()->update(['last_session_register' => now()]);
         return $this->redirect;
     }
