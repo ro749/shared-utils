@@ -3,6 +3,9 @@
         const numero = parseFloat(value.toString().replace(/[^0-9.-]/g, ''));
         return isNaN(numero) ? 0 : numero;
     }
+    function isDigit(char) {
+        return char >= '0' && char <= '9';
+    }
 
     $.fn.get_number = function (value) {
         if ($(this[0]).is('input')) {
