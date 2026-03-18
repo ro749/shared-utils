@@ -156,8 +156,8 @@
             $(this).set_percent($(this).get_number());
         });
         $(document).on('input','.input-money', function(e) {
-            var text = $(this).val();
             $(this).set_money($(this).get_number());
+            var text = $(this).val();
             var position = $(this).data('position');
             var current_count = 0;
             var current_position = 0;
