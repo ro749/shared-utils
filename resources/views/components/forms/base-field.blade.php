@@ -1,5 +1,5 @@
 @php
-if(isset($form)){
+if(isset($form) && isset($form->fields[$name])){
     $field = $form->fields[$name];
     $form_id = $form->get_id();
     $initial_data = $form->initial_data->{$name}??($form->initial_data[$name]??'');
