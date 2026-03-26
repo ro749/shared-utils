@@ -243,6 +243,10 @@
                 $(this).set_value($(this).attr('min'));
                 $(this).trigger('input');
             }
+            if ($(this).attr('max') !== undefined && $(this).get_number() > $(this).attr('max')) {
+                $(this).set_value($(this).attr('max'));
+                $(this).trigger('input');
+            }
         });
     }
 })(jQuery);
