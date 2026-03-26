@@ -28,6 +28,10 @@ class OverrideFile extends Command implements PromptsForMissingInput
         unset($allConfigs["sender"]);
         $configTypes = array_keys($allConfigs);
 
+        if (!isset($allConfigs[$type]) && isset($allConfigs[$type."s"])) {
+            $type = $type."s";
+        }
+
         if (!$type || !isset($allConfigs[$type])) {
             $this->info("Type missing or non-existent.");
 
@@ -82,7 +86,7 @@ class OverrideFile extends Command implements PromptsForMissingInput
 
         $file_override = config('overrides.'.$type.'s.'.$file);
         $route_parts = explode('\\', $file_override);
-        $this->info("route parts: ".json_encode($route_parts, JSON_PRETTY_PRINT));
+        //$this->info("route parts: ".json_encode($route_parts, JSON_PRETTY_PRINT));
 
         $packageNK = $route_parts[1];
         $route_parts[1] = Str::kebab($route_parts[1]);
