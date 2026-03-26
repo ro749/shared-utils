@@ -22,7 +22,11 @@
         @endif
     @endif
 
-    @if($field->type === \Ro749\SharedUtils\Forms\InputType::NUMBER)
+    @if(
+        $field->type === \Ro749\SharedUtils\Forms\InputType::NUMBER ||
+        $field->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE ||
+        $field->type === \Ro749\SharedUtils\Forms\InputType::MONEY
+    )
         @if($field->max!==null)
     max="{{ $field->max }}"
         @endif

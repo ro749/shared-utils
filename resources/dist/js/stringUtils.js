@@ -1,10 +1,10 @@
 (function ($) {
+    function isDigit(c) {
+        return c >= '0' && c <= '9';
+    }
     function extract_number(value) {
         const numero = parseFloat(value.toString().replace(/[^0-9.-]/g, ''));
         return isNaN(numero) ? 0 : numero;
-    }
-    function isDigit(char) {
-        return char >= '0' && char <= '9';
     }
 
     $.fn.get_number = function (value) {
@@ -44,6 +44,7 @@
     }
 
     $.fn.set_money = function (raw_value) {
+        
         var value = Number(Number(raw_value).toFixed(2));
         var val = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         return this.each(function () {
@@ -118,7 +119,12 @@
             });
             $(this).on('input', function () {
                 $(this).set_percent(extract_number($(this).val()));
-            })
+            });
+            $(this).on('change', function () {
+                if ($(this).attr('min') !== undefined && $(this).get_number() < $(this).attr('min')) {
+                    $(this).set_value($(this).attr('min'));
+                }
+            });
         });
     }
 
@@ -169,6 +175,7 @@
                 }
                 current_position+=1;
             }
+
             if(current_count == position ){
                 $(this).get(0).setSelectionRange(current_position,current_position);
             }
@@ -230,6 +237,16 @@
                         $(this).get(0).setSelectionRange(start - 1, start - 1);
                     }
                 }
+            }
+        });
+        $(document).on('change','.input-percent', function () {
+            if ($(this).attr('min') !== undefined && $(this).get_number() < $(this).attr('min')) {
+                $(this).set_value($(this).attr('min'));
+                $(this).trigger('input');
+            }
+            if ($(this).attr('max') !== undefined && $(this).get_number() > $(this).attr('max')) {
+                $(this).set_value($(this).attr('max'));
+                $(this).trigger('input');
             }
         });
     }

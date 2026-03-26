@@ -11,3 +11,18 @@
 </template>
 @include('sharedutils::components.tables.smartTable', ['table' => $field->preview_table])
 </div>
+@push('scripts')
+<script>
+//$('#{{ $form_id }}-button').hide();
+$('#{{ $form_id }}-cancel').on('click', function() {
+    $.ajax({
+        url: '{{ '/form/'.$form_id.'/cancel/'.$name }}',
+        type: 'POST',
+        success: function (data) {
+            $('#{{ $preview_table_id }}').DataTable().ajax.reload();
+        }
+    }); 
+
+});
+</script>
+@endpush
