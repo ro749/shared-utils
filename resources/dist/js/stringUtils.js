@@ -44,6 +44,7 @@
     }
 
     $.fn.set_money = function (raw_value) {
+        
         var value = Number(Number(raw_value).toFixed(2));
         var val = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         return this.each(function () {
@@ -161,7 +162,7 @@
             $(this).set_percent($(this).get_number());
         });
         $(document).on('input','.input-money', function(e) {
-            $(this).set_money($(this).get_number());
+            $(this).set_value($(this).get_number());
             var text = $(this).val();
             var position = $(this).data('position');
             var current_count = 0;
