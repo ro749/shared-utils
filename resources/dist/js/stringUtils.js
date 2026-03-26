@@ -1,10 +1,10 @@
 (function ($) {
+    function isDigit(c) {
+        return c >= '0' && c <= '9';
+    }
     function extract_number(value) {
         const numero = parseFloat(value.toString().replace(/[^0-9.-]/g, ''));
         return isNaN(numero) ? 0 : numero;
-    }
-    function isDigit(char) {
-        return char >= '0' && char <= '9';
     }
 
     $.fn.get_number = function (value) {
@@ -118,7 +118,12 @@
             });
             $(this).on('input', function () {
                 $(this).set_percent(extract_number($(this).val()));
-            })
+            });
+            $(this).on('change', function () {
+                if ($(this).attr('min') !== undefined && $(this).get_number() < $(this).attr('min')) {
+                    $(this).set_value($(this).attr('min'));
+                }
+            });
         });
     }
 
@@ -156,7 +161,7 @@
             $(this).set_percent($(this).get_number());
         });
         $(document).on('input','.input-money', function(e) {
-            $(this).set_value($(this).get_number());
+            $(this).set_money($(this).get_number());
             var text = $(this).val();
             var position = $(this).data('position');
             var current_count = 0;
@@ -169,6 +174,7 @@
                 }
                 current_position+=1;
             }
+
             if(current_count == position ){
                 $(this).get(0).setSelectionRange(current_position,current_position);
             }
@@ -230,6 +236,12 @@
                         $(this).get(0).setSelectionRange(start - 1, start - 1);
                     }
                 }
+            }
+        });
+        $(document).on('change','.input-percent', function () {
+            if ($(this).attr('min') !== undefined && $(this).get_number() < $(this).attr('min')) {
+                $(this).set_value($(this).attr('min'));
+                $(this).trigger('input');
             }
         });
     }
