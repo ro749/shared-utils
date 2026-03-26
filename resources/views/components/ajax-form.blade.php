@@ -21,8 +21,13 @@ $initial_data = $form->get_initial_data();
     @endforeach
     </div>
     @if($form->submit_text==!"")
-    <div id="{{ $form->get_id() }}-button">
-        <button class="btn btn-light" @click="submit">
+    <div id="{{ $form->get_id() }}-button" style="display:flex; flex-direction:row; justify-content:center; gap:1rem;">
+        @if($form->needs_cancel() )
+        <button id="{{ $form->get_id() }}-cancel" class="btn btn-cancel">
+            Cancelar
+        </button>
+        @endif    
+        <button class="btn btn-submit" @click="submit">
             {{ $form->submit_text }}
         </button>
     </div>

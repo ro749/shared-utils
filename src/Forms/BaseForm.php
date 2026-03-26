@@ -187,7 +187,6 @@ class BaseForm
                 case InputType::FILE:
                     
                     if($field->autosave){
-                        Log::info('key: '.$key);
                         $file = $rawRequest->file($key);
                         $field->read($file,$key);
                     }
@@ -314,6 +313,15 @@ class BaseForm
 
     function get_id(){
         return class_basename($this);
+    }
+
+    function needs_cancel(){
+        foreach ($this->fields as $key => $field) {
+            if ($field instanceof FileUploader) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function before_process(array &$data){}

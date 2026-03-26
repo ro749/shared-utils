@@ -82,11 +82,16 @@ Route::middleware('web')->group(function () {
     });
 
     Route::post('/form/{form}/preview/{field}', function (Request $request,$form,$field) {
-        $ans = [];
         $formClass = config('overrides.forms.'.$form);
         $form = new $formClass();
         $file = $request->file($field);
         $form->fields[$field]->preview($file);
+    });
+
+    Route::post('/form/{form}/cancel/{field}', function (Request $request,$form,$field) {
+        $formClass = config('overrides.forms.'.$form);
+        $form = new $formClass();
+        $form->fields[$field]->cancel();
     });
 
     

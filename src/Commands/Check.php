@@ -275,8 +275,18 @@ class Check extends Command
         
     }
 
+    function check_myqsl_strictness(){
+        if(config('database.connections.mysql.strict')){
+        $file_path = base_path('config/database.php');
+        $file_contents = file_get_contents($file_path);
+        $file_contents = str_replace("'strict' => true,", "'strict' => false,", $file_contents);
+        file_put_contents($file_path, $file_contents);
+        }
+    }
+
     public function handle(): void
     {
+        $this->check_myqsl_strictness();
         $this->generate_overrides();
         $this->fix_composer_json();
         $this->fix_gitignore();

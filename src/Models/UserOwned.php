@@ -7,7 +7,6 @@ trait UserOwned
 {
     protected static function bootUserOwned()
     {
-        Log::debug("bootUserOwned");
         static::addGlobalScope(new UserScope());
     }
 }
