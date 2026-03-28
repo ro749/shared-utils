@@ -10,8 +10,9 @@ use Illuminate\Support\Str;
 
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
+use function PHPSTORM_META\map;
 
-class OverrideFile extends Command implements PromptsForMissingInput
+class OverrideFile extends Command
 {
     protected $signature = 'override:file {type?} {file?}';
 
@@ -91,29 +92,67 @@ class OverrideFile extends Command implements PromptsForMissingInput
         $packageNK = $route_parts[1];
         $route_parts[1] = Str::kebab($route_parts[1]);
         $package = $route_parts[1];
+        //$this->info("Package: $package");
         $route = implode('/', array_slice($route_parts, 2));
 
-        $content = File::get(path: base_path('../'.$package.'/src/'.$route.'.php'));
-        $content = preg_replace('/namespace Ro749\\\\.*\\\\/', 'namespace App\\', $content);
+        //$this->info(base_path('../'.$package.'/src/'.$route.'.php'));
+        $baseContent = File::get(path: base_path('../'.$package.'/src/'.$route.'.php'));
+
+        
+        $matches = [];
+        preg_match('/namespace Ro749\\\\.*\\\\(\w+)/', $baseContent, $matches);
+        $namespace_name = $matches[1];
+        //$this->info("Namespace $namespace_name");
+
+        $matches = [];
+        preg_match('/class\s+(\w+)\s+extends\s+(\w+)/', $baseContent, $matches);
+        $class_name = $matches[1];
+        //$this->info("class $class_name");
+        $parent_class = $matches[2];
+        //$this->info("parent class $parent_class");
+
+        /*$matches = [];
+        preg_match('/use (.*\\\\)*(.*)\\\\/', $baseContent, $matches);
+        $type_name = "";
+        if (empty($matches)) {
+            $this->info("Couldn't find type name.");
+        }
+        else{
+            $type_name = $matches[2];
+            $this->info("type $type_name");
+        }*/
+
+        $matches = [];
+        preg_match('/public function __construct()/', $baseContent, $matches);
+        $has_contructor = !empty($matches);
+
+
+        $content = "<?php\n\n";
+        $content = $content."namespace App\\$namespace_name;\n\n";
+        $content = $content."use Ro749\\$packageNK\\$type"."s\\$class_name as $parent_class;\n\n";
+        $content = $content."class $class_name extends $parent_class\n";
+        $content = $content."{\n";
+        if ($has_contructor) {
+            $content = $content."\tpublic function __construct() {\n";
+            $content = $content."\t\tparent::__construct();\n";
+            $content = $content."\t}\n";
+        }
+        $content = $content."}";
+
+        /*$content = preg_replace('/namespace Ro749\\\\.*\\\\/', 'namespace App\\', $content);
 
         $matches = [];
         preg_match('/class\s+(\w+)\s+extends\s+(\w+)/', $content, $matches);
         $parent_class = $matches[2];
         $content = preg_replace('/use (.*\\\\)*(.*)\\\\'.$parent_class.';/', 'use Ro749\\\\'.$packageNK.'\\\\$2\\\\'.$file.' as '.$parent_class.';', $content);
-        $content = preg_replace('/parent::__construct\((((.*)\s)*)\);/', 'parent::__construct();', $content);
+        $content = preg_replace('/parent::__construct\((((.*)\s)*)\);/', 'parent::__construct();', $content);*/
 
         $filePath = app_path($route.'.php');
         if (!file_exists(dirname($filePath))) {
             mkdir(dirname($filePath), 0777, true);
         }
         File::put(app_path($route.'.php'), $content);
-        $this->call('generate:overrides');
-    }
 
-    protected function promptForMissingArgumentsUsing(): array
-    {
-        return [
-            'type' => ['What type of data are you overiding?', "E.g. Table"],
-        ];
+        $this->call('generate:overrides');
     }
 }
