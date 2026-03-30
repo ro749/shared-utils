@@ -3,15 +3,19 @@
 namespace Ro749\SharedUtils\Readers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DbUpdate extends DbReader
 {
     public string $public_id = '';
+    public bool $debug = false;
+
     public function __construct(
         string $model_class, 
         string $public_id,
         array $required_columns = [], 
-        bool $add_new_columns = false
+        bool $add_new_columns = false,
+        bool $debug = false,
     )
     {
         parent::__construct(
@@ -20,10 +24,16 @@ class DbUpdate extends DbReader
             add_new_columns: $add_new_columns
         );
         $this->public_id = $public_id;
+        $this->debug = $debug;
     }
 
     public function check_columns(array &$titles):void{
         $this->migration_text = '';
+        if ($this->debug)
+        {
+            $titlesPretty = json_encode($titles, JSON_PRETTY_PRINT);
+            Log::debug("Titles: $titlesPretty");
+        }
         foreach ($this->required_columns as $column){
             if (!in_array($column, $titles)){
                 $this->error_text .= "Column $column is required.";
