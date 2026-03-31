@@ -24,6 +24,7 @@ use Ro749\SharedUtils\Commands\ActivateEditor;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Ro749\SharedUtils\Commands\InitProject;
 
 class SharedUtilsServiceProvider extends PackageServiceProvider
 {
@@ -52,6 +53,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 ReadCsv::class,
                 Check::class,
                 GenerateOverridesConfig::class,
+                InitProject::class,
                 Reimport::class,
                 Local::class,
                 Normalize::class,
