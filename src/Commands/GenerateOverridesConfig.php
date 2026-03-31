@@ -23,7 +23,7 @@ class GenerateOverridesConfig extends Command
         $overrides['forms'] = $this->getClassesFromFolder('app/Forms');
         $overrides['models'] = $this->getClassesFromFolder('app/Models');
         $overrides['data'] = $this->getClassesFromFolder('app/Data');
-        $overrides['controllers'] = $this->getClassesFromFolder('app/Http/Controllers');
+        $overrides['controllers'] = $this->getClassesFromFolder('app/Controllers');
         $overrides['views'] = $this->getClassesFromFolder('resources/views',views: true);
         // Procesar Plans e ImageMapPro (solo archivos únicos, no carpetas)
         $plansOverrides = $this->getClassesFromFolder('app/Plans');
