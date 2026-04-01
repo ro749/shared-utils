@@ -6,6 +6,29 @@
         const numero = parseFloat(value.toString().replace(/[^0-9.-]/g, ''));
         return isNaN(numero) ? 0 : numero;
     }
+    function extract_number_str(value, decimals = 2) {
+        const numero = value.toString().replace(/[^0-9.-]/g, '');
+        const parts = numero.split('.');
+        if (parts.length > 2) {
+            return '0';
+        }
+        let integerPart = parts[0] || '0';
+        let decimalPart = parts[1] || '';
+        if (integerPart === '') {
+            integerPart = '0';
+        }
+        if (integerPart.length > 1 && integerPart.startsWith('0')) {
+            integerPart = integerPart.replace(/^0+/, '');
+            if (integerPart === '') {
+                integerPart = '0';
+            }
+        }
+        if (decimalPart.length > decimals) {
+            decimalPart = decimalPart.substring(0, decimals);
+        }
+        const formattedNumber = parts.length > 1 ? integerPart + '.' + decimalPart : integerPart;
+        return formattedNumber;
+    }
 
     $.fn.get_number = function (value) {
         if ($(this[0]).is('input')) {
@@ -13,6 +36,15 @@
         }
         else{
             return extract_number($(this[0]).text());
+        }
+    }
+
+    $.fn.get_number_str = function (value, decimals = 2) {
+        if ($(this[0]).is('input')) {
+            return extract_number_str($(this[0]).val(), decimals);
+        }
+        else{
+            return extract_number_str($(this[0]).text(), decimals);
         }
     }
 
@@ -33,12 +65,29 @@
                 if(typeof Alpine !== 'undefined'){
                     var form = $(this).closest('[x-data]');
                     var alpine_form = Alpine.$data(form[0]);
-                    alpine_form.form[$(this).attr('id').replace(/-/g, '_')] = value;
+                    alpine_form.form[$(this).attr('id').replace(/-/g, '_')] = val;
                 }
                 $(this).val(val + '%');
             }
             else {
                 $(this).html(val + '%');
+            }
+        });
+    }
+
+    $.fn.set_percent_str = function (value) {
+        var val = Number(Number(value).toFixed(2));
+        return this.each(function () {
+            if ($(this).is('input')) {
+                if(typeof Alpine !== 'undefined'){
+                    var form = $(this).closest('[x-data]');
+                    var alpine_form = Alpine.$data(form[0]);
+                    alpine_form.form[$(this).attr('id').replace(/-/g, '_')] = val;
+                }
+                $(this).val(value + '%');
+            }
+            else {
+                $(this).html(value + '%');
             }
         });
     }
@@ -159,7 +208,9 @@
 
     $.fn.init_string_utils = function () {
         $(document).on('input','.input-percent', function(e) {
-            $(this).set_percent($(this).get_number());
+            //$(this).get_number_str();
+            $(this).set_percent_str($(this).get_number_str(2));
+            //$(this).set_percent($(this).get_number());
         });
         $(document).on('input','.input-money', function(e) {
             $(this).set_value($(this).get_number());
