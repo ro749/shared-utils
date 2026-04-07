@@ -204,6 +204,7 @@ class BaseForm
         if(!empty($this->model_class)){
             if($this->debug){
                 DB::enableQueryLog();
+                Log::debug('debugging form: '.$this->get_id());
                 Log::debug($data);
             }
             
@@ -230,6 +231,10 @@ class BaseForm
             }
             foreach ($forms as $key => $form_data){
                 $form_data[$this->fields[$key]->owner_column] = $model->id;
+                if($this->debug){
+                    Log::debug('Creating form: '.$key);
+                    Log::debug($form_data);
+                }
                 if(empty($this->fields[$key]->form->model_class)){
                     DB::table($key)->insert($form_data);
                 }
