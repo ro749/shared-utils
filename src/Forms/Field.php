@@ -126,8 +126,13 @@ class Field
         return $this->type; // default type
     }
 
-    public function render(string $name,string $push,string $data)
+    public function render(string $name,string $push,string $data,string $class)
     {
-        return view('shared-utils::components.forms.field', ["field"=>$this,"name"=>$name,"data"=>$data]);
+        return view('shared-utils::components.forms.field', [
+            "field"=>$this,
+            "name"=>$name,
+            "data"=>$data,
+            "classes"=>$class
+        ]);
     }
 }
