@@ -6,6 +6,9 @@
     @elseif($field->type === \Ro749\SharedUtils\Forms\InputType::MONEY)
     input-money
     @endif
+    @if(isset($classes)) 
+    {{ $classes }}
+    @endif
     "
     id="{{ $name }}"
     name="{{ $name }}"

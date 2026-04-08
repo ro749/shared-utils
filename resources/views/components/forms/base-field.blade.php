@@ -9,6 +9,9 @@ else{
     $initial_data = isset($initial_data)?$initial_data:'';    
 }
 
+if(!isset($class)){
+    $class = '';
+}
 @endphp
 @if($field->type === Ro749\SharedUtils\Forms\InputType::FILE)
 {!! $field->render($name,$form_id,$initial_data) !!}
@@ -23,7 +26,7 @@ else{
             <iconify-icon icon="{{ $field->icon }}"></iconify-icon>
         </span>
     @endif
-    {!! $field->render($name,$form_id,$initial_data,) !!}
+    {!! $field->render($name,$form_id,$initial_data,$field->field_class) !!}
     @if($field->icon)
     </div>
     @endif

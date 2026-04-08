@@ -207,6 +207,7 @@
     }
 
     $.fn.init_string_utils = function () {
+
         $(document).on('input','.input-percent', function(e) {
             //$(this).get_number_str();
             $(this).set_percent_str($(this).get_number_str(2));
@@ -261,6 +262,17 @@
                 }
             }
         });
+
+        $(document).on('keydown','.input-percent', function(e) {
+            if (e.keyCode === 8) { // backspace key
+                var start = $(this).get(0).selectionStart;
+                var end = $(this).get(0).selectionEnd;
+                if(start === end && start == $(this).val().length){
+                    $(this).get(0).setSelectionRange(start - 1, start - 1);
+                }
+            }
+        });
+
         $(document).on('keydown','.input-money', function(e) {
             var start = $(this).get(0).selectionStart;
             
