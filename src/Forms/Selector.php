@@ -121,7 +121,7 @@ class Selector extends Field
         return $this->table.".".$this->value_column;
     }
 
-    public function render(string $name,string $form_id = "",string $data = '')
+    public function render(string $name,string $form_id = "",string $data = '',string $class)
     {
         return view('shared-utils::components.forms.selector',[
             "selector"=>$this,
@@ -131,6 +131,7 @@ class Selector extends Field
             "hot_reload"=>$this->hot_reload,
             "value"=>$data,
             "form_id"=>$form_id,
+            "class"=>$class
         ]);
     }
 }
