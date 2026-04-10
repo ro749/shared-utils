@@ -208,7 +208,7 @@ $initial_data = $form->get_initial_data();
                         reset();
                         @endif
                     },
-                    error: (xhr) => {
+                    error: (xhr, status, error) => {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             this.errors = xhr.responseJSON.errors;
                         } else {

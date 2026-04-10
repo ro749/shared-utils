@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class Selector extends Field
 {
+    public string $component = 'form';
     public $options;
     public string $table;
     public string $label_column;
