@@ -40,14 +40,15 @@ class FileUploader extends Field
         $this->updater->save_changes();
     }
 
-    public function render(string $name,string $push = "",string $data)
+    public function render(string $name,string $push = "",string $data, string $class)
     {
         return view('shared-utils::components.forms.file-uploader',[
             "field"=>$this,
             "name"=>$name,
             "form_id"=>$push,
             "push_init"=>$push,
-            "preview_table_id"=>$this->preview_table->get_id()
+            "preview_table_id"=>$this->preview_table->get_id(),
+            "class"=>$class
         ]);
     }
 }
