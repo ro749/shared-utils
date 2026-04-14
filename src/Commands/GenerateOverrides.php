@@ -9,7 +9,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Illuminate\Support\Facades\Log;
-class GenerateOverridesConfig extends Command
+class GenerateOverrides extends Command
 {
     protected $signature = 'generate:overrides';
     protected $description = 'Genera el archivo config/overrides.php con todas las clases';
@@ -26,7 +26,7 @@ class GenerateOverridesConfig extends Command
         $overrides['controllers'] = $this->getClassesFromFolder('app/Controllers');
         $overrides['views'] = $this->getClassesFromFolder('resources/views',views: true);
         // Procesar Plans e ImageMapPro (solo archivos únicos, no carpetas)
-        $plansOverrides = $this->getClassesFromFolder('app/Plans');
+        $plansOverrides = $this->getClassesFromFolder('app/Plans',single: 'Plans');
         if (!empty($plansOverrides)) {
             $overrides['plans'] = $plansOverrides;
         }
@@ -49,7 +49,7 @@ class GenerateOverridesConfig extends Command
         $this->info('Total de clases registradas: ' . count($overrides));
     }
 
-    private function getClassesFromFolder($folder,$views = false)
+    private function getClassesFromFolder($folder,$views = false,$single = '')
     {
         $classes = [];
         $appPath = base_path($folder);
@@ -73,9 +73,17 @@ class GenerateOverridesConfig extends Command
             foreach ($iterator as $file) {
                 if ($file->getExtension() === 'php') {
                     $className = $this->getClassNameFromFile($file);
-                    if ($className) {
-                        $classes[$className['shortName']] = $className['fullName'];
+                    if(!empty($single)){
+                        if($className['shortName'] == $single){
+                            return [$className['fullName']];
+                        }
                     }
+                    else{
+                        if ($className) {
+                            $classes[$className['shortName']] = $className['fullName'];
+                        }
+                    }
+                    
                 }
             }
         }

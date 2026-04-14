@@ -285,7 +285,7 @@
                 }
             }
             
-            if (e.keyCode >= 48 && e.keyCode <= 57) {
+            if (isDigit(e.key)) {
                 $(this).data('position',count+1);
             } 
             var charToDelete = '';
