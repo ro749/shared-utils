@@ -1,15 +1,17 @@
+@props(['element' => null, 'name' => ''])
+
 <textarea
     class="form-control"
     name="{{ $name }}"
     x-model="form.{{ $name }}"
-    placeholder="{{ $field->placeholder }}"
-    @if($field->max!=0)
-    maxlength="{{ $field->max }}"
+    placeholder="{{ $element->placeholder }}"
+    @if($element->max!=0)
+    maxlength="{{ $element->max }}"
     @endif
-    @if($field->autosave)
+    @if($element->autosave)
     @input.debounce.500ms="submit()"
     @endif
-    rows="{{ $field->rows }}",
-    cols="{{ $field->cols }}"
+    rows="{{ $element->rows }}",
+    cols="{{ $element->cols }}"
 >
 </textarea>

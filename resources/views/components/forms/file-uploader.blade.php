@@ -1,6 +1,8 @@
+@props(['element' => null, 'name' => ''])
+
 <div id="{{ $name }}-container">
-<input id="{{ $name }}" type="file" accept="{{ $field->accept ?? '*' }}" 
-@if($field->autosave)
+<input id="{{ $name }}" type="file" accept="{{ $element->accept ?? '*' }}" 
+@if($element->autosave)
 @change="storeFile($event); submit();"
 @else
 @change="showPreview($event);"
@@ -9,17 +11,16 @@
 <template x-if="errors['{{ $name }}']">
     <p class="form-error" x-text="errors['{{ $name }}']"></p>
 </template>
-@include('sharedutils::components.tables.smartTable', ['table' => $field->preview_table])
+@include('sharedutils::components.tables.smartTable', ['table' => $element->preview_table])
 </div>
 @push('scripts')
 <script>
-//$('#{{ $form_id }}-button').hide();
-$('#{{ $form_id }}-cancel').on('click', function() {
+$('#{{ $element->push }}-cancel').on('click', function() {
     $.ajax({
-        url: '{{ '/form/'.$form_id.'/cancel/'.$name }}',
+        url: '{{ '/form/'.$element->push.'/cancel/'.$name }}',
         type: 'POST',
         success: function (data) {
-            $('#{{ $preview_table_id }}').DataTable().ajax.reload();
+            $('#{{ $element->preview_table->get_id() }}').DataTable().ajax.reload();
         }
     }); 
 

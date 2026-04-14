@@ -16,7 +16,7 @@ $initial_data = $form->get_initial_data();
         @continue
         @endif
         
-        <x-field :name="$name" :form="$form"/>
+        <x-field :name="$name" :form="$form" />
         
     @endforeach
     </div>

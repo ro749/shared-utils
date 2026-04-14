@@ -26,7 +26,8 @@ if(!isset($class)){
             <iconify-icon icon="{{ $field->icon }}"></iconify-icon>
         </span>
     @endif
-    {!! $field->render($name,$form_id,$initial_data,$field->field_class) !!}
+    <x-dynamic-component :component="$field->component" :element="$field" :name="$name" />
+    <!-- Al parecer el dynamic va aquí. Cambiar todo para acá. -->
     @if($field->icon)
     </div>
     @endif

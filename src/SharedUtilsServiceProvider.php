@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Ro749\SharedUtils\Commands\InitProject;
 
+use Ro749\SharedUtils\Forms;
+
 class SharedUtilsServiceProvider extends PackageServiceProvider
 {
     
@@ -112,6 +114,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
         Blade::component('sharedutils::components.forms.field', 'sharedutils::field');
         Blade::component('sharedutils::components.forms.field-uploader', 'sharedutils::field-uploader');
+        Blade::component('sharedutils::components.forms.image-uploader', 'sharedutils::image-uploader');
         Blade::component('sharedutils::components.forms.radio-button', 'sharedutils::radio-button');
         Blade::component('sharedutils::components.forms.radio-buttons', 'sharedutils::radio-buttons');
         Blade::component('sharedutils::components.forms.textarea', 'sharedutils::textarea');

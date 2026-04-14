@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class Selector extends Field
 {
-    public string $component = 'form';
+    public string $component = 'sharedutils::selector';
     public $options;
     public string $table;
     public string $label_column;
@@ -15,6 +15,11 @@ class Selector extends Field
     public bool $search = false;
     public string $hot_reload = '';
     public int $length = 0;
+
+    public string $name;
+    public string $form_id;
+    public string $data;
+    public string $class;
 
     public function __construct(
         $options, 
@@ -33,7 +38,11 @@ class Selector extends Field
         string $value_column = "id",
         bool $autosave = false,
         string $hot_reload = '',
-        int $max_length = 0
+        int $max_length = 0,
+        string $name = "",
+        string $form_id = "",
+        string $data = "",
+        string $class = ""
     )    
     {
         parent::__construct(
@@ -62,6 +71,10 @@ class Selector extends Field
         $this->value_column = $value_column;
         $this->hot_reload = $hot_reload;
         $this->max_length = $max_length;
+        $this->name = $name;
+        $this->form_id = $form_id;
+        $this->data = $data;
+        $this->class = $class;
     }
 
     public static function fromDB(
@@ -122,17 +135,11 @@ class Selector extends Field
         return $this->table.".".$this->value_column;
     }
 
-    public function render(string $name,string $form_id = "",string $data = '',string $class)
+    public function render()
     {
         return view('shared-utils::components.forms.selector',[
-            "selector"=>$this,
-            "name"=>$name,
-            "push_init"=>$form_id,
-            "push_reset"=>$form_id.'_reset',
-            "hot_reload"=>$this->hot_reload,
-            "value"=>$data,
-            "form_id"=>$form_id,
-            "class"=>$class
+            'element' => $this,
+            'name' => $this->name,
         ]);
     }
 }
