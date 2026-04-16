@@ -9,4 +9,8 @@ abstract class Controller
         $basename = class_basename(static::class);
         return new (config('overrides.controllers.'.$basename) ?? static::class);
     }
+
+    public function get_default_args($function){
+        return [];
+    }
 }

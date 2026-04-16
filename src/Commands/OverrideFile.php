@@ -84,20 +84,15 @@ class OverrideFile extends Command
         if (str_ends_with($type, 's')) {
             $type = substr($type, 0, -1);
         }
-
         $file_override = config('overrides.'.$type.'s.'.$file);
         $route_parts = explode('\\', $file_override);
-        //$this->info("route parts: ".json_encode($route_parts, JSON_PRETTY_PRINT));
 
         $packageNK = $route_parts[1];
         $route_parts[1] = Str::kebab($route_parts[1]);
         $package = $route_parts[1];
-        //$this->info("Package: $package");
         $route = implode('/', array_slice($route_parts, 2));
 
-        //$this->info(base_path('../'.$package.'/src/'.$route.'.php'));
         $baseContent = File::get(path: base_path('../'.$package.'/src/'.$route.'.php'));
-
         
         $matches = [];
         preg_match('/namespace Ro749\\\\.*\\\\(\w+)/', $baseContent, $matches);

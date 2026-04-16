@@ -29,3 +29,28 @@ function insert_between_keys($array, $after_key, $new_key, $new_value) {
 
     return $new_array;
 }
+
+function array_export(array $array, int $indent = 0): string
+{
+    $pad = str_repeat('    ', $indent);
+    $inner = str_repeat('    ', $indent + 1);
+    
+    if (empty($array)) {
+        return '[]';
+    }
+
+    $items = [];
+    $isList = array_is_list($array);
+
+    foreach ($array as $key => $value) {
+        $exportedValue = is_array($value)
+            ? array_export($value, $indent + 1)
+            : var_export($value, true);
+
+        $items[] = $isList
+            ? "{$inner}{$exportedValue}"
+            : "{$inner}" . var_export($key, true) . " => {$exportedValue}";
+    }
+
+    return "[\n" . implode(",\n", $items) . ",\n{$pad}]";
+}

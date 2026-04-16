@@ -48,7 +48,7 @@ class OverrideView extends Command
             File::put(base_path('resources/views/'.$view.'.blade.php'), $content);
         }
         else{
-            $content = '<x-'.$package.'::'.$view.'/>';
+            $content = '@include("'.$package.'::'.$view.'")';
             File::put(base_path('resources/views/'.$view.'.blade.php'), $content);
         }
         $this->call('generate:overrides');
