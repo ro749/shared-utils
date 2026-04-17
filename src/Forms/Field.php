@@ -2,9 +2,11 @@
 
 namespace Ro749\SharedUtils\Forms;
 use Illuminate\Validation\Rule;
+use Illuminate\View\Component;
 use Closure;
-class Field
+class Field extends Component
 {
+    public string $component = 'sharedutils::field';
     public InputType $type;
     public string $label;
     public string $placeholder;
@@ -25,6 +27,10 @@ class Field
     public bool $sufficient = false;
     public string $field_class = "";
 
+    public string $name;
+    public string $data;
+    public string $class;
+
     public function __construct(
         InputType $type, 
         string $label="", 
@@ -40,7 +46,10 @@ class Field
         bool $encrypt = false,
         bool $autosave = false,
         bool $sufficient = false,
-        string $field_class = ""
+        string $field_class = "",
+        string $name = "",
+        string $data = "",
+        string $class = ""
     )
     {
         $this->type = $type;
@@ -58,6 +67,9 @@ class Field
         $this->autosave = $autosave;
         $this->sufficient = $sufficient;
         $this->field_class = $field_class;
+        $this->name = $name;
+        $this->data = $data;
+        $this->class = $class;
     }
 
     public function is_required(): bool
@@ -129,13 +141,11 @@ class Field
         return $this->type; // default type
     }
 
-    public function render(string $name,string $push,string $data,string $class)
+    public function render()
     {
         return view('shared-utils::components.forms.field', [
-            "field"=>$this,
-            "name"=>$name,
-            "data"=>$data,
-            "classes"=>$class
+            'element' => $this,
+            'name' => $this->name,
         ]);
     }
 }

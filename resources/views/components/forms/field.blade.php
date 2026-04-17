@@ -1,9 +1,11 @@
+@props(['element' => null, 'name' => ''])
+
 <input
-    type="{{ $field->get_type() }}"
+    type="{{ $element->get_type() }}"
     class="form-control 
-    @if($field->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE)
+    @if($element->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE)
     input-percent
-    @elseif($field->type === \Ro749\SharedUtils\Forms\InputType::MONEY)
+    @elseif($element->type === \Ro749\SharedUtils\Forms\InputType::MONEY)
     input-money
     @elseif($element->type === \Ro749\SharedUtils\Forms\InputType::PIN)
     input-pin
@@ -14,45 +16,45 @@
     "
     id="{{ $name }}"
     name="{{ $name }}"
-    @if($field->type !== \Ro749\SharedUtils\Forms\InputType::PERCENTAGE && $field->type !== \Ro749\SharedUtils\Forms\InputType::MONEY)
+    @if($element->type !== \Ro749\SharedUtils\Forms\InputType::PERCENTAGE && $element->type !== \Ro749\SharedUtils\Forms\InputType::MONEY)
     x-model="form.{{ $name }}"
     @endif
-    placeholder="{{ $field->placeholder }}"
+    placeholder="{{ $element->placeholder }}"
     @if(
         $element->type === \Ro749\SharedUtils\Forms\InputType::TEXT ||
         $element->type === \Ro749\SharedUtils\Forms\InputType::PASSWORD ||
         $element->type === \Ro749\SharedUtils\Forms\InputType::PIN
         )
-        @if(!empty($field->max))
-    maxlength="{{ $field->max }}"
+        @if(!empty($element->max))
+    maxlength="{{ $element->max }}"
         @endif
     @endif
 
     @if(
-        $field->type === \Ro749\SharedUtils\Forms\InputType::NUMBER ||
-        $field->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE ||
-        $field->type === \Ro749\SharedUtils\Forms\InputType::MONEY
+        $element->type === \Ro749\SharedUtils\Forms\InputType::NUMBER ||
+        $element->type === \Ro749\SharedUtils\Forms\InputType::PERCENTAGE ||
+        $element->type === \Ro749\SharedUtils\Forms\InputType::MONEY
     )
-        @if($field->max!==null)
-    max="{{ $field->max }}"
+        @if($element->max!==null)
+    max="{{ $element->max }}"
         @endif
-        @if($field->min!==null)
-    min="{{ $field->min }}"
+        @if($element->min!==null)
+    min="{{ $element->min }}"
         @endif
     @endif
 
 
     @if(
-        $field->type === \Ro749\SharedUtils\Forms\InputType::ID_NUMBER ||
-        $field->type === \Ro749\SharedUtils\Forms\InputType::PHONE
+        $element->type === \Ro749\SharedUtils\Forms\InputType::ID_NUMBER ||
+        $element->type === \Ro749\SharedUtils\Forms\InputType::PHONE
         )
     oninput="this.value = this.value.replace(/\D/g, '')"
     @endif
-    @if($field->type === \Ro749\SharedUtils\Forms\InputType::EMAIL)
+    @if($element->type === \Ro749\SharedUtils\Forms\InputType::EMAIL)
     oninput="this.value = this.value.toLowerCase()"
     @endif
-    @if($field->autosave)
-        @if($field->type === \Ro749\SharedUtils\Forms\InputType::CHECKBOX)
+    @if($element->autosave)
+        @if($element->type === \Ro749\SharedUtils\Forms\InputType::CHECKBOX)
         @change="submit()"
         @else
         @input.debounce.500ms="submit()"

@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Ro749\SharedUtils\Commands\InitProject;
 
+use Ro749\SharedUtils\Forms;
+
 class SharedUtilsServiceProvider extends PackageServiceProvider
 {
     
@@ -81,21 +83,11 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sharedutils');
+
         // Register your component: <x-sharedutils::modal />
-        Blade::component('sharedutils::components.modal', 'sharedutils::modal');
-        Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
-        Blade::component('sharedutils::components.forms.base-field', 'field');
-        Blade::component('sharedutils::components.fillables.fillable-text', 'f-text');
-        Blade::component('sharedutils::components.fillables.fillable-money', 'f-money');
-        Blade::component('sharedutils::components.fillables.fillable-image', 'f-image');
-        Blade::component('sharedutils::components.fillables.fillable-conditional', 'f-conditional');
-        Blade::component('sharedutils::components.fillables.fillable-div', 'f-div');
-        Blade::component('sharedutils::components.fillables.fillable-list', 'f-list');
-        Blade::component('sharedutils::components.ajax-form', 'smartForm');
-        Blade::component('sharedutils::components.tables.smartTable', 'smartTable');
-        Blade::component('sharedutils::components.tables.localSmartTable', 'localSmartTable');
-        Blade::component('sharedutils::components.tables.layeredSmartTable', 'layeredSmartTable');
-        Blade::component('sharedutils::components.data', 'data');
+
+        Blade::component('sharedutils::components.carousel', 'carousel');
+
         Blade::component('sharedutils::components.charts.base-chart', 'base-chart');
         Blade::component('sharedutils::components.charts.chart', 'chart');
         Blade::component('sharedutils::components.charts.chart2', 'chart2');
@@ -104,10 +96,35 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.charts.donut-chart', 'donut-chart');
         Blade::component('sharedutils::components.charts.semi-donut-chart', 'semi-donut-chart');
         Blade::component('sharedutils::components.charts.multi-radial-chart', 'multi-radial-chart');
-        Blade::component('sharedutils::components.layout', 'layout');
+
+        Blade::component('sharedutils::components.data', 'data');
+
+        Blade::component('sharedutils::components.fillables.fillable-text', 'f-text');
+        Blade::component('sharedutils::components.fillables.fillable-money', 'f-money');
+        Blade::component('sharedutils::components.fillables.fillable-image', 'f-image');
+        Blade::component('sharedutils::components.fillables.fillable-conditional', 'f-conditional');
+        Blade::component('sharedutils::components.fillables.fillable-div', 'f-div');
+        Blade::component('sharedutils::components.fillables.fillable-list', 'f-list');
 
         Blade::component('sharedutils::components.filters.base-filters', 'base-filters');
 
-        Blade::component('sharedutils::components.carousel', 'carousel');
+        Blade::component('sharedutils::components.forms.form', 'form');
+        Blade::component('sharedutils::components.forms.field-decorator', 'field');
+        
+        Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
+        Blade::component('sharedutils::components.forms.field', 'sharedutils::field');
+        Blade::component('sharedutils::components.forms.field-uploader', 'sharedutils::field-uploader');
+        Blade::component('sharedutils::components.forms.image-uploader', 'sharedutils::image-uploader');
+        Blade::component('sharedutils::components.forms.radio-button', 'sharedutils::radio-button');
+        Blade::component('sharedutils::components.forms.radio-buttons', 'sharedutils::radio-buttons');
+        Blade::component('sharedutils::components.forms.textarea', 'sharedutils::textarea');
+
+        Blade::component('sharedutils::components.layout', 'layout');
+        
+        Blade::component('sharedutils::components.modal', 'sharedutils::modal');
+
+        Blade::component('sharedutils::components.tables.layeredSmartTable', 'layeredSmartTable');
+        Blade::component('sharedutils::components.tables.localSmartTable', 'localSmartTable');
+        Blade::component('sharedutils::components.tables.smartTable', 'smartTable');
     }
 }

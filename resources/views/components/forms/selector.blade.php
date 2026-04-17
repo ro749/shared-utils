@@ -1,4 +1,4 @@
-@props(['selector'=>null, 'form_id'=> ''])
+@props(['element' => null, 'name' => ''])
 
 <select 
     id="{{ $name }}"
@@ -8,17 +8,17 @@
     {{ $attributes->class([
         'form-select',
         'w-auto',
-        $selector->search ? 'select2' : '',
-        $form_id != '' ? $form_id.'-field' : '',
+        $element->search ? 'select2' : '',
+        $element->form_id != '' ? $element->form_id.'-field' : '',
         $class ?? '',
     ]) }}
-    @if($selector->autosave)
+    @if($element->autosave)
     x-effect="submit()"
     @endif
 >
     <option disabled selected value>select</option>
-    @foreach ($selector->options as $k=>$v)
-        @if($k==$selector->value)
+    @foreach ($element->options as $k=>$v)
+        @if($k==$element->value)
             <option value="{{ $k }}" selected>{{ $v }}</option> 
         @else
             <option value="{{ $k }}">{{ $v }}</option>
@@ -26,14 +26,14 @@
     @endforeach
 </select>
 
-@if($selector->search)
-@push($push_init)
+@if($element->search)
+@push($element->form_id)
     $('#{{ $name }}').select2({
         theme: "bootstrap-5",
         dropdownAutoWidth: true,
-        width: '{{ $selector->max_length == 0 ? 'auto' : $selector->max_length.'px' }}',
+        width: '{{ $element->max_length == 0 ? 'auto' : $element->max_length.'px' }}',
         allowClear: true,
-        placeholder: '{{ $selector->placeholder }}', 
+        placeholder: '{{ $element->placeholder }}', 
         
     });
     $('#{{ $name }}').on('change', () => {
@@ -46,7 +46,7 @@
     $('#{{ $name }}').val('{{ $initial_data[$name] }}').trigger('change');
     @endif
 @endpush
-@push($push_reset)
+@push($element->form_id."_reset")
     $('#{{ $name }}').val(null).trigger('change');
 @endpush
 

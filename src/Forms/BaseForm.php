@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 class BaseForm
 {
+    public string $component = 'form';
     public string $model_class = '';
     public array $fields;
     public string $submit_text;
@@ -349,4 +350,7 @@ class BaseForm
         return new (config('overrides.forms.'.$basename));
     }
 
+    public function render(){
+        return view('sharedutils::components.forms.form');
+    }
 }
