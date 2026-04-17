@@ -127,9 +127,9 @@ class BaseForm
         return $request->validate($rules);
     }
 
-    public function prosses(Request $rawRequest)
+    public function prosses(Request $request)
     {
-        $data = $rawRequest->validate($this->rules($rawRequest));
+        $data = $request->validate($this->rules($request));
         $this->before_process($data);
         if($this->session) {
             foreach ($data as $key => $value) {
@@ -174,7 +174,7 @@ class BaseForm
                     $data[$key] = $field->get_value($data);
                     break;
                 case InputType::IMAGE:
-                    $file = $rawRequest->file($key);
+                    $file = $request->file($key);
                     $data[$key] = Str::uuid() . '.' . $file->getClientOriginalExtension();
                     $ans = $file->storeAs($field->route, $data[$key], 'public');
                     if($this->db_id!=0){
@@ -187,7 +187,7 @@ class BaseForm
                 case InputType::FILE:
                     
                     if($field->autosave){
-                        $file = $rawRequest->file($key);
+                        $file = $request->file($key);
                         $field->read($file,$key);
                     }
                     break;
@@ -335,7 +335,12 @@ class BaseForm
     public static function instanciate(): BaseForm
     {
         $basename = class_basename(static::class);
+        Log::debug('instanciating form: '.$basename);
         return new (config('overrides.forms.'.$basename));
+    }
+
+    public function get_default_args(){
+        return [];
     }
 
 }

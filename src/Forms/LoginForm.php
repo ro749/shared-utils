@@ -49,14 +49,14 @@ abstract class LoginForm extends BaseForm
         ]);
     }
 
-    public function prosses(Request $rawRequest): string
+    public function prosses(Request $request): string
     {
         if($this->blocked){
             throw ValidationException::withMessages([
                 'password' => ['Acceso bloqueado, contacte al administrador.'],
             ]);
         }
-        $credentials = $rawRequest->validate($this->rules($rawRequest));
+        $credentials = $request->validate($this->rules($request));
         $user = array_values($credentials)[0];
         $key = "login-attempts:".$this->guard.$user;
         if (RateLimiter::tooManyAttempts($key, 6)) {
@@ -85,8 +85,12 @@ abstract class LoginForm extends BaseForm
             return route('reset-password-view');
         }
         RateLimiter::clear($key);
-        $rawRequest->session()->regenerate();
+        $request->session()->regenerate();
         Auth::guard($this->guard)->user()->update(['last_session_register' => now()]);
         return $this->redirect;
+    }
+
+    public function get_default_args(){
+        return ['test' => 'test'];
     }
 }
