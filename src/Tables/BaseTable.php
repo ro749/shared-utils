@@ -220,4 +220,8 @@ class BaseTable
         $basename = class_basename(static::class);
         return new (config('overrides.tables.'.$basename));
     }
+
+    public function get_default_args(){
+        return [];
+    }
 }
