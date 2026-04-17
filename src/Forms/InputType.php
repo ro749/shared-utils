@@ -28,5 +28,6 @@ enum InputType: string
     case FILE = 'file';
     case FORM = 'form';
     case ARRAY = 'array';
+    case PIN = 'pin';
 }
 ?>

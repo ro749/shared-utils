@@ -1,5 +1,5 @@
 @props(['form' => null, 'reset'=>''])
-<x-smartForm :form="$form"/>
+<x-form :form="$form"/>
 
 @push('scripts')
 <script>
