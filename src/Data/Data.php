@@ -33,7 +33,7 @@ abstract class Data
     public static function instance(): Data
     {
         $basename = class_basename(static::class);
-        return new (config('overrides.data.'.$basename));
+        return new (config('overrides.datas.'.$basename));
     }
 
     function get_id(){
@@ -42,6 +42,6 @@ abstract class Data
     public static function get_class(): string
     {
         $basename = class_basename(static::class);
-        return config('overrides.data.'.$basename);
+        return config('overrides.datas.'.$basename);
     }
 }

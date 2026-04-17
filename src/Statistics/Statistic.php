@@ -49,12 +49,12 @@ class Statistic{
     public function get_query()
     {   
         $prev_table = ($this->model_class)::make()->getTable();
-        $subquery = 
-            ($this->model_class)::query()->
-            select($prev_table.'.'.$this->group_column)->
-            groupBy($prev_table.'.'.$this->group_column);
+        $subquery = ($this->model_class)::query();
+            
         $prev_table = ($this->model_class)::make()->getTable();
         $prev_tables = [$prev_table];
+        $link_table = $prev_table;
+        $link_column = $this->group_column;
         foreach($this->links as $link){
             $link_table = $link->get_table();
             $as_table = $link_table;
@@ -63,10 +63,13 @@ class Statistic{
                 $as_table = $link_table.' as '.$link_table . '_' . count($prev_tables);
                 $link_table .= '_' . count($prev_tables);
             }
-            $subquery->join($as_table, $link_table.'.'.$link->column, '=', $prev_table.'.id');
+            $subquery->join($as_table, $link_table.'.id', '=', $prev_table.'.'.$link_column);
             $prev_table = $link_table;
             $prev_tables[] = $link_table;
+            $link_column = $link->column;
         }
+        $subquery->select($link_table.'.'.$link_column);
+        $subquery->groupBy($link_table.'.'.$link_column);
         return $subquery;
     }
     
@@ -139,8 +142,12 @@ class Statistic{
     public function extra_process($query){return $query;}
 
     public function apply_join($query,$subquery,$table,$name){
-        $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name) {
-            $join->on($name.'.'.$this->group_column, '=', $table . '.id');
+        $group_column = $this->group_column;
+        if(count($this->links) > 0){
+            $group_column = $this->links[count($this->links)-1]->column;
+        }
+        $query->leftJoinSub($subquery, $name, function ($join) use ($table,$name,$group_column) {
+            $join->on($name.'.'.$group_column, '=', $table . '.id');
         });
     }
 }
