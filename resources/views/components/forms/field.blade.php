@@ -5,6 +5,8 @@
     input-percent
     @elseif($field->type === \Ro749\SharedUtils\Forms\InputType::MONEY)
     input-money
+    @elseif($element->type === \Ro749\SharedUtils\Forms\InputType::PIN)
+    input-pin
     @endif
     @if(isset($classes)) 
     {{ $classes }}
@@ -17,8 +19,9 @@
     @endif
     placeholder="{{ $field->placeholder }}"
     @if(
-        $field->type === \Ro749\SharedUtils\Forms\InputType::TEXT ||
-        $field->type === \Ro749\SharedUtils\Forms\InputType::PASSWORD
+        $element->type === \Ro749\SharedUtils\Forms\InputType::TEXT ||
+        $element->type === \Ro749\SharedUtils\Forms\InputType::PASSWORD ||
+        $element->type === \Ro749\SharedUtils\Forms\InputType::PIN
         )
         @if(!empty($field->max))
     maxlength="{{ $field->max }}"

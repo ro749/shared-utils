@@ -123,6 +123,9 @@ class Field
         if ($this->type === InputType::ID_NUMBER||$this->type === InputType::PERCENTAGE || $this->type === InputType::MONEY) {
             return InputType::TEXT; // ID_NUMBER is treated as TEXT for input purposes
         }
+        if ($this->type === InputType::PIN) {
+            return InputType::PASSWORD; // PIN type
+        }
         return $this->type; // default type
     }
 

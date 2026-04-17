@@ -235,6 +235,22 @@
                 $(this).get(0).setSelectionRange(text.length-3,text.length-3);
             }
         });
+        $(document).on('input','.input-pin', function(e) {
+            let value = $(this).val();
+
+            console.log(value);
+
+            // Remove anything that is NOT a digit
+            value = value.replace(/\D/g, '');
+
+            if ($(this).attr('maxlength') !== undefined) {
+                // Limit to the specified number of digits
+                value = value.substring(0, $(this).attr('maxlength'));
+            }
+
+            // Set cleaned value back
+            $(this).val(value);
+        });
         $(document).on('focus click','.input-percent', function (e) {
             if ($(this).val() === '0%' || $(this).val() === '0.00%') {
                 e.preventDefault();

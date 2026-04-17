@@ -103,6 +103,11 @@ class BaseForm
         foreach ($this->fields as $key=>$value) {
            $value->rules($rules,$key, $table, $rawRequest);
         }
+        foreach ($rules as $key=>$value) {
+            if (str_ends_with($key, '_confirmation') && array_key_exists(substr($key, 0, -13), $rules)) {
+                $rules[substr($key, 0, -13)][] = 'confirmed';
+            }
+        }
         return $rules;
     }
 
@@ -130,6 +135,11 @@ class BaseForm
     public function prosses(Request $rawRequest)
     {
         $data = $rawRequest->validate($this->rules($rawRequest));
+        foreach ($data as $key => $value) {
+            if (str_ends_with($key, '_confirmation')) {
+                unset($data[$key]);
+            }
+        }
         $this->before_process($data);
         if($this->session) {
             foreach ($data as $key => $value) {
@@ -164,7 +174,7 @@ class BaseForm
                 $data[$key] = Hash::make($data[$key]);
             }
             switch ($field->type) {
-                case InputType::PASSWORD:
+                case InputType::PASSWORD: case InputType::PIN:
                     $data[$key] = Hash::make($data[$key]);
                     break;
                 case InputType::SESSION:
@@ -296,6 +306,7 @@ class BaseForm
             $something_selected = false;
             foreach ($this->fields as $key => $field) {
                 if($field->type == InputType::PASSWORD) continue;
+                if($field->type == InputType::PIN) continue;
                 if($field->type == InputType::IMAGE) continue;
                 $query->addSelect($key);
                 $something_selected = true;
