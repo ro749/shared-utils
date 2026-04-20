@@ -31,7 +31,7 @@
     $('#{{ $name }}').select2({
         theme: "bootstrap-5",
         dropdownAutoWidth: true,
-        width: '{{ $selector->max_length == 0 ? 'auto' : ($selector->max_length <108 ? '108px' : $selector->max_length.'px') }}',
+        width: '{{ $element->max_length == 0 ? 'auto' : ($element->max_length <108 ? '108px' : $element->max_length.'px') }}',
         allowClear: true,
         placeholder: '{{ $element->placeholder }}', 
         
