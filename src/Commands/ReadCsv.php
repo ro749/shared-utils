@@ -12,7 +12,7 @@ class ReadCsv extends Command
      *
      * @var string
      */
-    protected $signature = 'read:csv {file} {model}';
+    protected $signature = 'read:csv {--file} {--model}';
 
     /**
      * The console command description.
@@ -26,10 +26,16 @@ class ReadCsv extends Command
      */
     public function handle()
     {
-        $file = $this->argument('file');
-        $model = $this->argument('model');
+        $file = $this->option('file');
+        if(empty($file)){
+            $file = $this->ask('Enter the path to the CSV file');
+        }
+        $model = $this->option('model');
+        if(empty($model)){
+            $model = $this->ask('Enter the model class or table to import to');
+        }
         $reader = new DbReader(
-            model_class: $model,
+            table: $model,
             add_new_columns: true,
 
         );

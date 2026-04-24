@@ -115,11 +115,21 @@ VITE_APP_NAME="${APP_NAME}"';
 
         try {
             $this->call('generate:overrides');
-            //$this.info(config('overrides.models.User'));
-            config('overrides.models.User')::create([ 'name' => 'admin', 'email' => 'admin@example.com', 'password' => Hash::make('laqbuE0Sh5w9O84t')]);
+            if(config('overrides.models.User')::count() == 0) {
+                config('overrides.models.User')::create([ 'name' => 'admin', 'email' => 'admin@example.com', 'password' => Hash::make('admin')]);
+            }
+            config('overrides.models.Asesor')::create([ 
+                'name' => 'test', 
+                'mail' => 'test@example.com', 
+                'phone' => '3337811700',
+                'number' => '1111',
+                'password' => Hash::make('1111'),
+                'category' => 0
+            ]);
+
         }
         catch(Exception $e) {
-            Log::error("Error creating admin user: " . $e->getMessage());
+            $this->error("Error seeding: " . $e->getMessage());
         }
 
         $this->call('vendor:publish', ['--tag' => 'shared-utils-assets', '--force' => true]);

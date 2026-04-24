@@ -40,7 +40,7 @@ class OverrideView extends Command
         $view_override = config('overrides.views.'.$view);
 
         $data =explode('::', $view_override);
-        $this->info(json_encode($data));
+        
         $package = $data[0];
         $view = $data[1];
         if($copy) {
@@ -48,7 +48,14 @@ class OverrideView extends Command
             File::put(base_path('resources/views/'.$view.'.blade.php'), $content);
         }
         else{
-            $content = '@include("'.$package.'::'.$view.'")';
+            $original_content = File::get(base_path('../'.$package.'/resources/views/'.$view.'.blade.php'));
+            preg_match_all('/\{\{\s*(\$?[a-zA-Z]+)\s*\}\}|\{!!\s*(\$?[a-zA-Z]+)\s*!!\}/', $original_content, $matches);
+            $all = array_filter(array_merge($matches[1], $matches[2]));
+            $args = [];
+            foreach($all as $arg){
+                $args[] = '    "'.substr($arg, 1).'" => ""'. PHP_EOL;
+            }
+            $content = '@include("'.$package.'::'.$view.'", ['.PHP_EOL.implode(',', $args).'])';
             File::put(base_path('resources/views/'.$view.'.blade.php'), $content);
         }
         $this->call('generate:overrides');

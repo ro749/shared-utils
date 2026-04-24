@@ -3,11 +3,13 @@
 namespace Ro749\SharedUtils\Readers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 
 class DbReader extends Reader
 {
     public string $model_class = '';
+    public string $table = '';
 
     public array $required_columns = [];
 
@@ -19,18 +21,21 @@ class DbReader extends Reader
     public array $types = [];
 
     public function __construct(
-        string $model_class, 
+        string $model_class = "", 
+        string $table = '',
         array $required_columns = [], 
         bool $add_new_columns = false
         )
     {
         $this->model_class = $model_class;
+        $this->table = $table;
         $this->required_columns = $required_columns;
         $this->add_new_columns = $add_new_columns;
     }
 
     public function get_table(): string
     {
+        if($this->table != '') return $this->table;
         if($this->model_class == '') return '';
         return ($this->model_class)::make()->getTable();
     }
@@ -57,7 +62,13 @@ class DbReader extends Reader
 
     public function process_data(array &$titles,array &$data):void{
         if($this->add_new_columns){
-            $this->migration_text .= "Schema::table('{$this->get_table()}', function (Blueprint \$table) {\n";
+            if(Schema::hasTable('mytable')){
+                $create = 'table';
+            }
+            else{
+                $create = 'create';
+            }
+            $this->migration_text .= "Schema::".$create."('{$this->get_table()}', function (Blueprint \$table) {\n";
             foreach ($titles as $title){
                 $this->types[$title] = $this->get_type($title,$data);
                 if (!in_array($title, $this->required_columns)){

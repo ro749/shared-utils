@@ -16,7 +16,7 @@ class FixView extends Command
         $view = $this->argument('view');
         $content = File::get(base_path('resources\views\\'.$view.'.blade.php'));
         $content = preg_replace('/<img([^>]*?)\ssrc="((?:(?!\{\{).)*?)"/', '<img$1 src="{{ image(\'$2\') }}"', $content);
-        $content = preg_replace('/<div([^>]*?)\sclass="image"([^>]*?)\sdata-bgimage="url\(((?:(?!\{\{).)*?)\)([^>]*?)"/', '<div$1 class="image"$2 data-bgimage="url({{ image(\'$3\') }})$4"', $content);
+        $content = preg_replace('/data-bgimage="url\(((?:(?!\{\{).)*?)\)([^>]*?)"/', 'data-bgimage="url({{ image(\'$1\') }})"', $content);
         $content = preg_replace('/<a([^>]*?)\s+href=["\']([^"\']*\.(?:png|jpg))["\'][^>]/', '<a$1 href="{{ image(\'$2\') }}" ', $content);
 
         File::put(base_path('resources\views\\'.$view.'.blade.php'), $content);
