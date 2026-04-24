@@ -1,11 +1,11 @@
 @props(['id' => '', 'names' => [], 'percents' => [], 'colors' => []])
-<div id="{{ $id }}"></div>
+<div id="{{ $id }}" style="width: 100%;"></div>
 @push('scripts')
 <script>
     var options = {
         series: @json($percents),
         chart: {
-            height: 300,
+            width: "100%",
             type: "radialBar",
         },
         colors: @json($colors),
