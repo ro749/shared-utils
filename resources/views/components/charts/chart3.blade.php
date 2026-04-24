@@ -21,7 +21,7 @@ var options = {
       }],
       chart: {
           type: 'bar',
-          height: 310,
+          height: '100%',
           toolbar: {
               show: false
           }
@@ -61,6 +61,22 @@ var options = {
           type: 'category',
           categories: @json($labels)
       },
+      yaxis: {
+        labels: {
+            minWidth: 30,
+            formatter: function (val) {
+                if (!isFinite(val)) return '';
+                if (val < 1000) return val;
+                if (val < 1000000) return (val / 1000).toFixed(1) + 'K';
+                if (val < 1000000000) return (val / 1000000).toFixed(1) + 'M';
+
+                return val;
+            },
+            style: {
+              cssClass: 'apexcharts-yaxis-label',
+            }
+        }
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#{{ $chart->get_id() }}"), options);
