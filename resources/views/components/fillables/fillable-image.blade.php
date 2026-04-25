@@ -1,19 +1,19 @@
-@props(['id' => '', 'data' => '', 'src' => '', 'ext'=>'', 'unit'=>null])
+@props(['id' => '', 'src' => '', 'ext'=>'' ,'dif'=>'' , 'data'=>null])
 
-@if(!empty($unit))
+@if(!empty($data))
 
 @php
-if(is_array($unit->{$data}) && count($unit->{$data}) == 1){
-  $unit->{$data} = $unit->{$data}[0];
+if(is_array($data->{$id}) && count($data->{$id}) == 1){
+  $data->{$id} = $data->{$id}[0];
 }
 @endphp
 
-@if(is_string($unit->{$data}))
-<img class="image-{{ $id }}" src='{{ config('filesystems.disks.external.url', '').$src.$unit->{$data}.$ext }}' {{ $attributes }}>
+@if(!is_array($data->{$id}))
+<img class="image-{{ $id }}{{ $dif }}" src='{{ config('filesystems.disks.external.url', '').$src.$data->{$id}.$ext }}' {{ $attributes }}>
 @else
 <div class="owl-carousel owl-theme owl-single-dots">  
-  @foreach($unit->{$data} as $image)
-    <img class="image-{{ $id }}" src='{{ config('filesystems.disks.external.url', '').$src.$image.$ext }}' {{ $attributes }}>
+  @foreach($data->{$id} as $image)
+    <img class="image-{{ $id }}{{ $dif }}" src='{{ config('filesystems.disks.external.url', '').$src.$image.$ext }}' {{ $attributes }}>
   @endforeach
 </div>
 @endif
@@ -21,24 +21,24 @@ if(is_array($unit->{$data}) && count($unit->{$data}) == 1){
 @endif
 
 
-@if(empty($unit))
-<div id='{{ $id }}'></div>
+@if(empty($data))
+<div id='image-{{ $id }}{{ $dif }}'></div>
 @push('fill')
-    $('#{{ $id }}').empty();
-    if(Array.isArray(data['{{ $data }}'])){
-      if(data['{{ $data }}'].length == 1){
-        data['{{ $data }}'] = data['{{ $data }}'][0];
+    $('#image-{{ $id }}{{ $dif }}').empty();
+    if(Array.isArray(data['{{ $id }}'])){
+      if(data['{{ $id }}'].length == 1){
+        data['{{ $id }}'] = data['{{ $id }}'][0];
       }
     }
-    if(Array.isArray(data['{{ $data }}'])){
+    if(Array.isArray(data['{{ $id }}'])){
       var html_text = '<div class="owl-carousel owl-theme owl-single-dots">';
-      for(var i = 0; i < data['{{ $data }}'].length; i++){
-        var image_html_text = data['{{ $data }}'][i];
+      for(var i = 0; i < data['{{ $id }}'].length; i++){
+        var image_html_text = data['{{ $id }}'][i];
         var image_url = '{{ config('filesystems.disks.external.url', '').$src }}'+image_html_text+'{{ $ext }}';
-        html_text += '<img class="image-{{ $id }}" src="'+image_url+'" {{ $attributes }}>';
+        html_text += '<img class="image-{{ $id }}{{ $dif }}" src="'+image_url+'" {{ $attributes }}>';
       }
       html_text += '</div>';
-      $('#{{ $id }}').html(html_text);
+      $('#image-{{ $id }}{{ $dif }}').html(html_text);
       $('.owl-single-dots').owlCarousel({
           loop:true,
           items: 1,
@@ -47,7 +47,7 @@ if(is_array($unit->{$data}) && count($unit->{$data}) == 1){
       });
     }
     else{
-      $('#{{ $id }}').html('<img class="image-{{ $id }}" src="{{ config('filesystems.disks.external.url', '').$src }}'+data['{{ $data }}']+'{{ $ext }}" {{ $attributes }}>');
+      $('#image-{{ $id }}{{ $dif }}').html('<img class="image-{{ $id }}{{ $dif }}" src="{{ config('filesystems.disks.external.url', '').$src }}'+data['{{ $id }}']+'{{ $ext }}" {{ $attributes }}>');
     }
 @endpush
 @endif

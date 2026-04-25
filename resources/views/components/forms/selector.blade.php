@@ -1,4 +1,4 @@
-@props(['element' => null, 'name' => ''])
+@props(['element' => null, 'name' => '','form_id' => ''])
 
 <select 
     id="{{ $name }}"
@@ -25,9 +25,14 @@
         @endif
     @endforeach
 </select>
-
+<script>
+    console.log("{{ $element->search?"true":"false" }}");
+</script>
 @if($element->search)
-@push($element->form_id)
+<script>
+    console.log("{{ $element->form_id }}");
+</script>
+@push($form_id)
     $('#{{ $name }}').select2({
         theme: "bootstrap-5",
         dropdownAutoWidth: true,
