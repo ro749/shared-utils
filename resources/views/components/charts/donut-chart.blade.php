@@ -1,4 +1,4 @@
-@props(['id' => '', 'names' => [], 'percents' => [], 'colors' => []])
+@props(['id' => '', 'names' => [], 'percents' => [], 'colors' => [], 'added_char' => '$'])
 <div id="{{ $id }}"></div>
 @push('scripts')
 <script>
@@ -33,7 +33,7 @@ var options = {
         tooltip: {
           y: {
             formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
-              return '$' + value.toLocaleString();
+              return '{{ $added_char }}' + value.toLocaleString();
             }
           }
         }
