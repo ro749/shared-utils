@@ -62,7 +62,7 @@ class DbReader extends Reader
 
     public function process_data(array &$titles,array &$data):void{
         if($this->add_new_columns){
-            if(Schema::hasTable('mytable')){
+            if(Schema::hasTable($this->get_table())){
                 $create = 'table';
             }
             else{
@@ -71,6 +71,7 @@ class DbReader extends Reader
             $this->migration_text .= "Schema::".$create."('{$this->get_table()}', function (Blueprint \$table) {\n";
             foreach ($titles as $title){
                 $this->types[$title] = $this->get_type($title,$data);
+                if(Schema::hasColumn($this->get_table(), $title)) continue;
                 if (!in_array($title, $this->required_columns)){
                     $this->migration_text .= $this->get_text_for_type($title,$this->types[$title]);
                 }
@@ -80,13 +81,13 @@ class DbReader extends Reader
         foreach ($data as $row){
             $this->migration_text .= "DB::table('{$this->get_table()}')->insert([\n";
             foreach ($row as $column => $value){
-                if($this->types[$column] == 'int' && $value === ''){
+                if($this->types[$column][0] == 'int' && $value === ''){
                     $value = 0;
                 }
-                else if($this->types[$column] == 'float' && $value === ''){
+                else if($this->types[$column][0] == 'float' && $value === ''){
                     $value = 0.0;
                 }
-                if($this->types[$column] == 'string'){
+                if($this->types[$column][0] == 'string'){
                     $value = "'".$value."'";
                 }
                 $this->migration_text .= "'$column' => $value,\n";
@@ -115,33 +116,43 @@ return new class extends Migration
         echo "Migration created: ".database_path('migrations/'.$file);
     }
 
-    public function get_type(string $column,array &$data):string{
-        $ans = 'int';
+    public function get_type(string $column,array &$data):array{
+        $type = ['int',0,0];
         foreach($data as &$row){
             if($row[$column] === '') continue;
-            if($ans == 'int'){
+            if($type[0] == 'int'){
                 if(!is_numeric($row[$column]) || preg_match('/^0[0-9]/', $row[$column])){
-                    $ans = 'string';
+                    return ['string'];
                 }
                 else if (strpos($row[$column], '.')){
-                    $ans = 'float';
+                    $type[0] = 'float';
+                    $parts = explode('.', $row[$column]);
+                    $type[1] = strlen($parts[0]);
+                    $type[2] = strlen($parts[1]);
                 }
             }
-            else if($ans == 'float' && is_numeric($row[$column]) && !preg_match('/^0[0-9]/', $row[$column])){
-                $ans = 'int';
+            else if($type[0] == 'float'){
+                if(!is_numeric($row[$column]) || preg_match('/^0[0-9]/', $row[$column])){
+                    return ['string'];
+                }
+                else if (strpos($row[$column], '.')){
+                    $parts = explode('.', $row[$column]);
+                    $type[1] = strlen($parts[0])>$type[1] ? strlen($parts[0]) : $type[1];
+                    $type[2] = strlen($parts[1])>$type[2] ? strlen($parts[1]) : $type[2];
+                }
             }
         }
         
-        return $ans;
+        return $type;
     }
 
-    public function get_text_for_type(string $column,string $type): string
+    public function get_text_for_type(string $column,array $type): string
     {
-        switch ($type) {
+        switch ($type[0]) {
             case 'int':
                 return "\$table->integer('$column');\n";
             case 'float':
-                return "\$table->decimal('$column', 12, 2);\n";
+                return "\$table->decimal('$column', ".($type[1]+$type[2]).", ".$type[2].");\n";
             case 'string':
                 return "\$table->string('$column');\n";
         }

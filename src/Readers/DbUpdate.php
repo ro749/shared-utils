@@ -91,32 +91,6 @@ return new class extends Migration
         
     }
 
-    public function get_type(string $column,array &$data):string{
-        $ans = 'int';
-        foreach($data as &$row){
-            if($ans == 'int'){
-                if(!is_numeric($row[$column])){
-                    $ans = 'string';
-                }
-                else if (strpos($row[$column], '.')){
-                    $ans = 'float';
-                }
-            }
-            else if($ans == 'float' && is_numeric($row[$column])){
-                $ans = 'int';
-            }
-        }
-        switch ($ans) {
-            case 'int':
-                return "\$table->integer('$column');\n";
-            case 'float':
-                return "\$table->decimal('$column', 12, 2);\n";
-            case 'string':
-                return "\$table->string('$column');\n";
-        }
-        return "";
-    }
-
     public function save_changes(){
 
     }

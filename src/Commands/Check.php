@@ -152,6 +152,7 @@ class Check extends Command
         
         
     }
+
     function fix_model($model, $table){
         $parser_factory = new ParserFactory();
         $parser = $parser_factory->createForHostVersion();
