@@ -124,7 +124,7 @@ class OverrideFile extends Command
 
         $content = "<?php\n\n";
         $content = $content."namespace App\\$namespace_name;\n\n";
-        $content = $content."use Ro749\\$packageNK\\$type"."s\\$class_name as $parent_class;\n\n";
+        $content = $content."use Ro749\\$packageNK\\".ucfirst($type)."s\\$class_name as $parent_class;\n\n";
         $content = $content."class $class_name extends $parent_class\n";
         $content = $content."{\n";
         if ($has_contructor) {
