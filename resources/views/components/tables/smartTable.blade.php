@@ -34,6 +34,5 @@ $.ajax({
         $('#{{ $table->get_id() }}').smartTable(data);
     }
 })
-//$('#{{ $table->get_id() }}').DataTable().ajax.reload();
 @endpush
 </script>

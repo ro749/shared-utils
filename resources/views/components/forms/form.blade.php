@@ -205,6 +205,7 @@ $initial_data = $form->get_initial_data();
                         this.files = {};
                         this.$dispatch('{{$form->get_id()}}-submitted',  response);
                         @if($form->soft_reload)
+
                         reset();
                         @endif
                     },

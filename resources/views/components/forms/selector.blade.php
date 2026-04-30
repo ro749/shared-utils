@@ -13,7 +13,7 @@
         $class ?? '',
     ]) }}
     @if($element->autosave)
-    x-effect="submit()"
+    @change="submit()"
     @endif
 >
     <option disabled selected value>select</option>
