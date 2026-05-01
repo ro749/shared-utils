@@ -347,7 +347,6 @@ class BaseForm
     public static function instanciate(): BaseForm
     {
         $basename = class_basename(static::class);
-        Log::debug('instanciating form: '.$basename);
         return new (config('overrides.forms.'.$basename));
     }
 
