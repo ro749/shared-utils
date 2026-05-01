@@ -49,8 +49,8 @@ class Getter{
             if($column->local) continue;
             //if column needs data from other table
             if ($column->is_foreign()) {
-                if(array_key_exists($column->logic_modifier->table, $this->statistics)){
-                    $stat_name = $column->logic_modifier->table;
+                if(array_key_exists($column->logic_modifier->get_table(), $this->statistics)){
+                    $stat_name = $column->logic_modifier->get_table();
                     $query->addSelect(DB::raw('COALESCE('.$stat_name.'.'.$key.',0) as '.$key));
                     continue;
                 }
@@ -59,24 +59,24 @@ class Getter{
                 if(!$column->editable){
                     $modifier = $column->logic_modifier;
                     //if column needs data from other table and its not editable and this join has not been added, adds it
-                    if(!in_array($modifier->table, $joins)){
-                        $joins[] = $modifier->table;
-                        if($modifier->table == $this->get_table()){
+                    if(!in_array($modifier->get_table(), $joins)){
+                        $joins[] = $modifier->get_table();
+                        if($modifier->get_table() == $this->get_table()){
                             $query->leftJoin(
-                                $modifier->table.' as '.$modifier->table.'_'.$key, 
-                                $modifier->table.'_'.$key.'.id', '=', $table . '.' . $key
+                                $modifier->get_table().' as '.$modifier->get_table().'_'.$key, 
+                                $modifier->get_table().'_'.$key.'.id', '=', $table . '.' . $key
                             );
                         }
                         else{
                             $query->leftJoin(
-                                $modifier->table, 
-                                $modifier->table . '.id', '=', $table . '.' . $key
+                                $modifier->get_table(), 
+                                $modifier->get_table() . '.id', '=', $table . '.' . $key
                             );
                         }
                         
                     }
-                    if($modifier->table == $this->get_table()){
-                        $value = $modifier->table.'_'.$key.'.'.$modifier->column;
+                    if($modifier->get_table() == $this->get_table()){
+                        $value = $modifier->get_table().'_'.$key.'.'.$modifier->column;
                     }
                     else{
                         $value = $modifier->get_value($table ,$key);
@@ -94,7 +94,7 @@ class Getter{
                     if ($search!='') {
                         if(!in_array($column, $joins)){
                             $joins[] = $column;
-                            $query->leftJoin($column->table, $column->table . '.id', '=', $table . '.' . $key);
+                            $query->leftJoin($column->get_table(), $column->get_table() . '.id', '=', $table . '.' . $key);
                         }
                     }
                 }
