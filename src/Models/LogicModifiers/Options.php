@@ -14,4 +14,8 @@ class Options extends LogicModifier
     public function  get_value(string $table, string $key):string{
         return $key;
     }
+
+    public function get_table(): string {
+        return '';
+    }
 }

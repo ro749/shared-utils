@@ -79,7 +79,7 @@ class Selector extends Field
 
     public static function fromDB(
         string $id, 
-        string $table,
+        string $model_class,
         string $label_column,
         string $value_column = "id",
         Closure $query_modifier = null,
@@ -95,13 +95,11 @@ class Selector extends Field
         string $hot_reload = ''
     ):self
     {
-        $query = DB::table($table)->select($value_column, $label_column);
+        $query = $model_class::query()->select($value_column, $label_column);
         if ($query_modifier) {
             $query_modifier($query);
         }
-
         $rows = $query->get();
-
         $options = [];
         $max = 0;
         foreach ($rows as $row) {
@@ -114,7 +112,7 @@ class Selector extends Field
             value: $value,
             options: $options, 
             search: true, 
-            table: $table, 
+            table: $model_class::make()->getTable(), 
             label_column: $label_column, 
             value_column: $value_column,
             label:$label, 
