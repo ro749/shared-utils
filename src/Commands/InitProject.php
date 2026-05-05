@@ -10,20 +10,71 @@ use Illuminate\Support\Facades\Hash;
 
 class InitProject extends Command
 {
-    protected $signature = 'init:project {--db_name=}';
+    protected $signature = 'init:project
+    {--db_name=}
+    {--ci}
+    {--skip-env}
+    {--skip-db-create}
+    {--skip-migrate}
+    {--skip-seed}
+    {--skip-publish}';
 
     protected $description = 'Initializes the project by creating the .env file, creating a default admin user and publishing the necessary assets.';
 
     public function handle(): void
     {
+        $isCi = $this->option('ci');
+
+        $skipEnv = $this->option('skip-env') || $isCi;
+        $skipDbCreate = $this->option('skip-db-create') || $isCi;
+        $skipMigrate = $this->option('skip-migrate') || $isCi;
+        $skipSeed = $this->option('skip-seed');
+        $skipPublish = $this->option('skip-publish');
+
+
         $dbName = $this->option('db_name');
-        if ($dbName === null || $dbName === '') {
+        if (!$isCi && ($dbName === null || $dbName === '')) {
             $dbName = $this->ask('What is the name of your database?');
         }
-        
+
+        if (! $skipDbCreate && ($dbName === null || $dbName === '' || ! preg_match('/^[A-Za-z0-9_]+$/', $dbName))) {
+            $this->error('Invalid database name. If you don\'t want to create a database, use the --skip-db-create option.');
+            return;
+        }
+
+        if ($skipEnv) {
+            $this->info('Skipping .env file creation.');
+        } else {
+            $this->createEnvFile($dbName);
+            exec('php artisan generate:key');
+        }
+
+        if ($skipDbCreate) {
+            $this->info('Skipping db creation.');
+        } else {
+            $this->createDatabase($dbName, $skipMigrate);
+        }
+
+        $this->call('generate:overrides');
+
+        if ($skipSeed) {
+            $this->info('Skipping seeding.');
+        } else {
+            $this->createDefaultUsers();
+        }
+
+        if ($skipPublish) {
+            $this->info('Skipping publish.');
+        } else {
+            $this->publishAssets();
+        }
+    }
+
+    private function createEnvFile(string $dbName): void
+    {
         $content = 'APP_NAME=Laravel
 APP_ENV=local
-APP_KEY=base64:cblPWWlOqTsn9xIZ4HxfniiAOk4NvBUXFkIOsnfas0g=
+APP_KEY=
 APP_DEBUG=true
 APP_URL=http://localhost
 
@@ -74,10 +125,10 @@ MAIL_MAILER=smtp
 MAIL_SCHEME=null
 MAIL_HOST=\'smtp.hostinger.com\'
 MAIL_PORT=465
-MAIL_USERNAME="cotizacion@propstudios.mx"
-MAIL_PASSWORD=\'&i)Gq8!Z;&Gk\'
-MAIL_FROM_ADDRESS="cotizacion@propstudios.mx"
-MAIL_FROM_NAME="PROPSTUDIOS"
+MAIL_USERNAME="
+MAIL_PASSWORD=\'\'
+MAIL_FROM_ADDRESS=""
+MAIL_FROM_NAME=""
 
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
@@ -91,48 +142,78 @@ VITE_APP_NAME="${APP_NAME}"';
         if (!file_exists($filePath)) {
             File::put($filePath, $content);
         }
+    }
 
-        if ($dbName !== null && $dbName !== '') {
-            try {
-              $conn = new \PDO("mysql:host=localhost", "root", "");
-              // set the PDO error mode to exception
-              $conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            } catch(\PDOException $e) {
-              Log::error("Could not connect. " . $e->getMessage());
-            }
-    
-            try {
-              $sql = "CREATE DATABASE IF NOT EXISTS $dbName CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-              $conn->exec($sql);
-              Log::info("Database created successfully");
-            } catch(\PDOException $e) {
-              // Handle errors during db creation
-              Log::error("Error creating database: " . $sql . $e->getMessage());
-            }
-
-            exec('php artisan migrate');
-        }
-
+    private function createDatabase(string $dbName, bool $skipMigrate): void
+    {
         try {
-            $this->call('generate:overrides');
-            if(config('overrides.models.User')::count() == 0) {
-                config('overrides.models.User')::create([ 'name' => 'admin', 'email' => 'admin@example.com', 'password' => Hash::make('admin')]);
-            }
-            config('overrides.models.Asesor')::create([ 
-                'name' => 'test', 
-                'mail' => 'test@example.com', 
-                'phone' => '3337811700',
-                'number' => '1111',
-                'password' => Hash::make('1111'),
-                'category' => 0
-            ]);
-
+          $conn = new \PDO("mysql:host=localhost", "root", "");
+          // set the PDO error mode to exception
+          $conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        } catch(\PDOException $e) {
+          Log::error("Could not connect with database. " . $e->getMessage());
+          return;
         }
-        catch(Exception $e) {
+    
+        $sql = "CREATE DATABASE IF NOT EXISTS $dbName CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+        try {
+          $conn->exec($sql);
+          Log::info("Database created successfully");
+        } catch(\PDOException $e) {
+          // Handle errors during db creation
+          Log::error("Error creating database: " . $sql . $e->getMessage());
+          return;
+        }
+
+        if ($skipMigrate) {
+            $this->info('Skipping migration.');
+        } else {
+            //exec('php artisan migrate');
+            $this->call('migrate', ['--force' => true]);
+        }
+    }
+
+    private function createDefaultUsers(): void
+    {
+        try {
+            $this->call('db:seed', ['--force' => true]);
+            $userModel = config('overrides.models.User');
+
+            if ($userModel::count() == 0) {
+                $userModel::create([
+                    'name' => 'admin',
+                    'email' => 'admin@example.com',
+                    'password' => Hash::make('admin'),
+                ]);
+            }
+
+            $asesorModel = config('overrides.models.Asesor');
+
+            $asesorModel::firstOrCreate(
+                ['mail' => 'test@example.com'],
+                [
+                    'name' => 'test',
+                    'phone' => '3337811700',
+                    'number' => '1111',
+                    'password' => Hash::make('1111'),
+                    'category' => 0,
+                ]
+            );
+        } catch (Exception $e) {
             $this->error("Error seeding: " . $e->getMessage());
         }
+    }
 
-        $this->call('vendor:publish', ['--tag' => 'shared-utils-assets', '--force' => true]);
-        $this->call('vendor:publish', ['--tag' => 'listing-utils-assets', '--force' => true]);
+    private function publishAssets(): void
+    {
+        $this->call('vendor:publish', [
+            '--tag' => 'shared-utils-assets',
+            '--force' => true,
+        ]);
+
+        $this->call('vendor:publish', [
+            '--tag' => 'listing-utils-assets',
+            '--force' => true,
+        ]);
     }
 }
