@@ -176,7 +176,7 @@ VITE_APP_NAME="${APP_NAME}"';
     private function createDefaultUsers(): void
     {
         try {
-            $this->call('db:seed', ['--force' => true]);
+            //$this->call('db:seed', ['--force' => true]);
             $userModel = config('overrides.models.User');
 
             if ($userModel::count() == 0) {
