@@ -115,7 +115,7 @@ class BaseGetter extends Getter{
         foreach ($this->columns as $key => $column){
             if ($column->is_foreign() && $column->editable) {
                 $modifier = $column->logic_modifier;
-                $foreign_column = DB::table($modifier->table)->select('id',$modifier->column)->get();
+                $foreign_column = DB::table($modifier->get_table())->select('id',$modifier->column)->get();
                 foreach($foreign_column as $foreign_column_key => $foreign_column_value) {
                     $ans[$key][$foreign_column_value->id] = $foreign_column_value->{$modifier->column};
                 }
