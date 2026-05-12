@@ -36,7 +36,7 @@ class ImageUploader extends Field
         return 'image';
     }
 
-    public function render()
+    public function render($name="")
     {
         return view('shared-utils::components.forms.image-uploader', [
             'element' => $this,

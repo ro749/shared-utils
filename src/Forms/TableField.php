@@ -28,7 +28,7 @@ class TableField extends Field{
         }
     }
 
-    public function render(string $name,string $push = "",string $data)
+    public function render($name="")
     {
         return view('shared-utils::components.tables.localSmartTable',[
             "name"=>$name,

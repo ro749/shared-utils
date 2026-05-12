@@ -57,11 +57,11 @@ class FileUploader extends Field
         $this->updater->save_changes();
     }
 
-    public function render()
+    public function render($name="")
     {
         return view('shared-utils::components.forms.file-uploader',[
             'element' => $this,
-            'name' => $this->name,
+            'name' => $name,
         ]);
     }
 }
