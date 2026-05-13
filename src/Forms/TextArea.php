@@ -36,7 +36,7 @@ class TextArea extends Field
         $this->cols = $cols;
     }
 
-    public function render()
+    public function render($name="")
     {
         return view('shared-utils::components.forms.textarea', [
             'element' => $this,

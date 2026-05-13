@@ -141,7 +141,7 @@ class Field extends Component
         return $this->type; // default type
     }
 
-    public function render()
+    public function render($name="")
     {
         return view('shared-utils::components.forms.field', [
             'element' => $this,

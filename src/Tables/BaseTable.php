@@ -12,6 +12,7 @@ use Ro749\SharedUtils\Tables\TableButtonView;
 use Ro749\SharedUtils\Enums\Icon;
 use Illuminate\Http\Request;
 use Ro749\SharedUtils\Tables\Texts\TableTexts;
+use Illuminate\Support\Facades\Log;
 class BaseTable
 {
     public BaseGetter $getter;

@@ -35,7 +35,7 @@ class RadioButtons extends Selector
         $this->button_view = $button_view;
     }
 
-    public function render()
+    public function render($name="")
     {
         return view('shared-utils::components.forms.radio-buttons',[
             'element' => $this,

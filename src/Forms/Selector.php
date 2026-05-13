@@ -133,7 +133,7 @@ class Selector extends Field
         return $this->table.".".$this->value_column;
     }
 
-    public function render()
+    public function render($name="")
     {
         return view('shared-utils::components.forms.selector',[
             'element' => $this,
