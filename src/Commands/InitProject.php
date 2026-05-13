@@ -46,7 +46,7 @@ class InitProject extends Command
             $this->info('Skipping .env file creation.');
         } else {
             $this->createEnvFile($dbName);
-            exec('php artisan generate:key');
+            exec('php artisan key:generate');
         }
 
         if ($skipDbCreate) {
@@ -61,6 +61,7 @@ class InitProject extends Command
             $this->info('Skipping seeding.');
         } else {
             $this->createDefaultUsers();
+            $this->createDefaultQuotation();
         }
 
         if ($skipPublish) {
@@ -125,7 +126,7 @@ MAIL_MAILER=smtp
 MAIL_SCHEME=null
 MAIL_HOST=\'smtp.hostinger.com\'
 MAIL_PORT=465
-MAIL_USERNAME="
+MAIL_USERNAME=""
 MAIL_PASSWORD=\'\'
 MAIL_FROM_ADDRESS=""
 MAIL_FROM_NAME=""
@@ -199,6 +200,25 @@ VITE_APP_NAME="${APP_NAME}"';
                     'category' => 0,
                 ]
             );
+        } catch (Exception $e) {
+            $this->error("Error seeding: " . $e->getMessage());
+        }
+    }
+
+    private function createDefaultQuotation(): void
+    {
+        try {
+            $this->info('Creating Quotation.');
+            $quotationModel = config('overrides.models.Quotation');
+            if ($quotationModel::count() == 0) {
+                $quotationModel::create([
+                    'client_id' => '1',
+                    'medium' => '0',
+                    'assesor_id' => '1',
+                    'unit_id' => '1',
+                    'quoted_price' => '3474750.00',
+                ]);
+            }
         } catch (Exception $e) {
             $this->error("Error seeding: " . $e->getMessage());
         }
