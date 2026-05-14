@@ -29,6 +29,9 @@ class Reimport extends Command
     public function handle()
     {
         $vendor_folder = base_path('public\vendor');
+        if (!File::exists($vendor_folder)) {
+            File::makeDirectory($vendor_folder, 0755, true);
+        }  
         $vendor_dirs = File::directories($vendor_folder);
         foreach($vendor_dirs as $dir) {
             $package_name = basename($dir);
