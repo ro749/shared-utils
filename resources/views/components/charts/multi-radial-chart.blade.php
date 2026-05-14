@@ -1,11 +1,11 @@
-@props(['id' => '', 'names' => [], 'percents' => [], 'colors' => []])
+@props(['id' => '', 'names' => [], 'percents' => [], 'colors' => [], 'radialWidth' => "100%", 'hollowSize' => "1%"])
 <div id="{{ $id }}" style="width: 100%;"></div>
 @push('scripts')
 <script>
     var options = {
         series: @json($percents),
         chart: {
-            width: "100%",
+            width: "{{ $radialWidth }}",
             type: "radialBar",
         },
         colors: @json($colors),
@@ -15,7 +15,7 @@
         plotOptions: {
             radialBar: {
                 hollow: {
-                    size: "1%", // Adjust this value to control the bar width
+                    size: "{{ $hollowSize }}", // Adjust this value to control the bar width
                 },
                 dataLabels: {
                     name: {
