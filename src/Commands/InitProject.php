@@ -12,33 +12,47 @@ class InitProject extends Command
 {
     protected $signature = 'init:project
     {--db_name=}
+    {--ext-img-dir=}
+
+    {--none}
     {--ci}
+
     {--skip-env}
     {--skip-db-create}
-    {--skip-migrate}
+    {--skip-migrations}
     {--skip-seed}
-    {--skip-publish}';
+    {--skip-publish}
+    {--skip-external-disk}
+
+    {--create-env}
+    {--create-db}
+    {--do-migrations}
+    {--do-seeding}
+    {--publish-assets}
+    {--create-external-disk}
+    ';
 
     protected $description = 'Initializes the project by creating the .env file, creating a default admin user and publishing the necessary assets.';
 
     public function handle(): void
     {
+        $none = $this->option('none');
         $isCi = $this->option('ci');
 
-        $skipEnv = $this->option('skip-env') || $isCi;
-        $skipDbCreate = $this->option('skip-db-create') || $isCi;
-        $skipMigrate = $this->option('skip-migrate') || $isCi;
-        $skipSeed = $this->option('skip-seed');
-        $skipPublish = $this->option('skip-publish');
-
+        $skipEnv = $none ? !$this->option('create-env') : $this->option('skip-env') || $isCi;
+        $skipDbCreate = $none ? !$this->option('create-db') : $this->option('skip-db-create') || $isCi;
+        $skipMigrations = $none ? !$this->option('do-migrations') : $this->option('skip-migrations') || $isCi;
+        $skipSeed = $none ? !$this->option('do-seeding') : $this->option('skip-seed');
+        $skipPublish = $none ? !$this->option('publish-assets') : $this->option('skip-publish');
+        $skipExternalDisk = $none ? !$this->option('create-external-disk') : $this->option('skip-external-disk');
 
         $dbName = $this->option('db_name');
-        if (!$isCi && ($dbName === null || $dbName === '')) {
+        if (! $isCi && (! $skipEnv || ! $skipDbCreate) && ($dbName === null || $dbName === '')) {
             $dbName = $this->ask('What is the name of your database?');
         }
 
         if (! $skipDbCreate && ($dbName === null || $dbName === '' || ! preg_match('/^[A-Za-z0-9_]+$/', $dbName))) {
-            $this->error('Invalid database name. If you don\'t want to create a database, use the --skip-db-create option.');
+            $this->error('Invalid database name. If you don\'t want to create a database name, use the --skip-db-create and --skip-env options.');
             return;
         }
 
@@ -46,13 +60,19 @@ class InitProject extends Command
             $this->info('Skipping .env file creation.');
         } else {
             $this->createEnvFile($dbName);
-            exec('php artisan key:generate');
         }
 
         if ($skipDbCreate) {
             $this->info('Skipping db creation.');
+
+            if ($skipMigrations) {
+                $this->info('Skipping migration.');
+            } else {
+                $this->call('migrate', ['--force' => true]);
+                $this->info('Migration completed.');
+            }
         } else {
-            $this->createDatabase($dbName, $skipMigrate);
+            $this->createDatabase($dbName, $skipMigrations);
         }
 
         $this->call('generate:overrides');
@@ -68,6 +88,12 @@ class InitProject extends Command
             $this->info('Skipping publish.');
         } else {
             $this->publishAssets();
+        }
+
+        if ($skipExternalDisk) {
+            $this->info('Skipping external disk configuration.');
+        } else {
+            $this->AddExternalDiskToConfig();
         }
     }
 
@@ -142,10 +168,18 @@ VITE_APP_NAME="${APP_NAME}"';
         $filePath = base_path('.env');
         if (!file_exists($filePath)) {
             File::put($filePath, $content);
+
+            $this->info('.env file created successfully.');
         }
+        else {
+            $this->info('.env file already exists. Skipping creation.');
+        }
+
+        $this->info('Generating application key.');
+        exec('php artisan key:generate');
     }
 
-    private function createDatabase(string $dbName, bool $skipMigrate): void
+    private function createDatabase(string $dbName, bool $skipMigrations): void
     {
         try {
           $conn = new \PDO("mysql:host=localhost", "root", "");
@@ -166,40 +200,64 @@ VITE_APP_NAME="${APP_NAME}"';
           return;
         }
 
-        if ($skipMigrate) {
-            $this->info('Skipping migration.');
+        if ($skipMigrations) {
+            $this->info('Skipping migrations.');
         } else {
             //exec('php artisan migrate');
             $this->call('migrate', ['--force' => true]);
+            $this->info('Migrations completed.');
         }
     }
 
     private function createDefaultUsers(): void
     {
         try {
-            //$this->call('db:seed', ['--force' => true]);
             $userModel = config('overrides.models.User');
-
             if ($userModel::count() == 0) {
+                $this->info('Creating default admin user.');
                 $userModel::create([
+                    'id' => 1,
                     'name' => 'admin',
                     'email' => 'admin@example.com',
                     'password' => Hash::make('admin'),
                 ]);
             }
+            
+            $clientModel = config('overrides.models.Client');
+            if ($clientModel::count() == 0) {
+                $this->info('Creating default client.');
+                $clientModel::create([
+                    'id' => 1,
+                    'name' => 'test',
+                    'phone' => '3337811700',
+                    'mail' => 'test@example.com',
+                    'asesor_id' => '1'
+                ]);
+            }
 
             $asesorModel = config('overrides.models.Asesor');
-
-            $asesorModel::firstOrCreate(
+            if ($asesorModel::count() == 0) {
+                $this->info('Creating default asesor.');
+                $asesorModel::create([
+                    'id' => 1,
+                    'name' => 'test',
+                    'phone' => '3337811700',
+                    'number' => '1111',
+                    'password' => Hash::make('1111'),
+                    'category' => 0,
+                ]);
+            }
+            /*asesorModel::firstOrCreate(
                 ['mail' => 'test@example.com'],
                 [
+                    'id' => 1,
                     'name' => 'test',
                     'phone' => '3337811700',
                     'number' => '1111',
                     'password' => Hash::make('1111'),
                     'category' => 0,
                 ]
-            );
+            );*/
         } catch (Exception $e) {
             $this->error("Error seeding: " . $e->getMessage());
         }
@@ -208,13 +266,13 @@ VITE_APP_NAME="${APP_NAME}"';
     private function createDefaultQuotation(): void
     {
         try {
-            $this->info('Creating Quotation.');
             $quotationModel = config('overrides.models.Quotation');
             if ($quotationModel::count() == 0) {
+                $this->info('Creating default quotation.');
                 $quotationModel::create([
                     'client_id' => '1',
                     'medium' => '0',
-                    'assesor_id' => '1',
+                    'asesor_id' => '1',
                     'unit_id' => '1',
                     'quoted_price' => '3474750.00',
                 ]);
@@ -226,6 +284,8 @@ VITE_APP_NAME="${APP_NAME}"';
 
     private function publishAssets(): void
     {
+        $this->info('Publishing assets.');
+
         $this->call('vendor:publish', [
             '--tag' => 'shared-utils-assets',
             '--force' => true,
@@ -235,5 +295,49 @@ VITE_APP_NAME="${APP_NAME}"';
             '--tag' => 'listing-utils-assets',
             '--force' => true,
         ]);
+    }
+
+    private function AddExternalDiskToConfig(): void
+    {
+        $this->info('Adding external disk to config/filesystems.php.');
+
+        $configPath = config_path('filesystems.php');
+        $configContent = File::get($configPath);
+
+        // Check if the external disk is already defined
+        if (strpos($configContent, "'external' => [") !== false) {
+            $this->info('External disk already defined in config/filesystems.php. Skipping modification.');
+            return;
+        }
+
+        $extImgDir = $this->option('ext-img-dir');
+        if ($extImgDir === null || $extImgDir === '') {
+            $extImgDir = $this->ask('What is the name of your external image directory?');
+        }
+
+        // Define the new disk configuration
+        $newDiskConfig = "
+        'external' => [
+            'driver' => 'local',
+            'root' => '/',
+            'url' => 'https://propstudios.mx/img/$extImgDir/',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+    ";
+
+        // Use regex to find the 'disks' array and insert the new disk configuration
+        $pattern = "/('disks'.*=>.*\[)([\s\S]*?(?:.*=>.*\[[\s\S]*?],?[\s\S]*?)*)(\],?)/";
+        $replacement = "$1$2$newDiskConfig$3";
+
+        if (preg_match($pattern, $configContent)) {
+            $newConfigContent = preg_replace($pattern, $replacement, $configContent);
+            File::put($configPath, $newConfigContent);
+            $this->info('External disk added to config/filesystems.php successfully.');
+        } else {
+            $this->error('Could not find the disks array in config/filesystems.php. Please add the following configuration manually:');
+            $this->line($newDiskConfig);
+        }
     }
 }
