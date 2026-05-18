@@ -222,23 +222,12 @@ VITE_APP_NAME="${APP_NAME}"';
                     'password' => Hash::make('admin'),
                 ]);
             }
-            
-            $clientModel = config('overrides.models.Client');
-            if ($clientModel::count() == 0) {
-                $this->info('Creating default client.');
-                $clientModel::create([
-                    'id' => 1,
-                    'name' => 'test',
-                    'phone' => '3337811700',
-                    'mail' => 'test@example.com',
-                    'asesor_id' => '1'
-                ]);
-            }
 
             $asesorModel = config('overrides.models.Asesor');
+            $asesorId = 0;
             if ($asesorModel::count() == 0) {
                 $this->info('Creating default asesor.');
-                $asesorModel::create([
+                $asesorId = $asesorModel::insertGetId([
                     'id' => 1,
                     'name' => 'test',
                     'phone' => '3337811700',
@@ -246,6 +235,9 @@ VITE_APP_NAME="${APP_NAME}"';
                     'password' => Hash::make('1111'),
                     'category' => 0,
                 ]);
+            }
+            else {
+                $asesorId = $asesorModel::first()->id;
             }
             /*asesorModel::firstOrCreate(
                 ['mail' => 'test@example.com'],
@@ -258,6 +250,34 @@ VITE_APP_NAME="${APP_NAME}"';
                     'category' => 0,
                 ]
             );*/
+            
+            $clientModel = config('overrides.models.Client');
+            $clientId = 0;
+            if ($clientModel::count() == 0) {
+                $this->info('Creating default client.');
+                $clientId = $clientModel::insertGetId([
+                    'id' => 1,
+                    'name' => 'test',
+                    'phone' => '3337811700',
+                    'mail' => 'test@example.com',
+                    'asesor_id' => $asesorId
+                ]);
+            }
+            else {
+                $clientId = $clientModel::first()->id;
+            }
+            
+            $quotationModel = config('overrides.models.Quotation');
+            if ($quotationModel::count() == 0) {
+                $this->info('Creating default quotation.');
+                $quotationModel::create([
+                    'client_id' => $clientId,
+                    'medium' => '0',
+                    'asesor_id' => $asesorId,
+                    'unit_id' => '1',
+                    'quoted_price' => '3474750.00',
+                ]);
+            }
         } catch (Exception $e) {
             $this->error("Error seeding: " . $e->getMessage());
         }
@@ -266,17 +286,6 @@ VITE_APP_NAME="${APP_NAME}"';
     private function createDefaultQuotation(): void
     {
         try {
-            $quotationModel = config('overrides.models.Quotation');
-            if ($quotationModel::count() == 0) {
-                $this->info('Creating default quotation.');
-                $quotationModel::create([
-                    'client_id' => '1',
-                    'medium' => '0',
-                    'asesor_id' => '1',
-                    'unit_id' => '1',
-                    'quoted_price' => '3474750.00',
-                ]);
-            }
         } catch (Exception $e) {
             $this->error("Error seeding: " . $e->getMessage());
         }
