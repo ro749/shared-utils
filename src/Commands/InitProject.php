@@ -225,6 +225,7 @@ VITE_APP_NAME="${APP_NAME}"';
                     'number' => '1111',
                     'password' => Hash::make('1111'),
                     'category' => 0,
+                    'mail' => 'admin@example.com',
                 ]);
             }
             else {
