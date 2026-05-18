@@ -77,6 +77,18 @@ class InitProject extends Command
 
         $this->call('generate:overrides');
 
+        if ($skipPublish) {
+            $this->info('Skipping publish.');
+        } else {
+            $this->publishAssets();
+        }
+
+        if($skipMigrate) {
+            $this->info('Skipping migration.');
+        } else {
+            $this->call('migrate:fresh');
+        }
+
         if ($skipSeed) {
             $this->info('Skipping seeding.');
         } else {
@@ -199,14 +211,11 @@ VITE_APP_NAME="${APP_NAME}"';
           Log::error("Error creating database: " . $sql . $e->getMessage());
           return;
         }
+    }
 
-        if ($skipMigrations) {
-            $this->info('Skipping migrations.');
-        } else {
-            //exec('php artisan migrate');
-            $this->call('migrate', ['--force' => true]);
-            $this->info('Migrations completed.');
-        }
+    private function migrate(){
+        $this->call('migrate', ['--force' => true]);
+        $this->info('Migrations completed.');
     }
 
     private function createDefaultUsers(): void
@@ -302,6 +311,11 @@ VITE_APP_NAME="${APP_NAME}"';
 
         $this->call('vendor:publish', [
             '--tag' => 'listing-utils-assets',
+            '--force' => true,
+        ]);
+
+        $this->call('vendor:publish', [
+            '--tag' => 'full-listing-template-migrations',
             '--force' => true,
         ]);
     }
