@@ -64,15 +64,8 @@ class InitProject extends Command
 
         if ($skipDbCreate) {
             $this->info('Skipping db creation.');
-
-            if ($skipMigrations) {
-                $this->info('Skipping migration.');
-            } else {
-                $this->call('migrate', ['--force' => true]);
-                $this->info('Migration completed.');
-            }
         } else {
-            $this->createDatabase($dbName, $skipMigrations);
+            $this->createDatabase($dbName);
         }
 
         $this->call('generate:overrides');
@@ -83,29 +76,23 @@ class InitProject extends Command
             $this->publishAssets();
         }
 
-        if($skipMigrate) {
+        if ($skipMigrations) {
             $this->info('Skipping migration.');
         } else {
-            $this->call('migrate:fresh');
+            $this->call('migrate', ['--force' => true]);
+            $this->info('Migration completed.');
         }
 
         if ($skipSeed) {
             $this->info('Skipping seeding.');
         } else {
-            $this->createDefaultUsers();
-            $this->createDefaultQuotation();
-        }
-
-        if ($skipPublish) {
-            $this->info('Skipping publish.');
-        } else {
-            $this->publishAssets();
+            $this->doSeeding();
         }
 
         if ($skipExternalDisk) {
             $this->info('Skipping external disk configuration.');
         } else {
-            $this->AddExternalDiskToConfig();
+            $this->addExternalDiskToConfig();
         }
     }
 
@@ -191,7 +178,7 @@ VITE_APP_NAME="${APP_NAME}"';
         exec('php artisan key:generate');
     }
 
-    private function createDatabase(string $dbName, bool $skipMigrations): void
+    private function createDatabase(string $dbName): void
     {
         try {
           $conn = new \PDO("mysql:host=localhost", "root", "");
@@ -213,12 +200,7 @@ VITE_APP_NAME="${APP_NAME}"';
         }
     }
 
-    private function migrate(){
-        $this->call('migrate', ['--force' => true]);
-        $this->info('Migrations completed.');
-    }
-
-    private function createDefaultUsers(): void
+    private function doSeeding(): void
     {
         try {
             $userModel = config('overrides.models.User');
@@ -292,14 +274,6 @@ VITE_APP_NAME="${APP_NAME}"';
         }
     }
 
-    private function createDefaultQuotation(): void
-    {
-        try {
-        } catch (Exception $e) {
-            $this->error("Error seeding: " . $e->getMessage());
-        }
-    }
-
     private function publishAssets(): void
     {
         $this->info('Publishing assets.');
@@ -320,7 +294,7 @@ VITE_APP_NAME="${APP_NAME}"';
         ]);
     }
 
-    private function AddExternalDiskToConfig(): void
+    private function addExternalDiskToConfig(): void
     {
         $this->info('Adding external disk to config/filesystems.php.');
 
