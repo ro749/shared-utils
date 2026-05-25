@@ -64,15 +64,8 @@ class InitProject extends Command
 
         if ($skipDbCreate) {
             $this->info('Skipping db creation.');
-
-            if ($skipMigrations) {
-                $this->info('Skipping migration.');
-            } else {
-                $this->call('migrate', ['--force' => true]);
-                $this->info('Migration completed.');
-            }
         } else {
-            $this->createDatabase($dbName, $skipMigrations);
+            $this->createDatabase($dbName);
         }
 
         $this->call('generate:overrides');
@@ -83,29 +76,23 @@ class InitProject extends Command
             $this->publishAssets();
         }
 
-        if($skipMigrate) {
+        if ($skipMigrations) {
             $this->info('Skipping migration.');
         } else {
-            $this->call('migrate:fresh');
+            $this->call('migrate', ['--force' => true]);
+            $this->info('Migration completed.');
         }
 
         if ($skipSeed) {
             $this->info('Skipping seeding.');
         } else {
-            $this->createDefaultUsers();
-            $this->createDefaultQuotation();
-        }
-
-        if ($skipPublish) {
-            $this->info('Skipping publish.');
-        } else {
-            $this->publishAssets();
+            $this->doSeeding();
         }
 
         if ($skipExternalDisk) {
             $this->info('Skipping external disk configuration.');
         } else {
-            $this->AddExternalDiskToConfig();
+            $this->addExternalDiskToConfig();
         }
     }
 
@@ -191,7 +178,7 @@ VITE_APP_NAME="${APP_NAME}"';
         exec('php artisan key:generate');
     }
 
-    private function createDatabase(string $dbName, bool $skipMigrations): void
+    private function createDatabase(string $dbName): void
     {
         try {
           $conn = new \PDO("mysql:host=localhost", "root", "");
@@ -213,12 +200,7 @@ VITE_APP_NAME="${APP_NAME}"';
         }
     }
 
-    private function migrate(){
-        $this->call('migrate', ['--force' => true]);
-        $this->info('Migrations completed.');
-    }
-
-    private function createDefaultUsers(): void
+    private function doSeeding(): void
     {
         try {
             $userModel = config('overrides.models.User');
@@ -231,30 +213,23 @@ VITE_APP_NAME="${APP_NAME}"';
                     'password' => Hash::make('admin'),
                 ]);
             }
-            
-            $clientModel = config('overrides.models.Client');
-            if ($clientModel::count() == 0) {
-                $this->info('Creating default client.');
-                $clientModel::create([
-                    'id' => 1,
-                    'name' => 'test',
-                    'phone' => '3337811700',
-                    'mail' => 'test@example.com',
-                    'asesor_id' => '1'
-                ]);
-            }
 
             $asesorModel = config('overrides.models.Asesor');
+            $asesorId = 0;
             if ($asesorModel::count() == 0) {
                 $this->info('Creating default asesor.');
-                $asesorModel::create([
+                $asesorId = $asesorModel::insertGetId([
                     'id' => 1,
                     'name' => 'test',
                     'phone' => '3337811700',
                     'number' => '1111',
                     'password' => Hash::make('1111'),
                     'category' => 0,
+                    'mail' => 'admin@example.com',
                 ]);
+            }
+            else {
+                $asesorId = $asesorModel::first()->id;
             }
             /*asesorModel::firstOrCreate(
                 ['mail' => 'test@example.com'],
@@ -267,21 +242,30 @@ VITE_APP_NAME="${APP_NAME}"';
                     'category' => 0,
                 ]
             );*/
-        } catch (Exception $e) {
-            $this->error("Error seeding: " . $e->getMessage());
-        }
-    }
-
-    private function createDefaultQuotation(): void
-    {
-        try {
+            
+            $clientModel = config('overrides.models.Client');
+            $clientId = 0;
+            if ($clientModel::count() == 0) {
+                $this->info('Creating default client.');
+                $clientId = $clientModel::insertGetId([
+                    'id' => 1,
+                    'name' => 'test',
+                    'phone' => '3337811700',
+                    'mail' => 'test@example.com',
+                    'asesor_id' => $asesorId
+                ]);
+            }
+            else {
+                $clientId = $clientModel::first()->id;
+            }
+            
             $quotationModel = config('overrides.models.Quotation');
             if ($quotationModel::count() == 0) {
                 $this->info('Creating default quotation.');
                 $quotationModel::create([
-                    'client_id' => '1',
+                    'client_id' => $clientId,
                     'medium' => '0',
-                    'asesor_id' => '1',
+                    'asesor_id' => $asesorId,
                     'unit_id' => '1',
                     'quoted_price' => '3474750.00',
                 ]);
@@ -311,7 +295,7 @@ VITE_APP_NAME="${APP_NAME}"';
         ]);
     }
 
-    private function AddExternalDiskToConfig(): void
+    private function addExternalDiskToConfig(): void
     {
         $this->info('Adding external disk to config/filesystems.php.');
 
