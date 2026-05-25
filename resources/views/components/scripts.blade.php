@@ -40,7 +40,8 @@
 $(function() {
     $.ajaxSetup({
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'X-App-Version': $('meta[name="app-version"]').attr('content')
         }
     });
     $(document).init_string_utils();
