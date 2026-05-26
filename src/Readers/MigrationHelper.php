@@ -74,24 +74,31 @@ class MigrationHelper
         return $migration_text;
         
     }
-
+    //columns_data as key the column name and as value the data type
     public static function generate_migration_for_add_rows($table_name,$columns_data) {
         $migration_text = "Schema::table('".$table_name."', function (Blueprint \$table) {\n";
 
         // Assuming $columns_data is an associative array with column names as keys and data types as values
         foreach ($columns_data as $column_name => $data_type) {
-            switch ($data_type) {
-                case 'int':
-                    $migration_text .= "\$table->integer('".$column_name."');\n";
-                    break;
-                case 'float':
-                    $migration_text .= "\$table->float('".$column_name."');\n";
-                    break;
-                case 'string':
-                default:
-                    $migration_text .= "\$table->string('".$column_name."');\n";
-                    break;
+            if(is_array($data_type)){
+                $migration_text .= "\$table->decimal('".$column_name."', ".$data_type[0].", ".$data_type[1].");\n";
+                continue;
             }
+            else{
+                switch ($data_type) {
+                    case 'int':
+                        $migration_text .= "\$table->integer('".$column_name."');\n";
+                        break;
+                    case 'float':
+                        $migration_text .= "\$table->float('".$column_name."');\n";
+                        break;
+                    case 'string':
+                    default:
+                        $migration_text .= "\$table->string('".$column_name."');\n";
+                        break;
+                }
+            }
+            
         }
         $migration_text .= "});\n";
 
