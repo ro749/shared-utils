@@ -258,6 +258,12 @@ VITE_APP_NAME="${APP_NAME}"';
             else {
                 $clientId = $clientModel::first()->id;
             }
+
+            $unitModel = config('overrides.models.Unit');
+            $unitId = 0;
+            if ($unitModel::count() != 0) {
+                $unitId = $unitModel::first()->id;
+            }
             
             $quotationModel = config('overrides.models.Quotation');
             if ($quotationModel::count() == 0) {
@@ -266,7 +272,7 @@ VITE_APP_NAME="${APP_NAME}"';
                     'client_id' => $clientId,
                     'medium' => '0',
                     'asesor_id' => $asesorId,
-                    'unit_id' => '1',
+                    'unit_id' => $unitId,
                     'quoted_price' => '3474750.00',
                 ]);
             }
