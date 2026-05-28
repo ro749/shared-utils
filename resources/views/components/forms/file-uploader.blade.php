@@ -15,9 +15,9 @@
 </div>
 @push('scripts')
 <script>
-$('#{{ $element->push }}-cancel').on('click', function() {
+$('#{{ $form_id }}-cancel').on('click', function() {
     $.ajax({
-        url: '{{ '/form/'.$element->push.'/cancel/'.$name }}',
+        url: '{{ '/form/'.$form_id.'/cancel/'.$name }}',
         type: 'POST',
         success: function (data) {
             $('#{{ $element->preview_table->get_id() }}').DataTable().ajax.reload();
