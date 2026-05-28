@@ -22,7 +22,6 @@ function get_{{ $data->get_id() }}() {
         }
     });
 }
-console.log("getting: {{ $data->get_id() }}");
 get_{{ $data->get_id() }}();
 </script>
 @endpush

@@ -10,10 +10,3 @@
         'push_reset' => 'filters-reset',
     ])
 </div>
-@push($push_init)
-<script>
-    $('#cf-{{ $filter->id }}').on('change', function() {
-        console.log('category filter changed');
-    });
-</script>
-@endpush

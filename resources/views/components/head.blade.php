@@ -14,10 +14,8 @@
       // site using the default scope.
       navigator.serviceWorker.register("/sw.js").then(
       (registration) => {
-         console.log("Service worker registration succeeded:", registration);
       },
       (error) => {
-         console.error(`Service worker registration failed: ${error}`);
       },
     );
   } else {
@@ -42,11 +40,9 @@
 				//};
 //
 				await rfid0.open(5000);
-                console.log('connected');
 				//statusEl.textContent = 'Connected';
 
 			} catch(err) {
-				console.error('Phidget error:', err);
 				//statusEl.textContent = '⚠️ ' + err.message;
 			}
 		})();

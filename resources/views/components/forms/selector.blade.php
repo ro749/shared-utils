@@ -25,13 +25,7 @@
         @endif
     @endforeach
 </select>
-<script>
-    console.log("{{ $element->search?"true":"false" }}");
-</script>
 @if($element->search)
-<script>
-    console.log("{{ $element->form_id }}");
-</script>
 @push($form_id)
     $('#{{ $name }}').select2({
         theme: "bootstrap-5",
