@@ -68,8 +68,12 @@
                     case 'date':
                         column.render = (data) => {
                             let value = renderFn ? renderFn(data) : data;
-                            value = value.split('T')[0];
-                            const [y, m, d] = value.split("-");
+
+                            const date = new Date(value);
+                            let localDate = date.toLocaleString("en-US");
+
+                            localDate = localDate.split(',')[0];
+                            const [m, d, y] = localDate.split("/");
                             return `${m}/${d}/${y}`;
                         }
                         break;
