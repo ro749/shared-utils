@@ -81,6 +81,13 @@ Route::middleware('web')->group(function () {
         return response()->json(data: $data);
     });
 
+    Route::get('/form/{form}/search/{field}', function (Request $request,$form,$field) {
+        $ans = [];
+        $formClass = config('overrides.forms.'.$form);
+        $form = new $formClass();
+        return $form->fields[$field]->search($request->get('q'));
+    });
+
     Route::post('/form/{form}/preview/{field}', function (Request $request,$form,$field) {
         $formClass = config('overrides.forms.'.$form);
         $form = new $formClass();

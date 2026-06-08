@@ -112,6 +112,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.forms.field-decorator', 'field');
         
         Blade::component('sharedutils::components.forms.selector', 'sharedutils::selector');
+        Blade::component('sharedutils::components.forms.selector-db', 'sharedutils::selector-db');
         Blade::component('sharedutils::components.forms.field', 'sharedutils::field');
         Blade::component('sharedutils::components.forms.field-uploader', 'sharedutils::field-uploader');
         Blade::component('sharedutils::components.forms.image-uploader', 'sharedutils::image-uploader');

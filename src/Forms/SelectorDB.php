@@ -5,36 +5,36 @@ use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class Selector extends Field
+class SelectorDB extends Field
 {
-    public string $component = 'sharedutils::selector';
-    public $options;
+    public string $component = 'sharedutils::selector-db';
     public string $table;
+    public string $model_class;
     public string $label_column;
     public string $value_column;
-    public bool $search = false;
     public string $hot_reload = '';
     public int $length = 0;
-
     public string $name;
     public string $form_id;
     public string $data;
     public string $class;
+
     public float $max_length;
+    public Closure $query_modifier;
 
     public function __construct(
-        $options, 
         string $id="", 
         string $label="", 
         string $placeholder="", 
         string $icon="", 
+        Closure $query_modifier = null,
         Closure|bool $required = false,
         bool $unique = false,
         array $rules=[], 
         string $message="", 
         string $value = "",
-        bool $search = false,
         string $table = "", 
+        string $model_class = "",
         string $label_column = "", 
         string $value_column = "id",
         bool $autosave = false,
@@ -60,13 +60,6 @@ class Selector extends Field
         );
 
         $this->id = $id;
-        if(is_array($options)){
-            $this->options = $options;
-        }
-        else{
-            $this->options = config("options.{$options->value}") ?? [];
-        }
-        $this->search = $search;
         $this->table = $table;
         $this->label_column = $label_column;
         $this->value_column = $value_column;
@@ -76,16 +69,42 @@ class Selector extends Field
         $this->form_id = $form_id;
         $this->data = $data;
         $this->class = $class;
+        $this->model_class = $model_class;
+    }
+
+    public function get_table(): string
+    {
+        return $this->model_class!="" ? (new $this->model_class)->getTable() : $this->table;
     }
 
     public function get_column(): string
     {
-        return $this->table.".".$this->value_column;
+        return $this->get_table().".".$this->value_column;
     }
+
+    public function search($search){
+        $query = DB::table($this->get_table());
+        ($this->query_modifier)($query);
+        return $query->
+        where($this->label_column, 'like', '%'.$search.'%')->
+        orderByRaw("
+        CASE
+            WHEN name = ? THEN 1
+            WHEN name LIKE ? THEN 2
+            WHEN name LIKE ? THEN 3
+            WHEN name LIKE ? THEN 4
+            WHEN name LIKE ? THEN 5
+            ELSE 6
+        END
+        ", [$search, $search . ' %', $search . '%', '% ' . $search . ' %','% ' . $search . '%'])->
+        limit(6)->
+        pluck($this->label_column, $this->value_column);
+    }
+
 
     public function render($name="")
     {
-        return view('shared-utils::components.forms.selector',[
+        return view('shared-utils::components.forms.selector-db',[
             'element' => $this,
             'name' => $this->name,
         ]);

@@ -7,7 +7,7 @@ class Reader
     public string $warning_text='';
 
     public string $error_text='';
-    public function read_cvs($file)
+    public function read_csv($file)
     {
         $raw_lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $titles = explode(',', $raw_lines[0]);

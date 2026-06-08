@@ -2,7 +2,7 @@
 
 namespace Ro749\SharedUtils\Forms;
 use Log;
-use Ro749\SharedUtils\Readers\DbUpdater;
+use Ro749\SharedUtils\Readers\DbReader;
 use Ro749\SharedUtils\Tables\BaseTable;
 use Closure;
 class FileUploader extends Field
@@ -13,13 +13,13 @@ class FileUploader extends Field
     public string $data;
 
     public string $accept = '';
-    public DbUpdater $updater;
+    public DbReader $reader;
     public BaseTable $preview_table;
 
     public $cancel;
     public function __construct(
         string $accept = '',
-        DbUpdater $updater = null,
+        DbReader $reader = null,
         $cancel = null,
         BaseTable $preview_table,
         bool $autosave = false,
@@ -33,7 +33,7 @@ class FileUploader extends Field
         $this->push = $push;
         $this->data = $data;
         $this->accept = $accept;
-        $this->updater = $updater;
+        $this->reader = $reader;
         $this->preview_table = $preview_table;
         $this->cancel = $cancel;
     }
@@ -45,7 +45,7 @@ class FileUploader extends Field
 
     public function preview($file)
     {
-        $this->updater->read_cvs($file);
+        $this->reader->read_csv($file);
     }
 
     public function cancel()
@@ -54,7 +54,7 @@ class FileUploader extends Field
     }
 
     public function save(){
-        $this->updater->save_changes();
+        //$this->updater->save_changes();
     }
 
     public function render($name="", $form_id="")
