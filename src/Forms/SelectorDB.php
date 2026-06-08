@@ -84,7 +84,9 @@ class SelectorDB extends Field
 
     public function search($search){
         $query = DB::table($this->get_table());
-        ($this->query_modifier)($query);
+        if(!empty($this->query_modifier)){
+            ($this->query_modifier)($query);
+        }
         return $query->
         where($this->label_column, 'like', '%'.$search.'%')->
         orderByRaw("
