@@ -20,7 +20,7 @@ class SelectorDB extends Field
     public string $class;
 
     public float $max_length;
-    public Closure $query_modifier;
+    public ?Closure $query_modifier;
 
     public function __construct(
         string $id="", 
@@ -70,6 +70,7 @@ class SelectorDB extends Field
         $this->data = $data;
         $this->class = $class;
         $this->model_class = $model_class;
+        $this->query_modifier = $query_modifier;
     }
 
     public function get_table(): string
@@ -85,9 +86,10 @@ class SelectorDB extends Field
     public function search($search){
         $query = DB::table($this->get_table());
         if(!empty($this->query_modifier)){
-            ($this->query_modifier)($query);
+            $query = ($this->query_modifier)($query);
         }
-        return $query->
+        DB::enableQueryLog();
+        $ans = $query->
         where($this->label_column, 'like', '%'.$search.'%')->
         orderByRaw("
         CASE
@@ -101,6 +103,8 @@ class SelectorDB extends Field
         ", [$search, $search . ' %', $search . '%', '% ' . $search . ' %','% ' . $search . '%'])->
         limit(6)->
         pluck($this->label_column, $this->value_column);
+        Log::info(DB::getQueryLog());
+        return $ans;
     }
 
 
