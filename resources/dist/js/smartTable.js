@@ -4,7 +4,7 @@
         $(this).data('end_date', end_date);
     }
     $.fn.smartTable = function (options = {}) {
-        function cancer_edit(){
+        function cancel_edit(){
             $('.edit-buttons').css('display', 'none');
             $('.normal-buttons').css('display', 'flex');
             $('.edit-cancel-recover').each(function(){
@@ -36,11 +36,6 @@
                                 '</div>';
                             }
                             break;
-                        case 'foreign_key':
-                            if(options?.form && options.form.fields && options.form.fields[col]) {
-                                renderFn = (data) => data==0||data==null?"":selectors[col][data];
-                            }
-                            break;
                     }
                 }
                 switch (col_data.modifier) {
@@ -68,12 +63,8 @@
                     case 'date':
                         column.render = (data) => {
                             let value = renderFn ? renderFn(data) : data;
-
-                            const date = new Date(value);
-                            let localDate = date.toLocaleString("en-US");
-
-                            localDate = localDate.split(',')[0];
-                            const [m, d, y] = localDate.split("/");
+                            value = value.split('T')[0];
+                            const [y, m, d] = value.split("-");
                             return `${m}/${d}/${y}`;
                         }
                         break;
@@ -143,15 +134,6 @@
                     const sessionValue = sessionStorage.getItem(filter.session)??1;
                     filters["cf-"+key] = sessionValue;
                 } 
-            }
-            if(options.needs_selectors){
-                $.ajax({
-                    url: '/table/'+options.id+'/selectors',
-                    type: 'GET',
-                    success: function(response) {
-                        selectors = response;
-                    }
-                });
             }
             var table = $table.DataTable({
                 ajax: {
@@ -279,6 +261,9 @@
                         }
                     }, 0);
                     
+                },
+                drawCallback: function () {
+                    $('#'+options.id).trigger('loaded', [this.api().data().length > 0]);
                 }
             });
             for(let button_num in options.buttons){
@@ -368,7 +353,7 @@
             
             if(options.is_editable){
                 $table.on('click', '.edit-btn', async function(event) {
-                    cancer_edit();
+                    cancel_edit();
                     this.parentElement.style.display = 'none';
                     this.parentElement.parentElement.children[1].style.display = 'flex';
                     this.parentElement.parentElement.children[1].style.justifyContent = 'left';
@@ -385,7 +370,22 @@
                     for(var key_field in options.form.fields){
                         var column = options.columns[key_field];
                         if(column?.logic_modifier && column.logic_modifier.type == 'foreign_key'){
-                            xdata.push("$('#"+key_field+"').val(this.form."+key_field+").select2({theme: 'bootstrap-5',width: 'auto',allowClear: true,placeholder: 'Select'});");
+                            xdata.push(`$('#`+key_field+`').val(this.form.`+key_field+`).select2({
+                                theme: 'bootstrap-5',
+                                width: 'auto',
+                                allowClear: true,
+                                placeholder: 'Select',
+                                ajax: {
+                                    url: '/form/`+options.form.id+`/search/`+key_field+`',
+                                    delay: 250,
+                                    processResults: function (data) {
+                                        var ans = {
+                                          results: Object.entries(data).map(([id, text]) => ({ 'id': id, text }))
+                                        };
+                                        return ans;
+                                    }
+                                }
+                            });`.replace(/[\r\n]/g, ''));
                             xdata.push("$('#"+key_field+"').on('change', () => {");
                             xdata.push("this.form."+key_field+" = $('#"+key_field+"').val();");
                             xdata.push("});");
@@ -481,7 +481,7 @@
                 });
                 
                 $table.on('click', '.cancel-btn', function(event) {
-                    cancer_edit();
+                    cancel_edit();
                 });
                 
                 $table.on('click', '.save-btn', function(event) {
