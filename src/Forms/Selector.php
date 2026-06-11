@@ -60,7 +60,7 @@ class Selector extends Field
         );
 
         $this->id = $id;
-        if(is_array($options)){
+        if(is_array($options) || $options instanceof \Illuminate\Support\Collection){
             $this->options = $options;
         }
         else{

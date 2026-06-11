@@ -1,5 +1,10 @@
 @props(['element' => null, 'name' => '','form_id' => ''])
-
+@if($element->selector_type == \Ro749\SharedUtils\Forms\SelectorType::Static)
+@php
+$element->generate_options();
+@endphp
+@include('sharedutils::components.forms.selector', ['element' => $element, 'name' => $name, 'form_id' => $form_id])
+@else
 <select 
     id="{{ $name }}"
     name="{{ $name }}"
@@ -21,8 +26,7 @@
 @push($form_id)
     $('#{{ $name }}').select2({
         theme: "bootstrap-5",
-        dropdownAutoWidth: true,
-        width: '{{ $element->max_length == 0 ? 'auto' : ($element->max_length <108 ? '108px' : $element->max_length.'px') }}',
+        width: '100% !important',
         allowClear: true,
         placeholder: '{{ $element->placeholder }}', 
         ajax: {
@@ -49,3 +53,4 @@
 @push($form_id."_reset")
     $('#{{ $name }}').val(null).trigger('change');
 @endpush
+@endif

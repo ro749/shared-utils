@@ -10,7 +10,7 @@ $initial_data = $form->get_initial_data();
 @if (!$slot->isEmpty())
 {{ $slot }}
 @else
-    <div id="{{ $form->get_id() }}-fields">
+    <div id="{{ $form->get_id() }}-fields" class="fields">
     @foreach ($form->fields as $name => $field)
         @if($field->type === Ro749\SharedUtils\Forms\InputType::HIDDEN)
         @continue

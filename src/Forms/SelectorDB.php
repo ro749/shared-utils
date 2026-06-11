@@ -18,9 +18,11 @@ class SelectorDB extends Field
     public string $form_id;
     public string $data;
     public string $class;
-
     public float $max_length;
     public ?Closure $query_modifier;
+    public $options;
+
+    public SelectorType $selector_type = SelectorType::Static;
 
     public function __construct(
         string $id="", 
@@ -43,7 +45,8 @@ class SelectorDB extends Field
         string $name = "",
         string $form_id = "",
         string $data = "",
-        string $class = ""
+        string $class = "",
+        SelectorType $selector_type = SelectorType::Dynamic
     )    
     {
         parent::__construct(
@@ -71,6 +74,7 @@ class SelectorDB extends Field
         $this->class = $class;
         $this->model_class = $model_class;
         $this->query_modifier = $query_modifier;
+        $this->selector_type = $selector_type;
     }
 
     public function get_table(): string
@@ -83,6 +87,16 @@ class SelectorDB extends Field
         return $this->get_table().".".$this->value_column;
     }
 
+    public function generate_options()
+    {
+        $query = DB::table($this->get_table());
+        if(!empty($this->query_modifier)){
+            $query = ($this->query_modifier)($query);
+        }
+        $this->options = $query->pluck($this->label_column, $this->value_column)->toArray();
+        $this->search = true;
+    }
+
     public function search($search){
         $query = DB::table($this->get_table());
         if(!empty($this->query_modifier)){
@@ -93,11 +107,11 @@ class SelectorDB extends Field
         where($this->label_column, 'like', '%'.$search.'%')->
         orderByRaw("
         CASE
-            WHEN name = ? THEN 1
-            WHEN name LIKE ? THEN 2
-            WHEN name LIKE ? THEN 3
-            WHEN name LIKE ? THEN 4
-            WHEN name LIKE ? THEN 5
+            WHEN ".$this->label_column." = ? THEN 1
+            WHEN ".$this->label_column." LIKE ? THEN 2
+            WHEN ".$this->label_column." LIKE ? THEN 3
+            WHEN ".$this->label_column." LIKE ? THEN 4
+            WHEN ".$this->label_column." LIKE ? THEN 5
             ELSE 6
         END
         ", [$search, $search . ' %', $search . '%', '% ' . $search . ' %','% ' . $search . '%'])->
