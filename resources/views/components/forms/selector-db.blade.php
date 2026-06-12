@@ -1,4 +1,9 @@
 @props(['element' => null, 'name' => '','form_id' => ''])
+@if($element->selector_type == \Ro749\SharedUtils\Forms\SelectorType::Smart)
+@php
+$element->decide();
+@endphp
+@endif
 @if($element->selector_type == \Ro749\SharedUtils\Forms\SelectorType::Static)
 @php
 $element->generate_options();

@@ -46,7 +46,7 @@ class SelectorDB extends Field
         string $form_id = "",
         string $data = "",
         string $class = "",
-        SelectorType $selector_type = SelectorType::Dynamic
+        SelectorType $selector_type = SelectorType::Smart
     )    
     {
         parent::__construct(
@@ -102,7 +102,6 @@ class SelectorDB extends Field
         if(!empty($this->query_modifier)){
             $query = ($this->query_modifier)($query);
         }
-        DB::enableQueryLog();
         $ans = $query->
         where($this->label_column, 'like', '%'.$search.'%')->
         orderByRaw("
@@ -117,8 +116,16 @@ class SelectorDB extends Field
         ", [$search, $search . ' %', $search . '%', '% ' . $search . ' %','% ' . $search . '%'])->
         limit(6)->
         pluck($this->label_column, $this->value_column);
-        Log::info(DB::getQueryLog());
         return $ans;
+    }
+    //if smart decide if its static or dynamic
+    public function decide(){
+        $query = DB::table($this->get_table());
+        if(!empty($this->query_modifier)){
+            $query = ($this->query_modifier)($query);
+        }
+        $count =$query->count();
+        $this->selector_type = $count > 216 ? SelectorType::Dynamic : SelectorType::Static;
     }
 
 
