@@ -33,8 +33,8 @@ class BaseForm
     public bool $has_files = false;
 
     public string $view = '';
-
-    public bool $reset = true;
+    //if is a register form the default is going to be true, if is an update the default is going to be false 
+    public ?bool $reset = null;
     public bool $soft_reload = false;
     public bool $session = false;
 
@@ -58,7 +58,7 @@ class BaseForm
         bool $reload = false,
         bool $autosave = false,
         string $view = '',
-        bool $reset = true,
+        bool $reset = null,
         $soft_reload = false,
         bool $session = false,
         bool $debug = false,
@@ -79,11 +79,12 @@ class BaseForm
         $this->reload = $reload;
         $this->view = $view;
         $this->has_files = $this->get_has_files();
-        $this->reset = $reset;
+        $this->reset = $reset??($this->db_id == 0);
         $this->soft_reload = $soft_reload;
         $this->session = $session;
         $this->autosave = $autosave;
         $this->debug = $debug;
+        Log::info($this->reset);
     }
 
     public function get_table(): string
