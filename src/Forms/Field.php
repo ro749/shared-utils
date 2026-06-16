@@ -148,4 +148,8 @@ class Field extends Component
             'name' => $this->name,
         ]);
     }
+
+    public function get_info(){
+        return $this;
+    }
 }

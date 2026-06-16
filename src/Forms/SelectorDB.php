@@ -50,7 +50,7 @@ class SelectorDB extends Field
     )    
     {
         parent::__construct(
-            type: InputType::SELECTOR,
+            type: InputType::SELECTOR_DB,
             label:$label, 
             placeholder:$placeholder, 
             icon:$icon,
@@ -61,7 +61,6 @@ class SelectorDB extends Field
             value:$value,
             autosave: $autosave
         );
-
         $this->id = $id;
         $this->table = $table;
         $this->label_column = $label_column;
@@ -97,10 +96,10 @@ class SelectorDB extends Field
         $this->search = true;
     }
 
-    public function search($search){
+    public function search($search, $request){
         $query = DB::table($this->get_table());
         if(!empty($this->query_modifier)){
-            $query = ($this->query_modifier)($query);
+            $query = ($this->query_modifier)($query, $request);
         }
         $ans = $query->
         where($this->label_column, 'like', '%'.$search.'%')->
@@ -135,5 +134,20 @@ class SelectorDB extends Field
             'element' => $this,
             'name' => $this->name,
         ]);
+    }
+
+    public function get_info(){
+        return [
+            'type' => $this->type,
+            'label' => $this->label,
+            'placeholder' => $this->placeholder,
+            'icon' => $this->icon,
+            'required' => $this->required,
+            'unique' => $this->unique,
+            'rules' => $this->rules,
+            'message' => $this->message,
+            'value' => $this->value,
+            'hot_reload' => $this->hot_reload,
+        ];
     }
 }

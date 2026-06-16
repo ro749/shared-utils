@@ -24,6 +24,7 @@ enum InputType: string
     case SESSION = 'session';
     case COPY = 'copy';
     case SELECTOR = 'selector';
+    case SELECTOR_DB = 'selector_db';
     case IMAGE = 'image';
     case FILE = 'file';
     case FORM = 'form';

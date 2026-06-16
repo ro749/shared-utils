@@ -45,7 +45,8 @@ class BaseGetter extends Getter{
         $order = [],
         $filters = [], 
         $start_date = null, 
-        $end_date = null
+        $end_date = null,
+        $editables = []
         )
     {
         $search = $search==null?"":$search;

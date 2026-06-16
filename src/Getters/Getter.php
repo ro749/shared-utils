@@ -45,7 +45,7 @@ class Getter{
         }
     }
 
-    function prosses_columns($query,$table,&$joins,$search){
+    function prosses_columns($query,$table,&$joins,$search,$editables = []){
         foreach ($this->columns as $key => $column) {
             if($column->local) continue;
             //if column needs data from other table
@@ -62,19 +62,19 @@ class Getter{
                 //does the joins
                 if(!in_array($modifier->get_table(), $joins)){
                     $joins[] = $modifier->get_table();
+                    $join_key = $key.'_id';
                     if($modifier->get_table() == $this->get_table()){
                         $query->leftJoin(
-                            $modifier->get_table().' as '.$modifier->get_table().'_'.$key, 
-                            $modifier->get_table().'_'.$key.'.id', '=', $table . '.' . $key
+                            $modifier->get_table().' as '.$modifier->get_table().'_'.$join_key, 
+                            $modifier->get_table().'_'.$join_key.'.id', '=', $table . '.' . $join_key
                         );
                     }
                     else{
                         $query->leftJoin(
                             $modifier->get_table(), 
-                            $modifier->get_table() . '.id', '=', $table . '.' . $key
+                            $modifier->get_table() . '.id', '=', $table . '.' . $join_key
                         );
                     }
-                    
                 }
                 
                 if($modifier->get_table() == $this->get_table()){
@@ -83,10 +83,11 @@ class Getter{
                 else{
                     $value = $modifier->get_value($table ,$key);
                 }
-                if(!empty($modifier->text_on_null)){
-                    $value = 'COALESCE('.$value.', "'.$modifier->text_on_null.'")';
-                }
+                $value = 'COALESCE('.$value.', "'.($modifier->text_on_null??'').'")';
                 $query->addSelect(DB::raw($value . ' as ' . $key));
+                if(in_array($key, $editables)){
+                    $query->addSelect($this->get_table().'.'.$key.'_id as '.$key.'_id');
+                }
             }
             else {
                 $query->addSelect($table . '.' . $key);

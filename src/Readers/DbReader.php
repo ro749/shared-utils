@@ -36,7 +36,6 @@ class DbReader extends Reader
     public function process_data(array &$titles,array &$data):void{
         foreach ($data as $row){
             $row['new'] = true;
-            Log::info("Creating new row with data: " . json_encode($row));
             $this->model_class::create($row);
         }
     }

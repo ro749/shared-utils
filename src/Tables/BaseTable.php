@@ -78,7 +78,11 @@ class BaseTable
 
     public function get($start = 0, $length = 10, $search = '',$order = [],$filters = [], $start_date = null, $end_date = null): mixed
     {
-        return $this->getter->get($start, $length, $search,$order,$filters,$start_date,$end_date);
+        $editables = [];
+        if($this->form != null){
+            $editables = array_keys($this->form->fields);
+        }
+        return $this->getter->get($start, $length, $search,$order,$filters,$start_date,$end_date,$editables);
     }
 
     public function get_selectors()
@@ -114,7 +118,7 @@ class BaseTable
         //foreach($this->getter->statistics as $stat){
         //    $filters = array_merge($filters,$stat->filters);
         //}
-        return [
+        $ans = [
             'id' => $this->get_id(),
             'columns' => $this->getter->columns,
             'filters' => $this->filters,
@@ -131,6 +135,7 @@ class BaseTable
             'view' => ($this->view&&$this->view->full_row)?$this->view:null,
             'autoload' => $this->autoload,
         ];
+        return $ans;
     }
 
     function make_it_modifiable(){

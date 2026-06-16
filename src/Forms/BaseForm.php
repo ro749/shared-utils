@@ -84,7 +84,6 @@ class BaseForm
         $this->session = $session;
         $this->autosave = $autosave;
         $this->debug = $debug;
-        Log::info($this->reset);
     }
 
     public function get_table(): string
@@ -211,6 +210,8 @@ class BaseForm
                     $arrays[$key] = $data[$key];
                     unset($data[$key]);
                     break;
+                case InputType::SELECTOR_DB:
+                    $data[$key.'_id'] = $data[$key];
             }
         }
         if(!empty($this->model_class)){
@@ -295,9 +296,13 @@ class BaseForm
 
     public function get_info(): array
     {
+        $fields = [];
+        foreach ($this->fields as $key => $field) {
+            $fields[$key] = $field->get_info();
+        }
         return [
             'id' => $this->get_id(),
-            'fields' => $this->fields
+            'fields' => $fields
         ];
     }
 

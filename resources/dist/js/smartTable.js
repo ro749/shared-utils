@@ -352,15 +352,19 @@
             }
             
             if(options.is_editable){
-                $table.on('click', '.edit-btn', async function(event) {
+                $table.on('click', '.edit-btn', function(event) {
                     cancel_edit();
                     this.parentElement.style.display = 'none';
                     this.parentElement.parentElement.children[1].style.display = 'flex';
                     this.parentElement.parentElement.children[1].style.justifyContent = 'left';
                     var row = table.row($(this).parents('tr'));
                     var initial_data = "id: '"+row.data().id+"',";
+                    
                     for(var key in options.form.fields){
                         initial_data += key+": "+"'"+row.data()[key]+"',";
+                        if(options.form.fields[key].type == 'selector_db'){
+                            initial_data += key+"_id: "+"'"+row.data()[key+'_id']+"',";
+                        }
                     }
                     initial_data = initial_data.slice(0, -1);
                     var xdata = [];
@@ -369,6 +373,7 @@
                     xdata.push('init(){');
                     for(var key_field in options.form.fields){
                         var column = options.columns[key_field];
+                        var hot_reload = options.form.fields[key_field].hot_reload;
                         if(column?.logic_modifier && column.logic_modifier.type == 'foreign_key'){
                             xdata.push(`$('#`+key_field+`').val(this.form.`+key_field+`).select2({
                                 theme: 'bootstrap-5',
@@ -383,12 +388,26 @@
                                           results: Object.entries(data).map(([id, text]) => ({ 'id': id, text }))
                                         };
                                         return ans;
+                                    },
+                                    `+(hot_reload != '' ? `
+                                    data: function (params) {
+                                        var data = {
+                                            search: params.term,
+                                            `+hot_reload+`: $('#`+hot_reload+`').val()
+                                        };
+                                        return data;
                                     }
+                                    ` : '')+`
                                 }
                             });`.replace(/[\r\n]/g, ''));
-                            xdata.push("$('#"+key_field+"').on('change', () => {");
-                            xdata.push("this.form."+key_field+" = $('#"+key_field+"').val();");
-                            xdata.push("});");
+                            xdata.push(`
+                                let `+key_field+`_option = new Option(this.form.`+key_field+`, this.form.`+key_field+`_id, false, true, true);
+                                $('#`+key_field+`').append(`+key_field+`_option).trigger('change');
+                            `);
+                            xdata.push(`
+                            $('#`+key_field+`').on('change', () => {
+                                this.form.`+key_field+` = $('#`+key_field+`').val();
+                            });`.replace(/[\r\n]/g, ''));
                         }
                     }
                     xdata.push('},');
@@ -405,20 +424,22 @@
                             if(col.logic_modifier != null){
                                 switch(col.logic_modifier.type){
                                     case 'foreign_key':
+                                        hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option></select>';
+                                        break;
                                         if(field.hot_reload!=""){
-                                            var data = await $.ajax({
-                                                url: field.hot_reload,
-                                                type: "GET",
-                                                dataType: "json",
-                                                data: {
-                                                    id: row.data().id
-                                                }
-                                            });
-                                            hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
-                                            for(let option in data){
-                                                hidden += '<option value=' + data[option].id + '>' + data[option].value + '</option>';
-                                            }
-                                            hidden += '</select>';
+                                            //var data = await $.ajax({
+                                            //    url: field.hot_reload,
+                                            //    type: "GET",
+                                            //    dataType: "json",
+                                            //    data: {
+                                            //        id: row.data().id
+                                            //    }
+                                            //});
+                                            //hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
+                                            //for(let option in data){
+                                            //    hidden += '<option value=' + data[option].id + '>' + data[option].value + '</option>';
+                                            //}
+                                            //hidden += '</select>';
                                         }
                                         else{
                                             hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option>';
