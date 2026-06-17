@@ -20,6 +20,13 @@ class DbReader extends Reader
 
     public array $types = [];
 
+    public function get_table(): string
+    {
+        if($this->table != '') return $this->table;
+        if($this->model_class == '') return '';
+        return ($this->model_class)::make()->getTable();
+    }
+
     public function __construct(
         string $model_class = "", 
         string $table = '',
@@ -38,11 +45,5 @@ class DbReader extends Reader
             $row['new'] = true;
             $this->model_class::create($row);
         }
-    }
-
-    public function save_changes(){
-        $this->model_class::where('new', true)->update([
-            'new' => false
-        ]);
     }
 }

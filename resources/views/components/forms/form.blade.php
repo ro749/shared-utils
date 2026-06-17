@@ -97,8 +97,10 @@ $initial_data = $form->get_initial_data();
                     success: function (data) {
                         self.errors['file'] = data;
                         $('#'+self.previews[event.target.id]).DataTable().ajax.reload();
+                        event.target.value = '';
                     }
                 });    
+
             },
             @endif
             init(){

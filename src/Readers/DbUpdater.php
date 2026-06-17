@@ -43,14 +43,6 @@ class DbUpdater extends DbUpdate
     }
 
     public function save_changes(){
-        foreach ($this->required_columns as $column){
-            if ($column == $this->public_id) continue;
-            $this->model_class::whereNotNull("new_{$column}")->update([
-                $column => DB::raw("new_{$column}")
-            ]);
-            $this->model_class::query()->update([
-                "new_{$column}" => null
-            ]);
-        }
+        
     }
 }

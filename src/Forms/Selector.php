@@ -31,7 +31,7 @@ class Selector extends Field
         Closure|bool $required = false,
         bool $unique = false,
         array $rules=[], 
-        string $message="", 
+        array $error_messages=[], 
         string $value = "",
         bool $search = false,
         string $table = "", 
@@ -54,7 +54,7 @@ class Selector extends Field
             required:$required,
             unique:$unique,
             rules:$rules, 
-            message:$message, 
+            error_messages:$error_messages, 
             value:$value,
             autosave: $autosave
         );

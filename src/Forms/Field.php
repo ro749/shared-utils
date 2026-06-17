@@ -3,6 +3,7 @@
 namespace Ro749\SharedUtils\Forms;
 use Illuminate\Validation\Rule;
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\Log;
 use Closure;
 class Field extends Component
 {
@@ -13,7 +14,7 @@ class Field extends Component
     public string $icon;
     /* @var Rule[] $buttons*/
     public array $rules;
-    public string $message;
+    public array $error_messages = [];
     public string $value;
     /**
      * @var Closure(): bool|bool
@@ -37,7 +38,7 @@ class Field extends Component
         string $placeholder="", 
         string $icon="", 
         array $rules=[], 
-        string $message="", 
+        array $error_messages=[], 
         string $value = "",
         Closure|bool $required = false,
         bool $unique = false,
@@ -57,7 +58,7 @@ class Field extends Component
         $this->placeholder = $placeholder;
         $this->icon = $icon;
         $this->rules = $rules;
-        $this->message = $message;
+        $this->error_messages = $error_messages;
         $this->value = $value;
         $this->required = $required;
         $this->unique = $unique;
@@ -128,6 +129,13 @@ class Field extends Component
             return ['nullable'];
         }
         return $rules;
+    }
+
+    public function get_error_messages($key, &$messages)
+    {
+        foreach($this->error_messages as $error_key => $error_message){
+            $messages[$key.'.'.$error_key] = $error_message;
+        }
     }
 
     public function get_type(): InputType

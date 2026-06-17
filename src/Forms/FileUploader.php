@@ -15,17 +15,18 @@ class FileUploader extends Field
     public string $accept = '';
     public DbReader $reader;
     public BaseTable $preview_table;
-
-    public $cancel;
+    public Closure $cancel;
+    public Closure $save;
     public function __construct(
         string $accept = '',
         DbReader $reader = null,
-        $cancel = null,
+        Closure $cancel = null,
+        Closure $save = null,
         BaseTable $preview_table,
         bool $autosave = false,
         string $name = "",
         string $push = "",
-        string $data = ""
+        string $data = "",
     )
     {
         parent::__construct(InputType::FILE,autosave: $autosave);
@@ -36,6 +37,7 @@ class FileUploader extends Field
         $this->reader = $reader;
         $this->preview_table = $preview_table;
         $this->cancel = $cancel;
+        $this->save = $save;
     }
 
     public static function getType(): string
@@ -50,11 +52,16 @@ class FileUploader extends Field
 
     public function cancel()
     {
-        ($this->cancel)();
+        if(!empty($this->cancel)){
+            ($this->cancel)();
+        }
+        
     }
 
     public function save(){
-        //$this->updater->save_changes();
+        if(!empty($this->save)){
+            ($this->save)();
+        }
     }
 
     public function render($name="", $form_id="")

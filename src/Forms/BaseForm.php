@@ -112,12 +112,11 @@ class BaseForm
         return $rules;
     }
 
-    public function messages(): array
+    public function get_error_messages(): array
     {
         $messages = [];
         foreach ($this->fields as $key=>$value) {
-            if($value->rule === '')continue;
-           $messages[$key] = $value->message;
+            $value->get_error_messages($key, $messages);
         }
         return $messages;
     }
@@ -135,7 +134,8 @@ class BaseForm
 
     public function prosses(Request $request)
     {
-        $data = $request->validate($this->rules($request));
+        $error_messages = $this->get_error_messages();
+        $data = $request->validate($this->rules($request),$error_messages);
         foreach ($data as $key => $value) {
             if (str_ends_with($key, '_confirmation')) {
                 unset($data[$key]);

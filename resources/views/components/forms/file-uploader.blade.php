@@ -1,7 +1,7 @@
 @props(['element' => null, 'name' => '', 'form_id' => ''])
 
 <div id="{{ $name }}-container">
-    <div id="{{ $name }}-input" @drop.prevent="showPreview($event.dataTransfer);">
+    <div id="{{ $name }}-input" @drop.prevent="showPreview($event.dataTransfer);" style="display:none">
         <p>Subir Archivo:</p>
         <label for="{{ $name }}" style="
         background-image: url('https://propstudios.mx/img/upload.png'); 
@@ -22,7 +22,7 @@
             <p class="form-error" x-text="errors['{{ $name }}']"></p>
         </template>
     </div>
-    <div id="{{ $name }}-preview">
+    <div id="{{ $name }}-preview" style="display:none">
     @include('sharedutils::components.tables.smartTable', ['table' => $element->preview_table])
     </div>
 </div>
