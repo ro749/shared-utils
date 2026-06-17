@@ -76,7 +76,9 @@ class Check extends Command
             );
             $this->info('fixed composer.json');
         }
-
+        if (!file_exists(public_path('vendor'))) {
+            return;
+        }
         $vendor_folder = base_path('public\vendor');
         $vendor_dirs = File::directories($vendor_folder);
         foreach($vendor_dirs as $dir) {
