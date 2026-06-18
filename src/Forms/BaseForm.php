@@ -167,7 +167,10 @@ class BaseForm
                 }
                 continue;
             }
-            if($data[$key] == null){
+            if($data[$key] == null && (
+                $field->type != InputType::SELECTOR ||
+                $field->type != InputType::SELECTOR_DB
+            )) {
                 $data[$key] = '';
                 continue;
             }
@@ -212,6 +215,7 @@ class BaseForm
                     break;
                 case InputType::SELECTOR_DB:
                     $data[$key.'_id'] = $data[$key];
+                    unset($data[$key]);
             }
         }
         if(!empty($this->model_class)){
