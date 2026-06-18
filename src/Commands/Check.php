@@ -79,6 +79,9 @@ class Check extends Command
         if (!file_exists(public_path('vendor'))) {
             return;
         }
+        if(!File::exists(base_path('public\vendor'))) {
+            return;
+        }
         $vendor_folder = base_path('public\vendor');
         $vendor_dirs = File::directories($vendor_folder);
         foreach($vendor_dirs as $dir) {
