@@ -37,7 +37,7 @@ $initial_data = $form->get_initial_data();
 @if($form->redirect=="" && $form->popup=="")
 @once('form-popup')
     <x-sharedutils::modal  id="form-success-popup" title="Datos guardados correctamente.">
-        <p>Datos guardados correctamente.</p>
+        <p id="form-success-text">Datos guardados correctamente.</p>
     </x-modal>
 @endonce
 @endif
@@ -185,6 +185,7 @@ $initial_data = $form->get_initial_data();
                         @elseif($form->callback)
                         {!! $form->callback !!}
                         @else
+                        $('#form-success-text').text('{{ $form->success_msg ?? 'Datos guardados correctamente.' }}');
                         openPopup("form-success-popup",2500);
                         @endif
                         @if($form->reset)
