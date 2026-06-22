@@ -49,7 +49,7 @@ class GenerateOverrides extends Command
         $this->info('Total de clases registradas: ' . count($overrides));
     }
 
-    private function getClassesFromFolder($folder,$views = false,$single = '')
+    public static function getClassesFromFolder($folder,$views = false,$single = '')
     {
         $classes = [];
         $appPath = base_path($folder);
@@ -62,17 +62,18 @@ class GenerateOverrides extends Command
         );
         if($views){
             foreach ($iterator as $file){
-                $init_pos = strrpos($file, '\\')+1;
-                $final_pos = strrpos($file, '.blade.php');
-                $name = substr($file,$init_pos,$final_pos-$init_pos);
+                $filename = basename($file);
+                $final_pos = strrpos($filename, '.blade.php');
+                $name = substr($filename,0,$final_pos-0);
                 $classes[$name] = '\''.$name.'\'';
                 //$className = substr($file->getPathname(), strrpos($file->getPathname(), '/') + 1);
+                
             }
         }
         else{
             foreach ($iterator as $file) {
                 if ($file->getExtension() === 'php') {
-                    $className = $this->getClassNameFromFile($file);
+                    $className = static::getClassNameFromFile($file);
                     if(!empty($single)){
                         if($className['shortName'] == $single){
                             return [$className['fullName']];
@@ -91,7 +92,7 @@ class GenerateOverrides extends Command
         return $classes;
     }
 
-    private function getClassNameFromFile(SplFileInfo $file)
+    public static function getClassNameFromFile(SplFileInfo $file)
     {
         $content = File::get($file->getRealPath());
         // Extraer namespace
