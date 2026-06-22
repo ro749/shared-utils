@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Storage;
 use Ro749\SharedUtils\Models\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
+use Ro749\SharedUtils\Models\AttributeType;
 class BaseForm
 {
     public string $component = 'form';
     public string $model_class = '';
     public array $fields;
-    public string $submit_text;
+    public string $submit_text = 'Submit';
     public string $redirect='';
     public string $popup='';
     public string $success_msg='';
@@ -84,6 +85,42 @@ class BaseForm
         $this->session = $session;
         $this->autosave = $autosave;
         $this->debug = $debug;
+    }
+
+    public function from_model(
+        string $model_class, 
+        array $fields, 
+    ){
+        $this->model_class = $model_class;
+        $model = new $model_class();
+        $attributes = $model->get_attributes();
+        $this->fields = [];
+        foreach($fields as $key => $field) {
+            $value = $attributes[$field];
+            if($value->type == AttributeType::RELATION) {
+                $this->fields[$field] = new SelectorDB(
+                    label: $value->label,
+                    model_class: $value->model_class,
+                    label_column: $value->column
+                );
+                continue;
+            }
+            switch($value->type){
+                case AttributeType::TEXT:
+                    $type = InputType::TEXT;
+                    break;
+                case AttributeType::NUMBER:
+                    $type = InputType::NUMBER;
+                    break;
+                default:
+                    $type = InputType::TEXT;
+                    break;
+            }
+            $this->fields[$field] = new Field(
+                label: $value->label,
+                type: $type
+            );
+        }
     }
 
     public function get_table(): string
@@ -168,7 +205,7 @@ class BaseForm
                 continue;
             }
             if($data[$key] == null && (
-                $field->type != InputType::SELECTOR ||
+                $field->type != InputType::SELECTOR &&
                 $field->type != InputType::SELECTOR_DB
             )) {
                 $data[$key] = '';
