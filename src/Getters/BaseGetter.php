@@ -51,7 +51,7 @@ class BaseGetter extends Getter{
     {
         $search = $search==null?"":$search;
         $ans = [];
-        $query = $this->get_query($ans,$search,$filters);
+        $query = $this->get_query($ans,$search,$filters,$editables);
         foreach ($this->backend_filters as $filter) {
             $filter->filter($query, $filters);
         }
@@ -86,12 +86,12 @@ class BaseGetter extends Getter{
         return $ans;
     }
 
-    function get_query(array &$ans,string $search,array $filters): Builder{
+    function get_query(array &$ans,string $search,array $filters, array $editables = []): Builder{
         $table = $this->get_table();
         $query = $this->model_class::query()->select($table.'.id');//DB::table($table)->select($table.'.id');
         $joins = [];
         $this->apply_statistics($query,$table,$filters);
-        $this->prosses_columns($query,$table,$joins,$search);
+        $this->prosses_columns($query,$table,$joins,$search,$editables);
         return $query;
     }
 

@@ -361,9 +361,12 @@
                     var initial_data = "id: '"+row.data().id+"',";
                     
                     for(var key in options.form.fields){
-                        initial_data += key+": "+"'"+row.data()[key]+"',";
                         if(options.form.fields[key].type == 'selector_db'){
-                            initial_data += key+"_id: "+"'"+row.data()[key+'_id']+"',";
+                            initial_data += key+": "+"'"+row.data()[key+'_id']+"',";
+                            initial_data += key+"_label: "+"'"+row.data()[key]+"',";
+                        }
+                        else{
+                            initial_data += key+": "+"'"+row.data()[key]+"',";
                         }
                     }
                     initial_data = initial_data.slice(0, -1);
@@ -401,7 +404,7 @@
                                 }
                             });`.replace(/[\r\n]/g, ''));
                             xdata.push(`
-                                let `+key_field+`_option = new Option(this.form.`+key_field+`, this.form.`+key_field+`_id, false, true, true);
+                                let `+key_field+`_option = new Option(this.form.`+key_field+`_label, this.form.`+key_field+`, false, true, true);
                                 $('#`+key_field+`').append(`+key_field+`_option).trigger('change');
                             `);
                             xdata.push(`
