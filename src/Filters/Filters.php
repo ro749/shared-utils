@@ -7,10 +7,18 @@ use Illuminate\Http\Request;
 class Filters extends BaseFilter
 {
     public array $filters = [];
-    public function __construct(string $display,string $id, array $filters)
+    //if it has a default, there is always one selected
+    public string $default = '';
+    public function __construct(
+        string $display,
+        string $id, 
+        array $filters,
+        string $default = ''
+    )
     {
         parent::__construct($display, $id,'');
         $this->filters = $filters;
+        $this->default = $default;
     }
 
     public function filter(Builder $query,array $filters)

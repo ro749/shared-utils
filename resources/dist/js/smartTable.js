@@ -134,6 +134,9 @@
                     const sessionValue = sessionStorage.getItem(filter.session)??1;
                     filters["cf-"+key] = sessionValue;
                 } 
+                if(filter.default){
+                    filters[key] = filter.default;
+                }
             }
             var table = $table.DataTable({
                 ajax: {
@@ -222,6 +225,12 @@
                                 button.classList.add('no-hover');
                                 button.textContent = filter_button.display;
                                 filters_div.appendChild(button);
+                                if(filter.default != ''){
+                                    if(filter.default == f){
+                                        button.classList.add('active');
+                                        filters[key] = f;
+                                    }
+                                }
                             }
                             $("#"+options.id+"_wrapper .dt-layout-cell.dt-layout-end").first().prepend(filters_div);
                         }
@@ -235,10 +244,15 @@
                                 $('.filter-button').removeClass('active');
                                 if(!is_on){
                                     clickedButton.addClass("active");
-                                    filters[this.parentElement.id] = this.id.substring(10);
+                                    filters[this.parentElement.id] = this.id.split("-").slice(2).join("-");
                                 }
                                 else{
-                                    delete filters[this.parentElement.id];
+                                    if(options.filters[this.parentElement.id].default == ''){
+                                        delete filters[this.parentElement.id];
+                                    }
+                                    else{
+                                        clickedButton.addClass("active");
+                                    }
                                 }
                                 table.ajax.reload(null, false);
                             });
