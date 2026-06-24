@@ -5,26 +5,34 @@ namespace Ro749\SharedUtils\Readers;
 class MigrationHelper 
 {
     //creates a new table
-    public static function generate_migration_for_table($table_name,$columns_data,$table_data) {
+    public static function generate_migration_for_table($table_name,$columns_data,$table_data=[]) {
         $migration_text = "Schema::create('".$table_name."', function (Blueprint \$table) {\n";
 
-        $migration_text .= "\$table->id();\n";
+        $migration_text .= "            \$table->id();\n";
         // Assuming $table_data is an associative array with column names as keys and data types as values
         foreach ($columns_data as $column_name => $data_type) {
+            if(is_array($data_type)){
+                $migration_text .= "            \$table->decimal('".$column_name."', ".$data_type[0].", ".$data_type[1].");\n";
+                continue;
+            }
             switch ($data_type) {
                 case 'int':
-                    $migration_text .= "\$table->integer('".$column_name."');\n";
+                    $migration_text .= "            \$table->integer('".$column_name."');\n";
                     break;
                 case 'float':
-                    $migration_text .= "\$table->float('".$column_name."');\n";
+                    $migration_text .= "            \$table->float('".$column_name."');\n";
+                    break;
+                case 'relation':
+                    $migration_text .= "            \$table->unsignedBigInteger('".$column_name."_id');\n";
                     break;
                 case 'string':
                 default:
-                    $migration_text .= "\$table->string('".$column_name."');\n";
+                    $migration_text .= "            \$table->string('".$column_name."');\n";
                     break;
             }
         }
-        $migration_text .= "});\n";
+        $migration_text .= "            \$table->timestamps();\n";
+        $migration_text .= "        });\n";
 
         foreach ($table_data as $row) {
             $migration_text .= "DB::table('".$table_name."')->insert([\n";
@@ -58,18 +66,21 @@ class MigrationHelper
         foreach ($columns_data as $column_name => $data_type) {
             switch ($data_type) {
                 case 'int':
-                    $migration_text .= "\$table->integer('".$column_name."')->change();\n";
+                    $migration_text .= "            \$table->integer('".$column_name."')->change();\n";
                     break;
                 case 'float':
-                    $migration_text .= "\$table->float('".$column_name."')->change();\n";
+                    $migration_text .= "            \$table->float('".$column_name."')->change();\n";
+                    break;
+                case 'relation':
+                    $migration_text .= "            \$table->unsignedBigInteger('".$column_name."_id');\n";
                     break;
                 case 'string':
                 default:
-                    $migration_text .= "\$table->string('".$column_name."')->change();\n";
+                    $migration_text .= "            \$table->string('".$column_name."')->change();\n";
                     break;
             }
         }
-        $migration_text .= "});\n";
+        $migration_text .= "        });\n";
 
         return $migration_text;
         
@@ -81,26 +92,29 @@ class MigrationHelper
         // Assuming $columns_data is an associative array with column names as keys and data types as values
         foreach ($columns_data as $column_name => $data_type) {
             if(is_array($data_type)){
-                $migration_text .= "\$table->decimal('".$column_name."', ".$data_type[0].", ".$data_type[1].");\n";
+                $migration_text .= "            \$table->decimal('".$column_name."', ".$data_type[0].", ".$data_type[1].");\n";
                 continue;
             }
             else{
                 switch ($data_type) {
                     case 'int':
-                        $migration_text .= "\$table->integer('".$column_name."');\n";
+                        $migration_text .= "            \$table->integer('".$column_name."');\n";
                         break;
                     case 'float':
-                        $migration_text .= "\$table->float('".$column_name."');\n";
+                        $migration_text .= "            \$table->float('".$column_name."');\n";
+                        break;
+                    case 'relation':
+                        $migration_text .= "            \$table->unsignedBigInteger('".$column_name."_id');\n";
                         break;
                     case 'string':
                     default:
-                        $migration_text .= "\$table->string('".$column_name."');\n";
+                        $migration_text .= "            \$table->string('".$column_name."');\n";
                         break;
                 }
             }
             
         }
-        $migration_text .= "});\n";
+        $migration_text .= "        });\n";
 
         return $migration_text;
     }
