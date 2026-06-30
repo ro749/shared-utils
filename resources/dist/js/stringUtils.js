@@ -138,6 +138,9 @@
                     $(this).val(value);
                 }
             }
+            else if ($(this).is('select')) {
+                $(this).val(value).trigger('change');
+            }
             else {
                 $(this).html(value);
             }
