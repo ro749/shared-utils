@@ -134,6 +134,9 @@
                 else if($(this).hasClass('input-percent')) {
                     $(this).set_percent(value);
                 }
+                else if($(this).hasClass('select2')) {
+                    $(this).val(value).trigger('change');
+                }
                 else {
                     $(this).val(value);
                 }

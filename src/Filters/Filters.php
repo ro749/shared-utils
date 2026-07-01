@@ -9,6 +9,7 @@ class Filters extends BaseFilter
     public array $filters = [];
     //if it has a default, there is always one selected
     public string $default = '';
+    public string $display = '';
     public function __construct(
         string $display,
         string $id, 
@@ -19,6 +20,7 @@ class Filters extends BaseFilter
         parent::__construct($display, $id,'');
         $this->filters = $filters;
         $this->default = $default;
+        $this->display = $display;
     }
 
     public function filter(Builder $query,array $filters)
