@@ -88,6 +88,13 @@ Route::middleware('web')->group(function () {
         return $form->fields[$field]->search($request->get('q'), $request);
     });
 
+    Route::get('/table/{table}/search/{field}', function (Request $request,$table,$field) {
+        $ans = [];
+        $tableClass = config('overrides.tables.'.$table) ?? 'App\\Tables\\' . $table;
+        $table = new $tableClass();
+        return $table->form->fields[$field]->search($request->get('q'), $request);
+    });
+
     Route::post('/form/{form}/preview/{field}', function (Request $request,$form,$field) {
         $formClass = config('overrides.forms.'.$form);
         $form = new $formClass();
