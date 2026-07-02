@@ -37,7 +37,7 @@ Route::middleware('web')->group(function () {
     });
     
     Route::post('/table/{table}/save', function (Request $request,string $table) {
-        $fullClass = config('overrides.tables.'.$table);
+        $fullClass = config('overrides.tables.'.$table) ?? 'App\\Tables\\' . $table;
         $table = new $fullClass();
         $table->save($request);
         return response()->json(['success' => true]);
@@ -71,7 +71,7 @@ Route::middleware('web')->group(function () {
     
     Route::post('/form/{form}', function (Request $request,$form) {
         $ans = [];
-        $formClass = config('overrides.forms.'.$form);
+        $formClass = config('overrides.forms.'.$form) ?? 'App\\Forms\\' . $form;
         $form = new $formClass();
         $data = $form->prosses($request);
         if($data!="" && is_string($data)) { 
@@ -83,7 +83,7 @@ Route::middleware('web')->group(function () {
 
     Route::get('/form/{form}/search/{field}', function (Request $request,$form,$field) {
         $ans = [];
-        $formClass = config('overrides.forms.'.$form);
+        $formClass = config('overrides.forms.'.$form) ?? 'App\\Forms\\' . $form;
         $form = new $formClass();
         return $form->fields[$field]->search($request->get('q'), $request);
     });
