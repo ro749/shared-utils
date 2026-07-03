@@ -253,6 +253,7 @@ class BaseForm
                 case InputType::SELECTOR_DB:
                     $data[$key.'_id'] = $data[$key];
                     unset($data[$key]);
+                    break;
             }
         }
         if(!empty($this->model_class)){
@@ -268,6 +269,7 @@ class BaseForm
                 if($this->debug){
                     Log::debug('Updating id: '.$id);
                     $model_instance = new $this->model_class;
+                    Log::debug('Fillable: ');
                     Log::debug($model_instance->getFillable());
                 }
                 $model = $this->model_class::updateOrCreate(['id' => $id], $data);

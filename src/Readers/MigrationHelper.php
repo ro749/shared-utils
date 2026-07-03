@@ -23,7 +23,7 @@ class MigrationHelper
                     $migration_text .= "            \$table->float('".$column_name."');\n";
                     break;
                 case 'relation':
-                    $migration_text .= "            \$table->unsignedBigInteger('".$column_name."_id');\n";
+                    $migration_text .= "            \$table->foreignId('".$column_name."_id')->constrained();\n";
                     break;
                 case 'string':
                 default:
@@ -72,7 +72,7 @@ class MigrationHelper
                     $migration_text .= "            \$table->float('".$column_name."')->change();\n";
                     break;
                 case 'relation':
-                    $migration_text .= "            \$table->unsignedBigInteger('".$column_name."_id');\n";
+                    $migration_text .= "            \$table->foreignId('".$column_name."_id')->constrained()->change();\n";
                     break;
                 case 'string':
                 default:
@@ -104,7 +104,7 @@ class MigrationHelper
                         $migration_text .= "            \$table->float('".$column_name."');\n";
                         break;
                     case 'relation':
-                        $migration_text .= "            \$table->unsignedBigInteger('".$column_name."_id');\n";
+                        $migration_text .= "            \$table->foreignId('".$column_name."_id')->constrained();\n";
                         break;
                     case 'string':
                     default:
