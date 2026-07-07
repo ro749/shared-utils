@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    @include(config('overrides.views.head'))
+    @include(config('overrides.views.head')??'shared-utils::components.head')
     @stack('styles')
 </head>
 

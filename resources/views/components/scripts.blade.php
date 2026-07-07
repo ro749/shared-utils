@@ -4,8 +4,6 @@
     <script src="{{ asset('vendor/shared-utils/js/lib/bootstrap.bundle.min.js') }}"></script>
     <!-- Apex Chart js -->
     <script src="{{ asset('vendor/shared-utils/js/lib/apexcharts.min.js') }}"></script>
-    <!-- Data Table js -->
-    <script src="{{ asset('vendor/shared-utils/js/lib/dataTables.min.js') }}"></script>
     <!-- Iconify Font js -->
     <script src="{{ asset('vendor/shared-utils/js/lib/iconify-icon.min.js') }}"></script>
     <!-- jQuery UI js -->
@@ -13,6 +11,7 @@
     <!-- Vector Map js -->
     <script src="{{ asset('vendor/shared-utils/js/lib/jquery-jvectormap-2.0.5.min.js') }}"></script>
     <script src="{{ asset('vendor/shared-utils/js/lib/jquery-jvectormap-world-mill-en.js') }}"></script>
+    <script src="{{ asset('vendor/shared-utils/js/lib/dataTables.min.js') }}"></script>
     <!-- Popup js -->
     <script src="{{ asset('vendor/shared-utils/js/lib/magnifc-popup.min.js') }}"></script>
     <!-- Slick Slider js -->
@@ -27,10 +26,6 @@
     <script src="{{ asset('vendor/shared-utils/js/lib/select2.min.js') }}"></script>
 
     <script src="{{ asset('vendor/shared-utils/js/inputs.js') }}"></script>
-    <!-- smart-table -->
-    <script src="{{ asset('vendor/shared-utils/js/smartTable.js') }}"></script>
-    <script src="{{ asset('vendor/shared-utils/js/layeredSmartTable.js') }}"></script>
-    <script src="{{ asset('vendor/shared-utils/js/localSmartTable.js') }}"></script>
     <script src="{{ asset('vendor/shared-utils/js/stringUtils.js') }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script>

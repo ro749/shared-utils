@@ -1,17 +1,10 @@
+@include('sharedutils::components.tables.table', ['table' => $table])
 
-
-<table id="{{ $table->get_id() }}" class="table bordered-table mb-0">
-    <thead>
-        <tr id="{{ $table->get_id() }}-header">
-            @foreach($table->get_columns() as $key=>$column)
-                <th>{{ $column->display }}</th>
-            @endforeach
-            @if($table->needsButtons())
-                <th></th>
-            @endif
-        </tr>
-    </thead>
-</table>
+@once
+    @push('script-includes')
+        <script src="{{ asset('vendor/shared-utils/js/localSmartTable.js') }}"></script>
+    @endpush
+@endonce
 
 @push('scripts')
 <script>
@@ -22,3 +15,4 @@
     $('#{{ $table->get_id() }}').localSmartTable(@json($info));
 </script>
 @endpush
+
