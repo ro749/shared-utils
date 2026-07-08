@@ -115,23 +115,12 @@
     $.fn.set_value = function (value) {
         return this.each(function () {
             if ($(this).is('input')) {
-                if(typeof Alpine !== 'undefined'){
-                    var form = $(this).closest('[x-data]');
-                    var alpine_form = Alpine.$data(form[0]);
-                    var id_path = $(this).attr('id').split('-');
-                    var field = alpine_form.form;
-                    for (var i = 0; i < id_path.length-1; i++) {
-                        if (!(id_path[i] in field)) {
-                            field[id_path[i]] = {};
-                        }
-                        field = field[id_path[i]];
-                    }
-                    field[id_path[i]] = value;
-                }
                 if($(this).hasClass('input-money')) {
+                    if(value == undefined) value = 0;
                     $(this).set_money(value);
                 }
                 else if($(this).hasClass('input-percent')) {
+                    if(value == undefined) value = 0;
                     $(this).set_percent(value);
                 }
                 else {
@@ -145,6 +134,18 @@
                 $(this).html(value);
             }
         });
+    }
+
+    $.fn.get_value = function(){
+        if ($(this[0]).is('input')) {
+            return $(this[0]).get_number();
+        }
+        else if ($(this[0]).is('select')) {
+            return $(this[0]).val();
+        }
+        else {
+            return $(this[0]).html();
+        }
     }
 
     $.fn.percent_input = function () {

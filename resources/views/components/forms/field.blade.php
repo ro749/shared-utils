@@ -18,6 +18,8 @@
     name="{{ $name }}"
     @if($element->type !== \Ro749\SharedUtils\Forms\InputType::PERCENTAGE && $element->type !== \Ro749\SharedUtils\Forms\InputType::MONEY)
     x-model="form.{{ $name }}"
+    @else
+    x-input="form.{{ $name }}"
     @endif
     placeholder="{{ $element->placeholder }}"
     @if(

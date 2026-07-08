@@ -441,7 +441,7 @@
                             if(col.logic_modifier != null){
                                 switch(col.logic_modifier.type){
                                     case 'foreign_key':
-                                        hidden = hidden+'<select x-model="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option></select>';
+                                        hidden = hidden+'<select x-input="form.'+key+'" class="form-select db-select" id="'+key+'"><option disabled selected value>selec</option></select>';
                                         break;
                                         if(field.hot_reload!=""){
                                             //var data = await $.ajax({
@@ -492,7 +492,7 @@
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" oninput="this.value = this.value.toLowerCase()" >';
                                         break;
                                     case 'money':
-                                        hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control input-money" >';
+                                        hidden = hidden+'<input x-input="form.'+key+'" id="'+key+'" type="text" class="form-control input-money" >';
                                         break;
                                     case 'text':
                                         hidden = hidden+'<input x-model="form.'+key+'" id="'+key+'" type="text" class="form-control" >';
