@@ -117,11 +117,11 @@
             if ($(this).is('input')) {
                 if($(this).hasClass('input-money')) {
                     if(value == undefined) value = 0;
-                    $(this).set_money(value);
+                    $(this).set_money(value).trigger('change');
                 }
                 else if($(this).hasClass('input-percent')) {
                     if(value == undefined) value = 0;
-                    $(this).set_percent(value);
+                    $(this).set_percent(value).trigger('change');
                 }
                 else {
                     $(this).val(value);
