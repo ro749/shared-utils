@@ -26,7 +26,7 @@
     <script src="{{ asset('vendor/shared-utils/js/lib/select2.min.js') }}"></script>
 
     <script src="{{ asset('vendor/shared-utils/js/inputs.js') }}"></script>
-    <script src="{{ asset('vendor/shared-utils/js/stringUtils.js') }}"></script>
+    <script src="{{ asset('vendor/shared-utils/js/stringUtils.js?v=2') }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script>
 $(function() {

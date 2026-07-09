@@ -21,7 +21,7 @@
 
 @once
     @push('script-includes')
-        <script src="{{ asset('vendor/shared-utils/js/smartTable.js') }}"></script>
+        <script src="{{ asset('vendor/shared-utils/js/smartTable.js') }}?v=2"></script>
     @endpush
 @endonce
 
