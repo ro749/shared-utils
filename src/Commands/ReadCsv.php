@@ -3,7 +3,7 @@
 namespace Ro749\SharedUtils\Commands;
 
 use Illuminate\Console\Command;
-use Ro749\SharedUtils\Readers\DbReader;
+use Ro749\SharedUtils\Readers\DbRead;
 use Ro749\SharedUtils\Readers\DbUpdate;
 class ReadCsv extends Command
 {
@@ -34,13 +34,13 @@ class ReadCsv extends Command
         if(empty($model)){
             $model = $this->ask('Enter the model class or table to import to');
         }
-        $reader = new DbReader(
+        $reader = new DbRead(
             table: $model,
             add_new_columns: true,
 
         );
         
-        $reader->read_cvs($file);
+        $reader->read_csv($file);
         $this->call('migrate', [
             '--force' => true
         ]);

@@ -6,7 +6,7 @@ class MigrationHelper
 {
     //creates a new table
     public static function generate_migration_for_table($table_name,$columns_data,$table_data=[]) {
-        $migration_text = "Schema::create('".$table_name."', function (Blueprint \$table) {\n";
+        $migration_text = "        Schema::create('".$table_name."', function (Blueprint \$table) {\n";
 
         $migration_text .= "            \$table->id();\n";
         // Assuming $table_data is an associative array with column names as keys and data types as values
@@ -21,6 +21,9 @@ class MigrationHelper
                     break;
                 case 'float':
                     $migration_text .= "            \$table->float('".$column_name."');\n";
+                    break;
+                case 'date':
+                    $migration_text .= "            \$table->date('".$column_name."');\n";
                     break;
                 case 'relation':
                     $migration_text .= "            \$table->foreignId('".$column_name."_id')->constrained();\n";
@@ -60,7 +63,7 @@ class MigrationHelper
     }
     //changes a column of a table
     public static function generate_migration_for_alter_table($table_name,$columns_data) {
-        $migration_text = "Schema::table('".$table_name."', function (Blueprint \$table) {\n";
+        $migration_text = "        Schema::table('".$table_name."', function (Blueprint \$table) {\n";
 
         // Assuming $columns_data is an associative array with column names as keys and data types as values
         foreach ($columns_data as $column_name => $data_type) {
@@ -70,6 +73,9 @@ class MigrationHelper
                     break;
                 case 'float':
                     $migration_text .= "            \$table->float('".$column_name."')->change();\n";
+                    break;
+                case 'date':
+                    $migration_text .= "            \$table->date('".$column_name."')->change();\n";
                     break;
                 case 'relation':
                     $migration_text .= "            \$table->foreignId('".$column_name."_id')->constrained()->change();\n";
@@ -87,7 +93,7 @@ class MigrationHelper
     }
     //columns_data as key the column name and as value the data type
     public static function generate_migration_for_add_rows($table_name,$columns_data) {
-        $migration_text = "Schema::table('".$table_name."', function (Blueprint \$table) {\n";
+        $migration_text = "        Schema::table('".$table_name."', function (Blueprint \$table) {\n";
 
         // Assuming $columns_data is an associative array with column names as keys and data types as values
         foreach ($columns_data as $column_name => $data_type) {
@@ -102,6 +108,9 @@ class MigrationHelper
                         break;
                     case 'float':
                         $migration_text .= "            \$table->float('".$column_name."');\n";
+                        break;
+                    case 'date':
+                        $migration_text .= "            \$table->date('".$column_name."');\n";
                         break;
                     case 'relation':
                         $migration_text .= "            \$table->foreignId('".$column_name."_id')->constrained();\n";
@@ -144,7 +153,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        '.$migration_text.'
+'.$migration_text.'
     }
 };';
 

@@ -21,6 +21,7 @@ class Selector extends Field
     public string $data;
     public string $class;
     public float $max_length;
+    public bool $accept_new_values = false;
 
     public function __construct(
         $options, 

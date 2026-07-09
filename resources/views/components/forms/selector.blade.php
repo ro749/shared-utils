@@ -3,7 +3,13 @@
 <select 
     id="{{ $name }}"
     name="{{ $name }}"
+    @if($element->register_in_form)
+    @if($element->search)
+    x-input="form.{{ $name }}"
+    @else
     x-model="form.{{ $name }}"
+    @endif
+    @endif
     style="width: 100%"
     {{ $attributes->class([
         'form-select',
@@ -33,20 +39,10 @@
         width: '{{ $element->max_length == 0 ? 'auto' : ($element->max_length <108 ? '108px' : $element->max_length.'px') }}',
         allowClear: true,
         placeholder: '{{ $element->placeholder }}', 
-        
+        @if(!empty($element->accept_new_values))
+        tags: true,
+        @endif
     });
-    $('#{{ $name }}').on('change', () => {
-        this.form.{{ str_replace('-', '_', $name) }} = $('#{{ $name }}').val();
-    });
-    @if(!empty($value))
-    $('#{{ $name }}').val('{{ $value }}').trigger('change');
-    @endif
-    @if(!empty($initial_data) && array_key_exists($name, $initial_data))
-    $('#{{ $name }}').val('{{ $initial_data[$name] }}').trigger('change');
-    @endif
-@endpush
-@push($element->form_id."_reset")
-    $('#{{ $name }}').val(null).trigger('change');
 @endpush
 
 @endif

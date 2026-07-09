@@ -13,7 +13,9 @@ $element->generate_options();
 <select 
     id="{{ $name }}"
     name="{{ $name }}"
-    x-model="form.{{ $name }}"
+    @if($element->register_in_form)
+    x-input="form.{{ $name }}"
+    @endif
     style="width: 100%"
     {{ $attributes->class([
         'form-select',
@@ -34,6 +36,9 @@ $element->generate_options();
         width: '100% !important',
         allowClear: true,
         placeholder: '{{ $element->placeholder }}', 
+        @if(!empty($element->accept_new_values))
+        tags: true,
+        @endif
         ajax: {
             url: '/form/{{ $form_id }}/search/{{ $name }}',
             delay: 250,

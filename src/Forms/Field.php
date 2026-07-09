@@ -32,6 +32,8 @@ class Field extends Component
     public string $data;
     public string $class;
 
+    public bool $register_in_form = true;
+
     public function __construct(
         InputType $type, 
         string $label="", 

@@ -1,6 +1,33 @@
 @props(['form' => null])
 @if($form != null)
-    
+@once
+
+@push('scripts')
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.directive('input', (el, { expression }, { evaluateLater, effect, cleanup }) => {
+      let getValue = evaluateLater(expression)
+
+      effect(() => {
+        getValue(value => {
+          if ($(el).val() !== value) {
+            $(el).set_value(value);
+          }
+        });
+      });
+
+      $(el).on('change', (e) => {
+        const valor = $(el).get_value();
+        Alpine.evaluate(el, `${expression} = ${valor}`);
+      })
+
+      cleanup(() => $(el).select2('destroy'))
+    })
+  });
+</script>
+@endpush
+
+@endonce
 @php
 $initial_data = $form->get_initial_data();
 @endphp
@@ -64,7 +91,12 @@ $initial_data = $form->get_initial_data();
                 @foreach ($initial_data as $key => $value)
                     @if($form->fields[$key]->type === Ro749\SharedUtils\Forms\InputType::CHECKBOX)
                 {{ $key }}: {{ $value ? 'true' : 'false' }},
-                    @else
+                    @elseif(
+                        $form->fields[$key]->type === Ro749\SharedUtils\Forms\InputType::DATE &&
+                        $value == 'today'
+                    )
+                {{ $key }}: new Date().toLocaleDateString('en-CA'),
+                @else
                 {{ $key }}: `{{ $value }}`,
                     @endif
                 @endforeach
@@ -105,17 +137,6 @@ $initial_data = $form->get_initial_data();
             @endif
             init(){
                 @stack($form->get_id())
-                @foreach ($form->fields as $key=>$field)
-                @if($field->type === Ro749\SharedUtils\Forms\InputType::ARRAY)
-                this.form.{{ $key }} = {};
-                $(document).on('{{ $field->table->get_id() }}.added', (e, data) => {
-                    this.form.{{ $key }}[data[0]] = data[1];
-                });
-                $(document).on('{{ $field->table->get_id() }}.deleted', (e, data) => {
-                    delete this.form.{{ $key }}[data];
-                });
-                @endif
-                @endforeach
 
                 @if($form->autosave)
                 $('.{{ $form->get_id() }}-field').on('change', function(e) {
@@ -126,6 +147,7 @@ $initial_data = $form->get_initial_data();
                     }
                 });
                 @endif
+                this._initial = { ...this.form };
             },
 
             hasAnyError() {
@@ -189,9 +211,7 @@ $initial_data = $form->get_initial_data();
                         openPopup("form-success-popup",2500);
                         @endif
                         @if($form->reset)
-                        for (const key in this.form) {
-                            this.form[key] = '';
-                        }
+                        this.form = { ...this._initial };
                         @endif
                         @stack($form->get_id().'_reset')
                         @endif
@@ -208,7 +228,6 @@ $initial_data = $form->get_initial_data();
                         this.files = {};
                         this.$dispatch('{{$form->get_id()}}-submitted',  response);
                         @if($form->soft_reload)
-
                         reset();
                         @endif
                     },

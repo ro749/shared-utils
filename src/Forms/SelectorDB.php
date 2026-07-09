@@ -22,6 +22,8 @@ class SelectorDB extends Field
     public ?Closure $query_modifier;
     public $options;
 
+    public bool $accept_new_values = false;
+
     public SelectorType $selector_type = SelectorType::Static;
 
     public function __construct(

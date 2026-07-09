@@ -290,12 +290,22 @@ class Check extends Command
         }
     }
 
+    public function fix_error_files(){
+        if(!File::exists(resource_path('views/errors'))){
+            File::makeDirectory(resource_path('views/errors'), 0755, true);
+        }
+        if(!File::exists(resource_path('views/errors/404.blade.php'))){
+            File::put(resource_path('views/errors/404.blade.php'), "@include('shared-utils::errors.404')");
+        }
+    }
+
     public function handle(): void
     {
         $this->check_myqsl_strictness();
         $this->generate_overrides();
         $this->fix_composer_json();
         $this->fix_gitignore();
+        $this->fix_error_files();
         //$this->model_fix();
         
 
