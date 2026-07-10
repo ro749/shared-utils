@@ -1,7 +1,12 @@
 <?php
+//for getting the full url of the image
 function image($path)
 {
     return str_replace(' ', '%20', Storage::disk('external')->url($path));
+}
+
+function mixed($path){
+    return asset($path).'?v='.filemtime(public_path($path));
 }
 
 function insert_between_keys($array, $after_key, $new_key, $new_value) {
@@ -53,4 +58,19 @@ function array_export(array $array, int $indent = 0): string
     }
 
     return "[\n" . implode(",\n", $items) . ",\n{$pad}]";
+}
+
+function renameKeyPreservingOrder(array $array, string $oldKey, string $newKey): array
+{
+    $result = [];
+
+    foreach ($array as $key => $value) {
+        if ($key === $oldKey) {
+            $result[$newKey] = $value;
+        } else {
+            $result[$key] = $value;
+        }
+    }
+
+    return $result;
 }

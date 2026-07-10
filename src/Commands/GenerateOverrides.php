@@ -34,6 +34,10 @@ class GenerateOverrides extends Command
         if (!empty($imageMapProOverrides)) {
             $overrides['image_map_pro'] = $imageMapProOverrides;
         }
+        $senderOverrides = $this->getClassesFromFolder('app/Sender',single:'CotizationSender');
+        if (!empty($senderOverrides)) {
+            $overrides['sender'] = $senderOverrides;
+        }
         // Generar contenido del archivo
         $content = $this->generatePhpContent($overrides);
 
@@ -123,7 +127,7 @@ class GenerateOverrides extends Command
 
         foreach ($overrides as $key_override => $values) {
             
-            if(($key_override == "plans" || $key_override == "image_map_pro") && count($values) == 1){
+            if(($key_override == "plans" || $key_override == "image_map_pro" || $key_override == "sender") && count($values) == 1){
                 $content .= "    '$key_override' => " . array_values($values)[0] . ",\n";
             }
             else{

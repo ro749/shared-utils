@@ -2,7 +2,7 @@
 
 @once
     @push('script-includes')
-        <script src="{{ asset('vendor/shared-utils/js/localSmartTable.js') }}"></script>
+        <script src="{{ mixed('vendor/shared-utils/js/localSmartTable.js') }}"></script>
     @endpush
 @endonce
 
