@@ -39,7 +39,7 @@
         }
     }
 
-    $.fn.get_number_str = function (value, decimals = 2) {
+    $.fn.get_number_str = function (value, decimals = 4) {
         if ($(this[0]).is('input')) {
             return extract_number_str($(this[0]).val(), decimals);
         }
@@ -59,7 +59,7 @@
     }
 
     $.fn.set_percent = function (value) {
-        var val = Number(Number(value).toFixed(2));
+        var val = Number(Number(value).toFixed(4));
         return this.each(function () {
             if ($(this).is('input')) {
                 if(typeof Alpine !== 'undefined'){
@@ -76,7 +76,7 @@
     }
 
     $.fn.set_percent_str = function (value) {
-        var val = Number(Number(value).toFixed(2));
+        var val = Number(Number(value).toFixed(4));
         return this.each(function () {
             if ($(this).is('input')) {
                 if(typeof Alpine !== 'undefined'){
