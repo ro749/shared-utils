@@ -121,6 +121,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.forms.radio-button', 'sharedutils::radio-button');
         Blade::component('sharedutils::components.forms.radio-buttons', 'sharedutils::radio-buttons');
         Blade::component('sharedutils::components.forms.textarea', 'sharedutils::textarea');
+        Blade::component('sharedutils::components.forms.array-field', 'sharedutils::array-field');
 
         Blade::component('sharedutils::components.layout', 'layout');
         
