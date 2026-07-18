@@ -21,6 +21,7 @@ use Ro749\SharedUtils\Commands\OverrideView;
 use Ro749\SharedUtils\Commands\OverrideFile;
 use Ro749\SharedUtils\Commands\Absorb;
 use Ro749\SharedUtils\Commands\ActivateEditor;
+use Ro749\SharedUtils\Commands\FixArray;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
@@ -63,7 +64,8 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 OverrideView::class,
                 OverrideFile::class,
                 Absorb::class,
-                ActivateEditor::class
+                ActivateEditor::class,
+                FixArray::class
             ])
             ->hasRoutes('web');
     }
