@@ -12,13 +12,17 @@ use Ro749\SharedUtils\Tables\TableButtonView;
 use Ro749\SharedUtils\Enums\Icon;
 use Illuminate\Http\Request;
 use Ro749\SharedUtils\Tables\Texts\TableTexts;
+use Ro749\SharedUtils\Models\Model;
+use Ro749\SharedUtils\Models\AttributeType;
+use Ro749\SharedUtils\Models\LogicModifiers\ForeignKey;
 use Illuminate\Support\Facades\Log;
 class BaseTable
 {
+    public string $id = '';
     public BaseGetter $getter;
     public ?View $view = null;
     public ?Delete $delete = null;
-    public ?BaseForm $form;
+    public ?BaseForm $form = null;
     public array $filters = [];
     public bool $needs_buttons = false;
     public bool $is_editable = false;
@@ -36,9 +40,9 @@ class BaseTable
     public bool $autoload = true;
     public function __construct(
         BaseGetter $getter,
+        BaseForm $form = null,
         View $view = null, 
         Delete $delete = null,
-        BaseForm $form = null,
         View $edit_url = null,
         array $buttons = [],
         int $page_length = 0,
@@ -52,6 +56,63 @@ class BaseTable
         $this->view = $view;
         $this->delete = $delete;
         $this->form = $form;
+        $this->edit_url = $edit_url;
+        $this->page_length = $page_length;
+        $this->texts = $texts;
+        $this->buttons = $buttons;
+        $this->buttons_label = $buttons_label;
+        $this->autoload = $autoload;
+        $this->filters = $filters;
+    }
+
+    public function from_model(
+        string $model_class, 
+        array $columns, 
+        array $editables = [],
+        View $view = null, 
+        Delete $delete = null,
+        View $edit_url = null,
+        array $buttons = [],
+        int $page_length = 0,
+        TableTexts $texts = new TableTexts(),
+        string $buttons_label = '',
+        bool $autoload = true,
+        array $filters = []
+    ){
+        $model = new $model_class();
+        $attributes = $model->get_attributes();
+        foreach($columns as $key => $column) {
+            $value = $attributes[$column];
+            if($value->type == AttributeType::RELATION){
+                $getter_colums[$column] = new Column(
+                    display: $value->label,
+                    logic_modifier: new ForeignKey(
+                        model_class: $value->model_class,
+                        column: $value->column
+                    )
+                );
+                continue;
+            }
+            $getter_colums[$column] = new Column(
+                display: $value->label,
+            );
+            
+        }
+        $this->getter = new BaseGetter(
+            model_class: $model_class,
+            columns: $getter_colums,
+        );
+
+        if(!empty($editables)){
+            $this->form = new BaseForm();
+            $this->form->from_model(
+                model_class: $model_class,
+                fields: $editables
+            );
+        }
+
+        $this->view = $view;
+        $this->delete = $delete;
         $this->edit_url = $edit_url;
         $this->page_length = $page_length;
         $this->texts = $texts;
@@ -82,7 +143,16 @@ class BaseTable
         if($this->form != null){
             $editables = array_keys($this->form->fields);
         }
-        return $this->getter->get($start, $length, $search,$order,$filters,$start_date,$end_date,$editables);
+        return $this->getter->get(
+            start: $start, 
+            length: $length, 
+            search: $search,
+            order: $order,
+            filters: $filters,
+            start_date: $start_date,
+            end_date: $end_date,
+            editables: $editables
+        );
     }
 
     public function get_selectors()
@@ -218,7 +288,7 @@ class BaseTable
     }
 
     function get_id(){
-        return class_basename($this);
+        return !empty($this->id) ? $this->id : class_basename($this);
     }
 
     public static function instance(): BaseTable
