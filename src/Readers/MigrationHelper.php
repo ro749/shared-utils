@@ -140,7 +140,7 @@ class MigrationHelper
         return $migration_text;
     }
 
-    public static function create_migration_file($migration_name,$migration_text) {
+    public static function create_migration_file($migration_name,$migration_text,$command = null) {
         $ans = '<?php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -159,6 +159,10 @@ return new class extends Migration
 
         $file = date('Y_m_d_His').'_'.$migration_name.'.php';
         file_put_contents(database_path('migrations/'.$file),$ans );
+        if(!empty($command)){
+            $command->info("Migration created: ".database_path('migrations/'.$file));
+            return;
+        }
         echo "Migration created: ".database_path('migrations/'.$file);
     }
 
