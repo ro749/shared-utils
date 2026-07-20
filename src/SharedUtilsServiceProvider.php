@@ -107,6 +107,7 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.fillables.fillable-conditional', 'f-conditional');
         Blade::component('sharedutils::components.fillables.fillable-div', 'f-div');
         Blade::component('sharedutils::components.fillables.fillable-list', 'f-list');
+        Blade::component('sharedutils::components.fillables.lang-text', 'lang-text');
 
         Blade::component('sharedutils::components.filters.base-filters', 'base-filters');
 
@@ -130,5 +131,6 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
         Blade::component('sharedutils::components.tables.layeredSmartTable', 'layeredSmartTable');
         Blade::component('sharedutils::components.tables.localSmartTable', 'localSmartTable');
         Blade::component('sharedutils::components.tables.smartTable', 'smartTable');
+
     }
 }

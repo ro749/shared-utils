@@ -19,15 +19,11 @@
     @endif
 @endforeach
 
-@once
-    @push('script-includes')
-        <script src="{{ mixed('vendor/shared-utils/js/smartTable.js') }}"></script>
-    @endpush
-@endonce
-
 @push('scripts')
 <script>
-    $('#{{ $table->get_id() }}').smartTable(@json($table->get_info()));
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#{{ $table->get_id() }}').smartTable(@json($table->get_info()));
+    });
 </script>
 @endpush
 <script>

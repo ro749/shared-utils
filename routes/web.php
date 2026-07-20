@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Ro749\SharedUtils\Charts\TimeChartGetData;
 use Ro749\SharedUtils\Statistics\ChartTime;
-
+use Ro749\SharedUtils\Controllers\LangController;
 use Illuminate\Support\Facades\Log;
 Route::middleware('web')->group(function () {
     
@@ -141,4 +141,9 @@ Route::middleware('web')->group(function () {
         ), $filters);
         return response()->json(data: $ans);
     });
+
+    Route::get('/lang', [LangController::class, 'index']);
+    Route::post('/change-lang', [LangController::class, 'changeLang']);
 });
+
+

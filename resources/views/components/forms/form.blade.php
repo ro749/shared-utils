@@ -136,6 +136,7 @@ $initial_data = $form->get_initial_data();
             },
             @endif
             init(){
+                console.log('initing');
                 @stack($form->get_id())
 
                 @if($form->autosave)

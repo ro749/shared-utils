@@ -4,11 +4,7 @@
     id="{{ $name }}"
     name="{{ $name }}"
     @if($element->register_in_form)
-    @if($element->search)
     x-input="form.{{ $name }}"
-    @else
-    x-model="form.{{ $name }}"
-    @endif
     @endif
     style="width: 100%"
     {{ $attributes->class([
