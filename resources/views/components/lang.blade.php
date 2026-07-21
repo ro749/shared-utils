@@ -1,6 +1,6 @@
 @push('scripts')
 <script>
-    var choosen_lang = 'es';
+    var choosen_lang = '{{ Illuminate\Support\Facades\Session::get('lang','es') }}';
     var lang = [];
     document.addEventListener('DOMContentLoaded', function() {
         $.ajax({
