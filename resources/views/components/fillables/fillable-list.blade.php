@@ -14,7 +14,7 @@
 @if(empty($data))
 @once($id)
 @push('fill')
-    $('#{{ $id }}').empty();
+    $('.{{ $id }}').empty();
     for(var i = 0; i < data['{{ $id }}'].length; i++){
         @if(empty($en))
         var html_text = data['{{ $id }}'][i];
