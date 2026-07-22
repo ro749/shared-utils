@@ -1,4 +1,4 @@
-<div id="{{ $id }}">
+<div class="{{ $id }}">
 @if(!empty($data))
 @foreach ($data->{$id} as $key => $item)
     @if(empty($en))
@@ -12,6 +12,7 @@
 
 <script>
 @if(empty($data))
+@once($id)
 @push('fill')
     $('#{{ $id }}').empty();
     for(var i = 0; i < data['{{ $id }}'].length; i++){
@@ -20,8 +21,9 @@
         @else
         var html_text = choosen_lang == 'es' ? data['{{ $id }}'][i] : data['{{ $en }}'][i];
         @endif
-        $('#{{ $id }}').append(html_text);
+        $('.{{ $id }}').append(html_text);
     }
 @endpush
+@endonce
 @endif
 </script>

@@ -22,9 +22,9 @@ if(is_array($data->{$id}) && count($data->{$id}) == 1){
 
 
 @if(empty($data))
-<div id='image-{{ $id }}{{ $dif }}'></div>
+<div class='image-{{ $id }}{{ $dif }}'></div>
 @push('fill')
-    $('#image-{{ $id }}{{ $dif }}').empty();
+    $('.image-{{ $id }}{{ $dif }}').empty();
     if(Array.isArray(data['{{ $id }}'])){
       if(data['{{ $id }}'].length == 1){
         data['{{ $id }}'] = data['{{ $id }}'][0];
@@ -38,7 +38,7 @@ if(is_array($data->{$id}) && count($data->{$id}) == 1){
         html_text += '<img class="image-{{ $id }}{{ $dif }}" src="'+image_url+'" {{ $attributes }}>';
       }
       html_text += '</div>';
-      $('#image-{{ $id }}{{ $dif }}').html(html_text);
+      $('.image-{{ $id }}{{ $dif }}').html(html_text);
       $('.owl-single-dots').owlCarousel({
           loop:true,
           items: 1,
@@ -47,7 +47,7 @@ if(is_array($data->{$id}) && count($data->{$id}) == 1){
       });
     }
     else{
-      $('#image-{{ $id }}{{ $dif }}').html('<img class="image-{{ $id }}{{ $dif }}" src="{{ config('filesystems.disks.external.url', '').$src }}'+data['{{ $id }}']+'{{ $ext }}" {{ $attributes }}>');
+      $('.image-{{ $id }}{{ $dif }}').html('<img class="image-{{ $id }}{{ $dif }}" src="{{ config('filesystems.disks.external.url', '').$src }}'+data['{{ $id }}']+'{{ $ext }}" {{ $attributes }}>');
     }
 @endpush
 @endif
