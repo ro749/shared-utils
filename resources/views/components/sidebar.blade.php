@@ -24,6 +24,7 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 $(".sidebar-mobile-toggle").on("click", function(){
   $(".sidebar").addClass("sidebar-open");
   $("body").addClass("overlay-active");
@@ -31,6 +32,7 @@ $(".sidebar-mobile-toggle").on("click", function(){
 $(".sidebar-close-btn").on("click", function(){
   $(".sidebar").removeClass("sidebar-open");
   $("body").removeClass("overlay-active");
+});
 });
 </script>
 @endpush

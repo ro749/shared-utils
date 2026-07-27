@@ -48,19 +48,6 @@ class MigrationHelper
         return $migration_text;
         
     }   
-    //modifies data of a table of normalized values
-    public static function generate_migration_for_alter_data($table_name,$table_data) {
-        $migration_text = "";
-
-        foreach ($table_data as $row) {
-            $migration_text .= "DB::table('".$table_name."')->where('".$row[0]."', '".$row[1]."')->update(['".$row[0]."' => '".$row[2]."']);\n";
-        }
-
-        $migration_text .= "\n";
-
-        return $migration_text;
-        
-    }
     //changes a column of a table
     public static function generate_migration_for_alter_table($table_name,$columns_data) {
         $migration_text = "        Schema::table('".$table_name."', function (Blueprint \$table) {\n";
@@ -138,6 +125,34 @@ class MigrationHelper
         $migration_text .= "});\n";
 
         return $migration_text;
+    }
+
+    public static function generate_migration_for_fill_data($table_name,$table_data) {
+        $migration_text = "";
+
+        foreach ($table_data as $row) {
+            $migration_text .= "        DB::table('".$table_name."')->insert([\n";
+            foreach ($row as $column => $value) {
+                $migration_text .= "            '$column' => '$value',\n";
+            }
+            $migration_text .= "        ]);\n";
+        }
+
+        return $migration_text;
+    }
+
+    //modifies data of a table of normalized values
+    public static function generate_migration_for_alter_data($table_name,$table_data) {
+        $migration_text = "";
+
+        foreach ($table_data as $row) {
+            $migration_text .= "DB::table('".$table_name."')->where('".$row[0]."', '".$row[1]."')->update(['".$row[0]."' => '".$row[2]."']);\n";
+        }
+
+        $migration_text .= "\n";
+
+        return $migration_text;
+        
     }
 
     public static function create_migration_file($migration_name,$migration_text,$command = null) {

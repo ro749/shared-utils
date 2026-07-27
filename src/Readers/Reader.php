@@ -7,7 +7,8 @@ class Reader
     public string $warning_text='';
 
     public string $error_text='';
-    public function read_csv($file)
+    //reads a file and returns an array
+    public function read_csv($file): array
     {
         $raw_lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $titles = explode(',', $raw_lines[0]);
@@ -20,7 +21,7 @@ class Reader
         $this->check_columns($titles);
         if ($this->error_text != '') {
             echo $this->error_text;
-            return;
+            return [];
         }
         $data = array_slice($raw_lines, 1);
         $lines = [];
