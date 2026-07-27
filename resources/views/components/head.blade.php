@@ -54,7 +54,6 @@
 @endpush
 @endif
 @push('script-includes-utils')
-    @include('shared-utils::components.scripts')
     <script enum="text/javascript" src="{{ asset('js/options.js') }}"></script>
 @endpush
 @push('scripts')
