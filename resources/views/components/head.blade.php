@@ -3,6 +3,10 @@
 <meta name="app-version" content="{{ config('app.version') }}">
 @include('sharedutils::components.title')
 <meta name="theme-color" content="#ffffff"/>
+@vite([
+    'resources/css/app.css',
+    'resources/js/app.js',
+])
 @if(!empty(config('app.pwa')))
 <link rel="apple-touch-icon" href="https://propstudios.mx/img/Verdant/Logo%20e%20Icono/Icono.png">
 <link rel="manifest" href="{{ asset('/manifest.json') }}">
@@ -49,9 +53,6 @@
 </script>
 @endpush
 @endif
-@push('styles')
-    @include('shared-utils::components.style')
-@endpush
 @push('script-includes-utils')
     @include('shared-utils::components.scripts')
     <script enum="text/javascript" src="{{ asset('js/options.js') }}"></script>
