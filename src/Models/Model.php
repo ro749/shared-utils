@@ -31,4 +31,8 @@ class Model extends BaseModel
     public static function getTableName() {
         return with(new static)->getTable();
     }
+
+    public static function get_table() {
+        return static::getTableName();
+    }
 }
