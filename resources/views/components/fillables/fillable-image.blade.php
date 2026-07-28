@@ -16,6 +16,20 @@ if(is_array($data->{$id}) && count($data->{$id}) == 1){
     <img class="image-{{ $id }}{{ $dif }}" src='{{ config('filesystems.disks.external.url', '').$src.$image.$ext }}' {{ $attributes }}>
   @endforeach
 </div>
+
+@once
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    $('.owl-single-dots').owlCarousel({
+        loop: true,
+        items: 1
+    });
+});
+</script>
+@endpush
+@endonce
+
 @endif
 
 @endif
@@ -39,11 +53,10 @@ if(is_array($data->{$id}) && count($data->{$id}) == 1){
       }
       html_text += '</div>';
       $('.image-{{ $id }}{{ $dif }}').html(html_text);
+      console.log('owling');
       $('.owl-single-dots').owlCarousel({
           loop:true,
-          items: 1,
-          nav:false,
-          dots:true,
+          items: 1
       });
     }
     else{
