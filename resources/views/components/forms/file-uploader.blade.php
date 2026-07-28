@@ -28,6 +28,7 @@
 </div>
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 $('#{{ $form_id }}-cancel').on('click', function() {
     $.ajax({
         url: '{{ '/form/'.$form_id.'/cancel/'.$name }}',
@@ -48,6 +49,7 @@ $('#{{ $element->preview_table->get_id() }}').on('loaded', function(e,data) {
         $('#{{ $name }}-preview').hide();
         $('#{{ $form_id }}-button').hide();
     }
+});
 });
 </script>
 @endpush
