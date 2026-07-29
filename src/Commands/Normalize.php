@@ -36,7 +36,7 @@ class Normalize extends Command{
         );
         $migration_text .= MigrationHelper::generate_migration_for_alter_table(
             $table, 
-            [$column => 'int']
+            [$column => 'relation']
         );
         MigrationHelper::create_migration_file(
             'normalize_'.$table.'_'.$column, 

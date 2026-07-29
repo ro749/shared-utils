@@ -55,7 +55,7 @@ $initial_data = $form->get_initial_data();
         </button>
         @endif    
         <button class="btn btn-submit" @click="submit">
-            {{ $form->submit_text }}
+            {!! $form->submit_text !!}
         </button>
     </div>
     @endif

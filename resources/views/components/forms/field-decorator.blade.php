@@ -18,7 +18,7 @@ if(!isset($class)){
 @else
 <div id="form-field-{{ $name }}" class="form-field" style="width: 100%;">
     @if($field->label!="")
-        <label for="{{ $name }}" class="block font-semibold">{{ $field->label }}{{ $field->is_required() ? '*' : '' }}</label>
+        <label for="{{ $name }}" class="block font-semibold">{!! $field->label !!}{{ $field->is_required() ? '*' : '' }}</label>
     @endif
     @if($field->icon)
     <div class="icon-field">

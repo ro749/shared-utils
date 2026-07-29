@@ -65,11 +65,12 @@ class MigrationHelper
                     $migration_text .= "            \$table->date('".$column_name."')->change();\n";
                     break;
                 case 'relation':
-                    $migration_text .= "            \$table->foreignId('".$column_name."_id')->constrained()->change();\n";
+                    $migration_text .= "            \$table->renameColumn('".$column_name."', '".$column_name."_id');\n";
+                    $migration_text .= "            \$table->foreignId('".$column_name."_id')->change()->constrained();\n";
                     break;
                 case 'string':
                 default:
-                    $migration_text .= "            \$table->string('".$column_name."')->change();\n";
+                    $migration_text .= "            \$table->".$data_type."('".$column_name."')->change();\n";
                     break;
             }
         }
