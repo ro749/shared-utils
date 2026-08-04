@@ -3,6 +3,7 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 var chartColor = '{{ $color }}';
 var currentYear = new Date().getFullYear();
 var options = {
@@ -114,5 +115,6 @@ var chart = new ApexCharts(document.querySelector("#{{ $chart->get_id() }}"), op
 
 chart.render();
 
+});
 </script>
 @endpush

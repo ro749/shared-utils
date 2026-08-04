@@ -3,6 +3,7 @@
 <div id="{{ $id }}"></div>
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 var options = { 
       series: @json($percents),
       colors: @json($colors),
@@ -74,5 +75,6 @@ var options = {
 
     var chart = new ApexCharts(document.querySelector("#{{ $id }}"), options);
     chart.render();
+});
 </script>
 @endpush

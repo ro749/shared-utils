@@ -9,6 +9,7 @@
 </x-base-chart>
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 var options = {
       series: [{
         name: '{{ $chart->get_series_name() }}',
@@ -107,6 +108,8 @@ $("#{{ $chart->get_id() }}").on('reset', function(event, data) {
         },
     });
     
+});
+
 });
 </script>
 @endpush

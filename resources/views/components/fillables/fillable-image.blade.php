@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       html_text += '</div>';
       $('.image-{{ $id }}{{ $dif }}').html(html_text);
-      console.log('owling');
       $('.owl-single-dots').owlCarousel({
           loop:true,
           items: 1

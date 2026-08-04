@@ -74,3 +74,7 @@ function renameKeyPreservingOrder(array $array, string $oldKey, string $newKey):
 
     return $result;
 }
+
+function snakeToNormal($string) {
+    return ucfirst(str_replace('_', ' ', ucwords($string, '_')));
+}

@@ -3,6 +3,7 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 var options = {
       series: [{
           name: '{{ $chart->get_series_name() }}',
@@ -81,5 +82,6 @@ var options = {
 
     var chart = new ApexCharts(document.querySelector("#{{ $chart->get_id() }}"), options);
     chart.render();
+});
 </script>
 @endpush
