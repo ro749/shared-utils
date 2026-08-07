@@ -19,6 +19,7 @@ class SelectorDB extends Field
     public string $data;
     public string $class;
     public float $max_length;
+    public bool $search = true;
     public ?Closure $query_modifier;
     public $options;
 
@@ -48,7 +49,8 @@ class SelectorDB extends Field
         string $form_id = "",
         string $data = "",
         string $class = "",
-        SelectorType $selector_type = SelectorType::Smart
+        SelectorType $selector_type = SelectorType::Smart,
+        bool $search = true
     )    
     {
         parent::__construct(
@@ -76,6 +78,7 @@ class SelectorDB extends Field
         $this->model_class = $model_class;
         $this->query_modifier = $query_modifier;
         $this->selector_type = $selector_type;
+        $this->search = $search;
     }
 
     public function get_table(): string
@@ -94,8 +97,10 @@ class SelectorDB extends Field
         if(!empty($this->query_modifier)){
             $query = ($this->query_modifier)($query);
         }
+        if($this->selector_type == SelectorType::Dynamic){
+            $query->limit(6);
+        }
         $this->options = $query->pluck($this->label_column, $this->value_column)->toArray();
-        $this->search = true;
     }
 
     public function search($search, $request){
@@ -125,8 +130,9 @@ class SelectorDB extends Field
         if(!empty($this->query_modifier)){
             $query = ($this->query_modifier)($query);
         }
-        $count =$query->count();
-        $this->selector_type = $count > 216 ? SelectorType::Dynamic : SelectorType::Static;
+        $count = $query->count();
+        $this->search = $count > 6;
+        $this->selector_type = $count > 36 ? SelectorType::Dynamic : SelectorType::Static;
     }
 
 
@@ -139,7 +145,11 @@ class SelectorDB extends Field
     }
 
     public function get_info(){
-        return [
+        if($this->selector_type == SelectorType::Smart){
+            $this->decide();
+        }
+        $this->generate_options();
+        $ans =  [
             'type' => $this->type,
             'label' => $this->label,
             'placeholder' => $this->placeholder,
@@ -148,6 +158,10 @@ class SelectorDB extends Field
             'unique' => $this->unique,
             'value' => $this->value,
             'hot_reload' => $this->hot_reload,
+            'search' => $this->search,
+            'options' => $this->options,
+            'dynamic' => $this->selector_type == SelectorType::Dynamic
         ];
+        return $ans;    
     }
 }

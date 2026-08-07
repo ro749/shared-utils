@@ -120,6 +120,7 @@ class Field extends Component
                 $rules[] = 'email';
                 break;
             case InputType::PHONE:
+                $rules[] = 'nullable';
                 $rules[] = 'phone:MX';
                 break;
             case InputType::ID_NUMBER:

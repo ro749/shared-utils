@@ -42,6 +42,8 @@ class BaseForm
     public bool $autosave = false;
 
     public bool $debug = false;
+
+    public array $layout = [];
     
     public function __construct(
         string $model_class = '', 
@@ -63,6 +65,7 @@ class BaseForm
         $soft_reload = false,
         bool $session = false,
         bool $debug = false,
+        array $layout = []
     )
     {
         $this->model_class = $model_class;
@@ -85,6 +88,7 @@ class BaseForm
         $this->session = $session;
         $this->autosave = $autosave;
         $this->debug = $debug;
+        $this->layout = $layout;
     }
 
     public function from_model(
@@ -345,7 +349,8 @@ class BaseForm
         }
         return [
             'id' => $this->get_id(),
-            'fields' => $fields
+            'fields' => $fields,
+            'submit_text' => $this->submit_text
         ];
     }
 
