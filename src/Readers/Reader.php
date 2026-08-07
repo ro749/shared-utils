@@ -7,6 +7,7 @@ class Reader
     public string $warning_text='';
 
     public string $error_text='';
+    public array $ignore_lines = [];
     //reads a file and returns an array
     public function read_csv($file): array
     {
@@ -32,11 +33,13 @@ class Reader
             unset($title);
             unset($k);
             foreach ($titles as $k => $title) {
+                if (in_array($title, $this->ignore_lines)) continue;
                 $line[$title] = $raw_row[$k];
             }
             
             $lines[] = $line;
         }
+        $titles = array_diff($titles, $this->ignore_lines);
         $this->process_data($titles,$lines);
         return $lines;
     }
