@@ -5,6 +5,7 @@ namespace Ro749\SharedUtils\Models;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 class Model extends BaseModel
 {
+    protected bool $dynamic_loaded = false;
     public static function instance(): Model
     {
         $basename = class_basename(static::class);

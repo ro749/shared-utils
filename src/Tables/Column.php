@@ -18,6 +18,9 @@ class Column
 
     public bool $local = false;
 
+    //if is a dynmaic coolumn so it is not in this table, it uses a pivot to get it, the table must be {model}_attributes
+    public bool $dynamic = false;
+
     public ColumnOrder $order = ColumnOrder::NONE;
 
     public function __construct(
@@ -26,6 +29,7 @@ class Column
         LogicModifier $logic_modifier = null,
         bool $fillable = false,
         bool $local = false,
+        bool $dynamic = false,
         $order = ColumnOrder::NONE
     )
     {
@@ -34,6 +38,7 @@ class Column
         $this->logic_modifier = $logic_modifier;
         $this->fillable = $fillable;
         $this->local = $local;
+        $this->dynamic = $dynamic;
         $this->order = $order;
     }
 
