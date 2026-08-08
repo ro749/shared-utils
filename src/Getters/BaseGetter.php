@@ -88,7 +88,7 @@ class BaseGetter extends Getter{
 
     function get_query(array &$ans,string $search,array $filters, array $editables = []): Builder{
         $table = $this->get_table();
-        $query = $this->model_class::query()->select($table.'.id');//DB::table($table)->select($table.'.id');
+        $query = $this->model_class::query()->without(['dynamicAttributes'])->select($table.'.id');
         $joins = [];
         $this->apply_statistics($query,$table,$filters);
         $this->prosses_columns($query,$table,$joins,$search,$editables);

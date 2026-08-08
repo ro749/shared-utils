@@ -46,6 +46,8 @@ class Getter{
     }
 
     function prosses_columns($query,$table,&$joins,$search,$editables = []){
+        $dynamic_attributes = [];
+        $static_attributes = [];
         foreach ($this->columns as $key => $column) {
             if($column->local) continue;
             //if column needs data from other table
@@ -89,8 +91,22 @@ class Getter{
                     $query->addSelect($this->get_table().'.'.$key.'_id as '.$key.'_id');
                 }
             }
+            else if($column->dynamic){
+                $query
+                ->addSelect(DB::raw("MAX(CASE WHEN attr.attribute = '".$key."' THEN attr.value END) as ".$key));
+                $dynamic_attributes[] = $key;
+            }
             else {
                 $query->addSelect($table . '.' . $key);
+                $static_attributes[] = $key;
+            }
+        }
+        if(!empty($dynamic_attributes)){
+            $model_base_name = strtolower(class_basename($this->model_class));
+            $query->join($model_base_name.'_attributes as attr', $table.'.id', '=', 'attr.'.$model_base_name.'_id')->whereIn('attr.attribute', $dynamic_attributes);
+            $query->groupBy($table.'.id');
+            foreach($static_attributes as $attr){
+                $query->groupBy($table.'.'.$attr);
             }
         }
     }
