@@ -1,12 +1,17 @@
 <?php
 
 namespace Ro749\SharedUtils\Readers;
-
+use Illuminate\Support\Facades\Schema;
 class MigrationHelper 
 {
     //creates a new table
     public static function generate_migration_for_table($table_name,$columns_data,$table_data=[]) {
-        $migration_text = "        Schema::create('".$table_name."', function (Blueprint \$table) {\n";
+        $migration_text = "";
+        if(Schema::hasTable($table_name)){
+            Static::generate_migration_for_alter_table($table_name,$columns_data);
+        } else {
+        
+        $migration_text .= "        Schema::create('".$table_name."', function (Blueprint \$table) {\n";
 
         $migration_text .= "            \$table->id();\n";
         // Assuming $table_data is an associative array with column names as keys and data types as values
@@ -36,7 +41,7 @@ class MigrationHelper
         }
         $migration_text .= "            \$table->timestamps();\n";
         $migration_text .= "        });\n";
-
+        }
         foreach ($table_data as $row) {
             $migration_text .= "DB::table('".$table_name."')->insert([\n";
             foreach ($row as $column => $value) {
@@ -85,6 +90,9 @@ class MigrationHelper
 
         // Assuming $columns_data is an associative array with column names as keys and data types as values
         foreach ($columns_data as $column_name => $data_type) {
+            if(Schema::hasColumn($table_name, $column_name)){
+                continue;
+            }
             if(is_array($data_type)){
                 $migration_text .= "            \$table->decimal('".$column_name."', ".$data_type[0].", ".$data_type[1].");\n";
                 continue;

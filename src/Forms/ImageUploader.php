@@ -15,17 +15,14 @@ class ImageUploader extends Field
 
     public function __construct(
         string $route,
-        string $view,
-        array $view_data = [],
+        string $label = '',
         bool $autosave = false,
         string $name = "",
         string $data = "",
         string $class = "")
     {
-        parent::__construct(InputType::IMAGE,autosave: $autosave);
+        parent::__construct(InputType::IMAGE, label: $label, autosave: $autosave);
         $this->route = $route;
-        $this->view = $view;
-        $this->view_data = $view_data;
         $this->name = $name;
         $this->data = $data;
         $this->class = $class;

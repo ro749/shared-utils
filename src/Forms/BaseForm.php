@@ -347,11 +347,15 @@ class BaseForm
         foreach ($this->fields as $key => $field) {
             $fields[$key] = $field->get_info();
         }
-        return [
+        $ans = [
             'id' => $this->get_id(),
             'fields' => $fields,
-            'submit_text' => $this->submit_text
+            'submit_text' => $this->submit_text,
         ];
+        if(!empty($this->layout)){
+            $ans['layout'] = $this->layout;
+        }
+        return $ans;
     }
 
     public function get_initial_data()
