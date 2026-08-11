@@ -58,13 +58,13 @@ class BaseGetter extends Getter{
         if(!empty($start_date) && !empty($end_date)) {
             $query->whereDateBetween($this->get_table().'.created_at', $start_date, $end_date);
         }
-        $ans['recordsTotal'] = $query->count();
+        $ans['recordsTotal'] = $query->get()->count();
         $this->apply_filters($query, $filters);
         
         if ($search!="") {
             $query = $this->search($query,$search);
         }
-        $ans['recordsFiltered'] = $query->count();
+        $ans['recordsFiltered'] = $query->get()->count();
         if(!empty($order)){
             $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
         }
