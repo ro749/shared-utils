@@ -9,6 +9,7 @@ use Ro749\SharedUtils\Statistics\Statistic;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Ro749\SharedUtils\Filters\BaseFilters;
+use Ro749\SharedUtils\Models\Modifier;
 //for when getting data normally from a table
 class BaseGetter extends Getter{
     public string $model_class = '';
@@ -66,7 +67,18 @@ class BaseGetter extends Getter{
         }
         $ans['recordsFiltered'] = $query->get()->count();
         if(!empty($order)){
-            $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
+            $column = array_keys($this->columns)[$order['column']];
+            if(($this->columns[$column]->modifier == Modifier::METERS ||
+                $this->columns[$column]->modifier == Modifier::FOOT ||
+                $this->columns[$column]->modifier == Modifier::MONEY ||
+                $this->columns[$column]->modifier == Modifier::DOLARS) &&
+                $this->columns[$column]->dynamic){
+                $query = DB::table($query->toBase(), 'sub')->orderByRaw("CAST(".$column." AS DECIMAL) ".$order['dir']);
+                
+            }
+            else{
+                $query->orderBy($column,$order['dir']);
+            }
         }
         if(!empty($start)){
             $query->offset($start);
