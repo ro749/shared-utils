@@ -54,7 +54,7 @@ $initial_data = $form->get_initial_data();
             Cancelar
         </button>
         @endif    
-        <button class="btn btn-submit" @click="submit">
+        <button id="{{ $form->get_id() }}-submit" class="btn btn-submit" @click="submit">
             {!! $form->submit_text !!}
         </button>
     </div>
@@ -172,6 +172,7 @@ $initial_data = $form->get_initial_data();
                 openPopup("form-uploading-popup");
                 @endif
                 @if($form->submit_text==!"" || $form->is_autosave())
+                $('#{{ $form->get_id() }}-submit').prop('disabled', true);
                 $.ajax({
                     url: '{{ $form->submit_url==""? '/form/'.$form->get_id() : $form->submit_url }}',
                     method: 'POST',
@@ -183,6 +184,7 @@ $initial_data = $form->get_initial_data();
                     data: this.form,
                     @endif
                     success: (response) => {
+                        $('#{{ $form->get_id() }}-submit').prop('disabled', false);
                         @if($form->is_autosave())
                         @else
 
@@ -232,6 +234,7 @@ $initial_data = $form->get_initial_data();
                         @endif
                     },
                     error: (xhr, status, error) => {
+                        $('#{{ $form->get_id() }}-submit').prop('disabled', false);
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             this.errors = xhr.responseJSON.errors;
                         } else {
