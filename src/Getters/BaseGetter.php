@@ -66,7 +66,7 @@ class BaseGetter extends Getter{
         }
         $ans['recordsFiltered'] = $query->count();
         if(!empty($order)){
-            $query->orderBy(array_keys($this->columns)[$order['column']], $order['dir']);
+            $query->orderBy($order['column'], $order['dir']);
         }
         if(!empty($start)){
             $query->offset($start);

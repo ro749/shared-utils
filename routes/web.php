@@ -14,7 +14,7 @@ Route::middleware('web')->group(function () {
         return response()->json($table->get(
             $request->get('start'), 
             $request->get('length'),
-            $request->get('search')['value'],
+            $request->get('search')['value']??'',
             $request->get('order')[0]??null,
             $request->get('filters')?? [],
             $request->get('start_date')?? null,
