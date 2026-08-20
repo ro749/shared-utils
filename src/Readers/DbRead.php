@@ -118,36 +118,6 @@ return new class extends Migration
         echo "Migration created: ".database_path('migrations/'.$file);
     }
 
-    public function get_type(string $column,array &$data):array{
-        $type = ['int',0,0];
-        foreach($data as &$row){
-            if($row[$column] === '') continue;
-            if($type[0] == 'int'){
-                if(!is_numeric($row[$column]) || preg_match('/^0[0-9]/', $row[$column])){
-                    return ['string'];
-                }
-                else if (strpos($row[$column], '.')){
-                    $type[0] = 'float';
-                    $parts = explode('.', $row[$column]);
-                    $type[1] = strlen($parts[0]);
-                    $type[2] = strlen($parts[1]);
-                }
-            }
-            else if($type[0] == 'float'){
-                if(!is_numeric($row[$column]) || preg_match('/^0[0-9]/', $row[$column])){
-                    return ['string'];
-                }
-                else if (strpos($row[$column], '.')){
-                    $parts = explode('.', $row[$column]);
-                    $type[1] = strlen($parts[0])>$type[1] ? strlen($parts[0]) : $type[1];
-                    $type[2] = strlen($parts[1])>$type[2] ? strlen($parts[1]) : $type[2];
-                }
-            }
-        }
-        
-        return $type;
-    }
-
     public function get_text_for_type(string $column,array $type): string
     {
         switch ($type[0]) {

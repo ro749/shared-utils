@@ -39,7 +39,7 @@ class BaseTable
     public string $buttons_label = '';
     public bool $autoload = true;
     public function __construct(
-        BaseGetter $getter,
+        BaseGetter $getter = null,
         BaseForm $form = null,
         View $view = null, 
         Delete $delete = null,

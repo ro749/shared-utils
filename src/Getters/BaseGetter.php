@@ -13,8 +13,9 @@ use Ro749\SharedUtils\Models\Modifier;
 //for when getting data normally from a table
 class BaseGetter extends Getter{
     public string $model_class = '';
-
+    public string $query = '';
     function __construct(
+        string $query,
         string $model_class = '',
         array $columns = [],
         array $statistics = [],
@@ -31,6 +32,7 @@ class BaseGetter extends Getter{
             $debug
         );
         $this->model_class = $model_class;
+        $this->query = $query;
     }
 
     function get_table(): string {
@@ -50,6 +52,10 @@ class BaseGetter extends Getter{
         $editables = []
         )
     {
+        if(!empty($this->query)){
+            $ans['data'] = DB::select($this->query);
+            return $ans;
+        } 
         $search = $search==null?"":$search;
         $ans = [];
         $query = $this->get_query($ans,$search,$filters,$editables);

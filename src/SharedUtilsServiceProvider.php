@@ -10,7 +10,6 @@ use Ro749\SharedUtils\Commands\MakeLogin;
 use Ro749\SharedUtils\Commands\MakeForm;
 use Ro749\SharedUtils\Commands\Options;
 use Ro749\SharedUtils\Commands\MakeCrud;
-use Ro749\SharedUtils\Commands\ReadCsv;
 use Ro749\SharedUtils\Commands\GenerateOverrides;
 use Ro749\SharedUtils\Commands\Check;
 use Ro749\SharedUtils\Commands\Reimport;
@@ -52,7 +51,6 @@ class SharedUtilsServiceProvider extends PackageServiceProvider
                 MakeForm::class,
                 Options::class,
                 MakeCrud::class,
-                ReadCsv::class,
                 Check::class,
                 GenerateOverrides::class,
                 InitProject::class,

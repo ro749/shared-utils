@@ -4,7 +4,7 @@ namespace Ro749\SharedUtils\Commands;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
 use Ro749\SharedUtils\Readers\MigrationHelper;
-
+use Illuminate\Support\Str;
 class Normalize extends Command{
     protected $signature = 'db:normalize {table} {column} {--new-table=} {--new-column=}';
     protected $description = 'Convierte una columna con valores repetidos en una tabla normalizada';
@@ -12,7 +12,7 @@ class Normalize extends Command{
     public function handle(){
         $table = $this->argument('table');
         $column = $this->argument('column');
-        $new_table = $this->option('new-table') ?: $column.'s';
+        $new_table = $this->option('new-table') ?: Str::pluralStudly($column);
         $new_column = $this->option('new-column') ?: 'name';
         $unique_values = DB::table($table)->select($column)->distinct()->get()->pluck($column)->toArray();
         $change_data = [];
