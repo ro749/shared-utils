@@ -20,12 +20,15 @@ class Getter{
 
     public bool $debug = false;
 
+    public DynamicAttributes $dynamic_attributes;
+
     function __construct(
         array $columns = [],
         array $statistics = [],
         BaseFilters $filters = null, 
         array $backend_filters = [],
-        bool $debug = false
+        bool $debug = false,
+        DynamicAttributes $dynamic_attributes = null
     )
     {
         $this->columns = $columns;
@@ -33,6 +36,8 @@ class Getter{
         $this->filters = $filters;
         $this->backend_filters = $backend_filters;
         $this->debug = $debug;
+        $this->dynamic_attributes = $dynamic_attributes?? new DynamicAttributes();
+        $this->dynamic_attributes->init(get_class($this));
     }
 
     function get_table(): string {
@@ -93,7 +98,7 @@ class Getter{
             }
             else if($column->dynamic){
                 $query
-                ->addSelect(DB::raw("MAX(CASE WHEN attr.attribute = '".$key."' THEN attr.value END) as ".$key));
+                ->addSelect(DB::raw("MAX(CASE WHEN attr.".$this->dynamic_attributes->label_column." = '".$key."' THEN attr.".$this->dynamic_attributes->value_column." END) as ".$key));
                 $dynamic_attributes[] = $key;
             }
             else {
@@ -102,8 +107,7 @@ class Getter{
             }
         }
         if(!empty($dynamic_attributes)){
-            $model_base_name = strtolower(class_basename($this->model_class));
-            $query->join($model_base_name.'_attributes as attr', $table.'.id', '=', 'attr.'.$model_base_name.'_id')->whereIn('attr.attribute', $dynamic_attributes);
+            $query->join($this->dynamic_attributes->table.' as attr', $table.'.id', '=', 'attr.'.$this->dynamic_attributes->parent_id)->whereIn('attr.'.$this->dynamic_attributes->label_column, $dynamic_attributes);
             $query->groupBy($table.'.id');
             foreach($static_attributes as $attr){
                 $query->groupBy($table.'.'.$attr);

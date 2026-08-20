@@ -15,12 +15,13 @@ class BaseGetter extends Getter{
     public string $model_class = '';
     public string $query = '';
     function __construct(
-        string $query,
+        string $query = '',
         string $model_class = '',
         array $columns = [],
         array $statistics = [],
         BaseFilters $filters = null, 
         array $backend_filters = [],
+        DynamicAttributes $dynamic_attributes = null,
         bool $debug = false
     )
     {
@@ -29,7 +30,8 @@ class BaseGetter extends Getter{
             $statistics, 
             $filters, 
             $backend_filters,
-            $debug
+            $debug,
+            $dynamic_attributes
         );
         $this->model_class = $model_class;
         $this->query = $query;
