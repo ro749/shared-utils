@@ -22,6 +22,8 @@ class Getter{
 
     public DynamicAttributes $dynamic_attributes;
 
+    public array $personalized_joins = [];
+
     function __construct(
         array $columns = [],
         array $statistics = [],
@@ -57,6 +59,12 @@ class Getter{
             if($column->local) continue;
             //if column needs data from other table
             if ($column->is_foreign()) {
+
+                if($this->check_is_from_personalized_joins($column->logic_modifier)){
+                    $query->addSelect($column->logic_modifier->get_value().' as '.$key);
+                    continue;
+                } 
+
                 //if it is from a statistic created table
                 if(array_key_exists($column->logic_modifier->get_table(), $this->statistics)){
                     $stat_name = $column->logic_modifier->get_table();
@@ -115,7 +123,18 @@ class Getter{
         }
     }
 
-    
+    public function check_is_from_personalized_joins($foreign_key){
+        foreach($this->personalized_joins as $join){
+            if($join[3] == $foreign_key->get_table()) return true;
+        }
+        return false;
+    }
+
+    public function apply_personalized_joins($query){
+        foreach($this->personalized_joins as $join){
+            $query->join(DB::raw($join[0]), $join[1].'.'.$join[2], '=', $join[3].'.'.$join[4]);
+        }
+    }
 
     
 }

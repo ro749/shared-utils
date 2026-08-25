@@ -294,7 +294,7 @@ class BaseTable
     public static function instance(): BaseTable
     {
         $basename = class_basename(static::class);
-        return new (config('overrides.tables.'.$basename));
+        return new (config('overrides.tables.'.$basename)??static::class);
     }
 
     public function get_default_args(){

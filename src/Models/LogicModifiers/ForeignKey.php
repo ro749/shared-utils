@@ -24,7 +24,7 @@ class ForeignKey extends LogicModifier
         $this->text_on_null = $text_on_null;
     }
 
-    public function get_value(string $table, string $key):string{
+    public function get_value(string $table='', string $key=''):string{
         return $this->get_table() . '.' . $this->column;
     }
 }

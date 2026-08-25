@@ -26,6 +26,7 @@ class Field extends Component
     public bool $encrypt = false;
     public bool $autosave = false;
     public bool $sufficient = false;
+    public bool $dynamic = false;
     public string $field_class = "";
 
     public string $name;
@@ -49,6 +50,7 @@ class Field extends Component
         bool $encrypt = false,
         bool $autosave = false,
         bool $sufficient = false,
+        bool $dynamic = false,
         string $field_class = "",
         string $name = "",
         string $data = "",
@@ -69,6 +71,7 @@ class Field extends Component
         $this->encrypt = $encrypt;
         $this->autosave = $autosave;
         $this->sufficient = $sufficient;
+        $this->dynamic = $dynamic;
         $this->field_class = $field_class;
         $this->name = $name;
         $this->data = $data;

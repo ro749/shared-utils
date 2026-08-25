@@ -10,6 +10,7 @@ use Ro749\SharedUtils\Models\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Ro749\SharedUtils\Models\AttributeType;
+use Ro749\SharedUtils\Getters\DynamicAttributes;
 class BaseForm
 {
     public string $component = 'form';
@@ -40,6 +41,7 @@ class BaseForm
     public bool $session = false;
 
     public bool $autosave = false;
+    public DynamicAttributes $dynamic_attributes;
 
     public bool $debug = false;
     
@@ -63,6 +65,7 @@ class BaseForm
         $soft_reload = false,
         bool $session = false,
         bool $debug = false,
+        DynamicAttributes $dynamic_attributes = null
     )
     {
         $this->model_class = $model_class;
@@ -84,6 +87,7 @@ class BaseForm
         $this->soft_reload = $soft_reload;
         $this->session = $session;
         $this->autosave = $autosave;
+        $this->dynamic_attributes = $dynamic_attributes ?? new DynamicAttributes();
         $this->debug = $debug;
     }
 
@@ -190,6 +194,7 @@ class BaseForm
         }
         $arrays = [];
         $forms = [];
+        $dynamic = [];
         foreach ($this->fields as $key => $field) {
             if(!array_key_exists($key, $data)) {
                 if($field->type == InputType::FILE) {
@@ -213,6 +218,10 @@ class BaseForm
             }
             if($field->encrypt){
                 $data[$key] = Hash::make($data[$key]);
+            }
+            if($field->dynamic){
+                $dynamic[$key] = $data[$key];
+                unset($data[$key]);
             }
             switch ($field->type) {
                 case InputType::PASSWORD: case InputType::PIN:
@@ -303,6 +312,15 @@ class BaseForm
                 foreach($array as $value){
                     $value[$this->fields[$key]->owner_column] = $model->id;
                     $this->fields[$key]->table->form->model_class::create($value);
+                }
+            }
+            if(!empty($this->dynamic_attributes)){
+                $this->dynamic_attributes->init($model::class);
+                foreach($dynamic as $key => $value){
+                    DB::table($this->dynamic_attributes->table)->
+                    where($this->dynamic_attributes->parent_id, $id)->
+                    where($this->dynamic_attributes->label_column, $key)->
+                    update([$this->dynamic_attributes->value_column => $value]);
                 }
             }
             if($this->debug){

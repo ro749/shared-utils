@@ -55,21 +55,25 @@ class DbUpdate extends DBRead
     }
 
     public function process_data(array &$titles,array &$data):void{
+        //select first row as id as default
         if(empty($this->public_id)){
             $this->public_id = $titles[0];
         }
+        //creates the new columns
         if($this->add_new_columns){
-            $this->migration_text .= "Schema::table('{$this->get_table()}', function (Blueprint \$table) {\n";
+            $new_columns = [];
             foreach ($titles as $title){
                 if (!in_array($title, $this->required_columns)){
-                    $this->types[$title] = $this->get_type($title,$data);
                     if(Schema::hasColumn($this->get_table(), $title)) continue;
-                    if (!in_array($title, $this->required_columns)){
-                        $this->migration_text .= $this->get_text_for_type($title,$this->types[$title]);
-                    }
+                    
+                    $new_columns[$title] = $this->get_type($title,$data);
+                    $new_columns[$title] = $new_columns[$title][0] != 'float' ? $new_columns[$title][0] : [$new_columns[$title][1] , $new_columns[$title][2]];
                 }
             }
-            $this->migration_text .= "});\n";
+            if(!empty($new_columns)){
+                $this->migration_text .= MigrationHelper::generate_migration_for_add_rows($this->get_table(), $new_columns);
+            }
+
         }
         foreach ($data as $row){
             $this->migration_text .= "DB::table('{$this->get_table()}')->where('".$this->public_id."', '".$row[$this->public_id]."')->update([\n";

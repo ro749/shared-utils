@@ -112,6 +112,7 @@ class BaseGetter extends Getter{
         $joins = [];
         $this->apply_statistics($query,$table,$filters);
         $this->prosses_columns($query,$table,$joins,$search,$editables);
+        $this->apply_personalized_joins($query);
         return $query;
     }
 
