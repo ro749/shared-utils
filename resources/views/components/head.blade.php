@@ -3,6 +3,7 @@
 <meta name="app-version" content="{{ config('app.version') }}">
 @include('sharedutils::components.title')
 <meta name="theme-color" content="#ffffff"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 @vite([
     'resources/css/app.css',
     'resources/js/app.js',

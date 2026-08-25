@@ -55,7 +55,39 @@ class BaseGetter extends Getter{
         )
     {
         if(!empty($this->query)){
-            $ans['data'] = DB::select($this->query);
+            $bindings = [];
+            $conditions = [];
+            $ans['recordsTotal'] = count(DB::select($this->query,$bindings));
+            if ($search!="") {
+                foreach ($this->columns as $key => $column) {
+                    $conditions[] = $key . " LIKE ?";
+                    $bindings[] = "%{$search}%";
+                }
+            }
+            $this->query .= $conditions != [] ? " AND ( " . implode(' OR ', $conditions) . " )":"";
+            if (!empty($order) && ($order['dir'] == "asc" || $order['dir'] == "desc")) {
+                $column = array_keys($this->columns)[$order['column']];
+                
+                if (($this->columns[$column]->modifier == Modifier::METERS ||
+                    $this->columns[$column]->modifier == Modifier::FOOT ||
+                    $this->columns[$column]->modifier == Modifier::MONEY ||
+                    $this->columns[$column]->modifier == Modifier::DOLARS) &&
+                    $this->columns[$column]->dynamic) {
+                    $this->query .= " ORDER BY CAST(". $column . " AS DECIMAL) " . $order['dir'];
+                } else {
+                    $this->query .= " ORDER BY " . $column . " " . $order['dir'];
+                }
+            }
+            $ans['recordsFiltered'] = count(DB::select($this->query,$bindings));
+            if ($length != -1) {
+                $this->query .= " LIMIT " . intval($length);
+            }
+            if (!empty($start)) {
+                $this->query .= " OFFSET " . intval($start);
+            }
+
+            
+            $ans['data'] = DB::select($this->query,$bindings);
             return $ans;
         } 
         $search = $search==null?"":$search;
@@ -74,7 +106,7 @@ class BaseGetter extends Getter{
             $query = $this->search($query,$search);
         }
         $ans['recordsFiltered'] = $query->get()->count();
-        if(!empty($order)){
+        if(!empty($order) && ($order['dir'] == "asc" || $order['dir'] == "desc")){
             $column = array_keys($this->columns)[$order['column']];
             if(($this->columns[$column]->modifier == Modifier::METERS ||
                 $this->columns[$column]->modifier == Modifier::FOOT ||
