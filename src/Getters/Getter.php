@@ -77,7 +77,7 @@ class Getter{
                 //does the joins
                 if(!in_array($modifier->get_table(), $joins)){
                     $joins[] = $modifier->get_table();
-                    $join_key = $key.'_id';
+                    $join_key = empty($modifier->key) ? $key.'_id' : $modifier->key;
                     if($modifier->get_table() == $this->get_table()){
                         $query->leftJoin(
                             $modifier->get_table().' as '.$modifier->get_table().'_'.$join_key, 

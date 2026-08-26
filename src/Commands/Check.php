@@ -76,31 +76,6 @@ class Check extends Command
             );
             $this->info('fixed composer.json');
         }
-        if (!file_exists(public_path('vendor'))) {
-            return;
-        }
-        if(!File::exists(base_path('public\vendor'))) {
-            return;
-        }
-        $vendor_folder = base_path('public\vendor');
-        $vendor_dirs = File::directories($vendor_folder);
-        foreach($vendor_dirs as $dir) {
-            $folder = basename($dir);
-            $package = base_path('..\\'.$folder.'\resources\dist');
-            $project_files = File::allFiles($dir);
-            foreach($project_files as $file) {
-                $relative_path = $file->getRelativePathname();
-                $file_in_package = $package.'/'.$relative_path;
-                if(!File::exists($file_in_package)) {
-                    File::copy($file, $file_in_package);
-                    $this->info('Copied '.$relative_path.' to package.');
-                }
-                else if (File::hash($file) !== File::hash($file_in_package)){
-                    File::copy($file, $file_in_package);
-                    $this->info('Updated '.$relative_path.' to package.');
-                }
-            }
-        }
     }
 
     function fix_gitignore(){

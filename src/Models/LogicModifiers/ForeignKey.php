@@ -6,6 +6,8 @@ class ForeignKey extends LogicModifier
     public string $table = '';
     public string $model_class = '';
     public string $column;
+    //if empty generates from the column and _id
+    public string $key = '';
     public string $text_on_null;
     public string $type = 'foreign_key';
     public function get_table(): string { 
@@ -15,12 +17,15 @@ class ForeignKey extends LogicModifier
         string $table = '',
         string $model_class='', 
         string $column='',
-        string $text_on_null = ''
+        string $key='',
+        string $text_on_null = '',
+        
     )
     {
         $this->table = $table;
         $this->model_class = $model_class;
         $this->column = $column;
+        $this->key = $key;
         $this->text_on_null = $text_on_null;
     }
 
