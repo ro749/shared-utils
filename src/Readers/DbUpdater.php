@@ -27,7 +27,9 @@ class DbUpdater extends DbUpdate
     }
 
     public function process_data(array &$titles,array &$data):void{
+        Log::info('process_data');
         foreach ($data as $row){
+            Log::info($row);
             $new_row = [];
             foreach ($row as $key => $value) {
                 if (
@@ -36,7 +38,7 @@ class DbUpdater extends DbUpdate
                     $this->model_class::where($this->public_id, $row[$this->public_id])->value($key) == $value
                     ) 
                 continue;
-                $new_row["new_{$key}"] = $value;
+                $new_row[$key] = $value;
             }
             $this->model_class::where($this->public_id, $row[$this->public_id])->update($new_row);
         }

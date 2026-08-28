@@ -30,7 +30,7 @@ Route::middleware('web')->group(function () {
     });
     
     Route::post('/table/{table}/delete', function (Request $request,string $table) {
-        $fullClass = config('overrides.tables.'.$table);
+        $fullClass = config('overrides.tables.'.$table) ?? 'App\\Tables\\' . $table;;
         $table = new $fullClass();
         $table->delete((int) $request->input('id'));
         return response()->json(['success' => true]);
@@ -94,20 +94,6 @@ Route::middleware('web')->group(function () {
         $table = new $tableClass();
         return $table->form->fields[$field]->search($request->get('q'), $request);
     });
-
-    Route::post('/form/{form}/preview/{field}', function (Request $request,$form,$field) {
-        $formClass = config('overrides.forms.'.$form);
-        $form = new $formClass();
-        $file = $request->file($field);
-        $form->fields[$field]->preview($file);
-    });
-
-    Route::post('/form/{form}/cancel/{field}', function (Request $request,$form,$field) {
-        $formClass = config('overrides.forms.'.$form);
-        $form = new $formClass();
-        $form->fields[$field]->cancel();
-    });
-
     
     Route::post('/form/{form}/validate', function (Request $request,$form) {
         $ans = [];

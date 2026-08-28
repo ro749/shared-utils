@@ -16,6 +16,7 @@ class BaseForm
     public string $model_class = '';
     public array $fields;
     public string $submit_text = 'Submit';
+    public string $reset_text = '';
     public string $redirect='';
     public string $popup='';
     public string $success_msg='';
@@ -51,7 +52,8 @@ class BaseForm
         string $redirect = '', 
         string $popup = 'sharedutils::templates.popup-success',
         string $success_msg = '',
-        string $submit_text = 'Submit', 
+        string $submit_text = 'Submit',
+        string $reset_text = '', 
         string $submit_url = '',
         string $user = '', 
         string $guard = 'web',
@@ -74,6 +76,7 @@ class BaseForm
         $this->popup = $popup;
         $this->success_msg = $success_msg;
         $this->submit_text = $submit_text;
+        $this->reset_text = $reset_text;
         $this->submit_url = $submit_url;
         $this->user = $user;
         $this->guard = $guard;
@@ -175,6 +178,7 @@ class BaseForm
 
     public function prosses(Request $request)
     {
+        
         $error_messages = $this->get_error_messages();
         $data = $request->validate($this->rules($request),$error_messages);
         foreach ($data as $key => $value) {
@@ -196,13 +200,6 @@ class BaseForm
         $forms = [];
         foreach ($this->fields as $key => $field) {
             if(!array_key_exists($key, $data)) {
-                if($field->type == InputType::FILE) {
-                    
-                    if(!$field->autosave){
-                        $field->save();
-                    }
-                    
-                }
                 if($field->type == InputType::COPY) {
                     $data[$key] = $field->get_value($data);
                 }
@@ -240,11 +237,9 @@ class BaseForm
                     }
                     break;
                 case InputType::FILE:
-                    
-                    if($field->autosave){
-                        $file = $request->file($key);
-                        $field->read($file,$key);
-                    }
+                    $file = $request->file($key);
+                    $field->reader->read_csv($file);
+                    unset($data[$key]);
                     break;
                 case InputType::FORM:
                     $forms[$key] = $data[$key];
@@ -280,7 +275,7 @@ class BaseForm
                 if($this->debug){
                     Log::debug('Updated model: '.$model );
                 }
-            } else {
+            } else if(!empty($data)) {
                 if ($this->user !== '') {
                     $data[$this->user] = Auth::guard($this->guard)->user()->id;
                 }
@@ -312,11 +307,11 @@ class BaseForm
             if($this->debug){
                 Log::debug(DB::getQueryLog());
             }
-            
-            $ans = $this->after_process($model);
-
-            if($ans != null){
-                return $ans;
+            if(!empty($model)){
+                $ans = $this->after_process($model);
+                if($ans != null){
+                    return $ans;
+                }
             }
         }
         return $this->redirect;
@@ -354,6 +349,9 @@ class BaseForm
         ];
         if(!empty($this->layout)){
             $ans['layout'] = $this->layout;
+        }
+        if(!empty($this->reset_text)){
+            $ans['reset_text'] = $this->reset_text;
         }
         return $ans;
     }

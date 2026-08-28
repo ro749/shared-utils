@@ -34,4 +34,12 @@ class Filters extends BaseFilter
     {
         return view('shared-utils::components.filters.filters')->with('filter', $this);
     }
+
+    public function get_info(): array
+    {
+        return [
+            'display'=>$this->display,
+            'filters'=>$this->filters
+        ];
+    }
 }

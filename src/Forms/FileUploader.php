@@ -13,16 +13,16 @@ class FileUploader extends Field
     public string $data;
 
     public string $accept = '';
-    public DbReader $reader;
-    public BaseTable $preview_table;
-    public Closure $cancel;
-    public Closure $save;
+    public ?DbReader $reader;
+    public ?BaseTable $preview_table;
+    public ?Closure $cancel;
+    public ?Closure $save;
     public function __construct(
         string $accept = '',
         DbReader $reader = null,
         Closure $cancel = null,
         Closure $save = null,
-        BaseTable $preview_table,
+        BaseTable $preview_table = null,
         bool $autosave = false,
         string $name = "",
         string $push = "",
@@ -45,9 +45,9 @@ class FileUploader extends Field
         return 'file';
     }
 
-    public function preview($file)
+    public function preview()
     {
-        $this->reader->read_csv($file);
+        ;
     }
 
     public function cancel()
@@ -63,13 +63,10 @@ class FileUploader extends Field
             ($this->save)();
         }
     }
-
-    public function render($name="", $form_id="")
-    {
-        return view('shared-utils::components.forms.file-uploader',[
-            'element' => $this,
-            'name' => $name,
-            'form_id' => $form_id,
-        ]);
+    public function get_info(){
+        $ans = (array)parent::get_info();
+        $ans['preview_table'] = $this->preview_table->get_info();
+        $ans['public_id'] = $this->reader->public_id;
+        return $ans;
     }
 }

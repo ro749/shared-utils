@@ -184,10 +184,10 @@ class BaseTable
             $this->make_it_modifiable();
         }
         $this->generate_buttons();
-        $filters = $this->getter->filters;
-        //foreach($this->getter->statistics as $stat){
-        //    $filters = array_merge($filters,$stat->filters);
-        //}
+        $filters = [];
+        foreach($this->filters as $key => $filter){
+            $filters[$key] = $filter->get_info();
+        }
         $ans = [
             'id' => $this->get_id(),
             'columns' => $this->getter->columns,

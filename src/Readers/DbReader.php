@@ -42,7 +42,6 @@ class DbReader extends Reader
 
     public function process_data(array &$titles,array &$data):void{
         foreach ($data as $row){
-            $row['new'] = true;
             $this->model_class::create($row);
         }
     }
