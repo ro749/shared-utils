@@ -1,27 +1,22 @@
 <?php
 
 namespace Ro749\SharedUtils\Charts;
-
+use Ro749\SharedUtils\Statistics\ChartTime;
+use Illuminate\Support\Facades\Log;
 class TimeChart extends Chart
 {
 
-    public function get(ChartGetData $data, $filters = []): array
+    public function get(ChartGetData $data = null, $filters = [])
     {
-        $data = $this->getter->get($data->interval, $data->number, $filters);
-        $this->categories = $data[$this->label_column];
-        $ans = [];
-        if(!empty($this->getter->statistics[array_key_first($this->getter->statistics)]->cumulative)){
-            $ans = $data[$this->data_column.'_cumulative'];
+        if($data == null){
+            $data = new TimeChartGetData(ChartTime::MONTH, 12);
         }
-        else{
-            $ans = $data[$this->data_column];
-        }
-        if($this->inverted){
-            foreach ($ans as $key => $value) {
-                $ans[$key] = $this->inverted - $value;
-            }
-        }
-        
-        return $ans;
+        $ans = $this->getter->get($data->interval, $data->number, $filters);
+        return [
+            'data' => $ans,
+            'label_column' => $this->label_column,
+            'data_column' => $this->data_column
+
+        ];
     }
 }

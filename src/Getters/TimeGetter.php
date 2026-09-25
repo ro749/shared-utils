@@ -49,13 +49,6 @@ class TimeGetter extends Getter{
             Log::debug($query->toRawSql());
         }
         $ans = $query->get();
-        
-        $ans = collect($ans)->reduce(function ($carry, $item) {
-            foreach ($item as $key => $value) {
-                $carry[$key][] = $value;
-            }
-            return $carry;
-        }, []);
         return $ans;
     }
 

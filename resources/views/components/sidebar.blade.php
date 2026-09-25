@@ -24,15 +24,20 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-$(".sidebar-mobile-toggle").on("click", function(){
-  $(".sidebar").addClass("sidebar-open");
-  $("body").addClass("overlay-active");
-});
-$(".sidebar-close-btn").on("click", function(){
-  $(".sidebar").removeClass("sidebar-open");
-  $("body").removeClass("overlay-active");
-});
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".sidebar-mobile-toggle").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelector(".sidebar").classList.add("sidebar-open");
+      document.body.classList.add("overlay-active");
+    });
+  });
+
+  document.querySelectorAll(".sidebar-close-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelector(".sidebar").classList.remove("sidebar-open");
+      document.body.classList.remove("overlay-active");
+    });
+  });
 });
 </script>
 @endpush

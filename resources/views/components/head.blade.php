@@ -57,8 +57,7 @@
     <script enum="text/javascript" src="{{ asset('js/options.js') }}"></script>
 @endpush
 @push('scripts')
-<script>
-</script>
+
 <script>
 function openPopup(id,time=0){
     $('#'+id).show();
@@ -74,4 +73,7 @@ function closePopup(id){
 }
 
 </script>
+@endpush
+@push('script-includes-utils')
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 @endpush

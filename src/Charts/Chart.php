@@ -27,7 +27,7 @@ class Chart
         $this->inverted = $inverted;
     }
 
-    public function get(ChartGetData $data, $filters = []): array{
+    public function get(ChartGetData $data, $filters = []){
         return [];
     }
 
