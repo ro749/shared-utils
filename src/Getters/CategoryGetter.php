@@ -12,7 +12,7 @@ class CategoryGetter extends Getter{
         string $option_name,
         array $columns = [],
         array $statistics = [],
-        BaseFilters $filters = null, 
+        BaseFilters $filters = null,
         array $backend_filters = [],
         bool $debug = false
     ){
@@ -50,14 +50,14 @@ class CategoryGetter extends Getter{
             Log::debug(DB::getQueryLog());
         }
 
-        $ans = collect($ans)->reduce(function ($carry, $item) {
-            foreach ($item as $key => $value) {
-                $carry[$key][] = $value;
-            }
-            return $carry;
-        }, []);
+        //$ans = collect($ans)->reduce(function ($carry, $item) {
+        //    foreach ($item as $key => $value) {
+        //        $carry[$key][] = $value;
+        //    }
+        //    return $carry;
+        //}, []);
 
-        return $ans;
+        return $ans->toArray();
     }
 
 }
