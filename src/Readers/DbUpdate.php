@@ -6,16 +6,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Ro749\SharedUtils\Readers\MigrationHelper;
-class DbUpdate extends DBRead
+class DbUpdate extends DbRead
 {
     public string $public_id = '';
     public bool $debug = false;
 
     public function __construct(
         string $table = '',
-        string $model_class = '', 
+        string $model_class = '',
         string $public_id = '',
-        array $required_columns = [], 
+        array $required_columns = [],
         bool $add_new_columns = false,
         bool $debug = false,
     )
