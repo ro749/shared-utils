@@ -65,7 +65,6 @@ class DbUpdate extends DBRead
             foreach ($titles as $title){
                 if (!in_array($title, $this->required_columns)){
                     if(Schema::hasColumn($this->get_table(), $title)) continue;
-                    
                     $new_columns[$title] = $this->get_type($title,$data);
                     $new_columns[$title] = $new_columns[$title][0] != 'float' ? $new_columns[$title][0] : [$new_columns[$title][1] , $new_columns[$title][2]];
                 }
@@ -73,16 +72,8 @@ class DbUpdate extends DBRead
             if(!empty($new_columns)){
                 $this->migration_text .= MigrationHelper::generate_migration_for_add_rows($this->get_table(), $new_columns);
             }
-
         }
-        foreach ($data as $row){
-            $this->migration_text .= "DB::table('{$this->get_table()}')->where('".$this->public_id."', '".$row[$this->public_id]."')->update([\n";
-            foreach ($row as $column => $value){
-                if($column == $this->public_id) continue;
-                $this->migration_text .= "'$column' => '$value',\n";
-            }
-            $this->migration_text .= "]);\n";
-        }
+        $this->migration_text .= MigrationHelper::generate_migration_for_fill_data($this->get_table(), $data, $this->public_id);
         MigrationHelper::create_migration_file($this->get_table().'_table', $this->migration_text);
     }
 

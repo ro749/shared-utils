@@ -2,7 +2,7 @@
 
 namespace Ro749\SharedUtils\Forms;
 use Log;
-use Ro749\SharedUtils\Readers\DbReader;
+use Ro749\SharedUtils\Readers\Reader;
 use Ro749\SharedUtils\Tables\BaseTable;
 use Closure;
 class FileUploader extends Field
@@ -13,13 +13,13 @@ class FileUploader extends Field
     public string $data;
 
     public string $accept = '';
-    public DbReader $reader;
+    public Reader $reader;
     public BaseTable $preview_table;
     public Closure $cancel;
     public Closure $save;
     public function __construct(
         string $accept = '',
-        DbReader $reader = null,
+        Reader $reader = null,
         Closure $cancel = null,
         Closure $save = null,
         BaseTable $preview_table,
@@ -55,7 +55,7 @@ class FileUploader extends Field
         if(!empty($this->cancel)){
             ($this->cancel)();
         }
-        
+
     }
 
     public function save(){
