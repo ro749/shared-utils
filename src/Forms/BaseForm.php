@@ -35,7 +35,7 @@ class BaseForm
     public bool $has_files = false;
 
     public string $view = '';
-    //if is a register form the default is going to be true, if is an update the default is going to be false 
+    //if is a register form the default is going to be true, if is an update the default is going to be false
     public ?bool $reset = null;
     public bool $soft_reload = false;
     public bool $session = false;
@@ -45,17 +45,17 @@ class BaseForm
     public bool $debug = false;
 
     public array $layout = [];
-    
+
     public function __construct(
-        string $model_class = '', 
-        array $fields = [], 
-        string $redirect = '', 
+        string $model_class = '',
+        array $fields = [],
+        string $redirect = '',
         string $popup = 'sharedutils::templates.popup-success',
-        string $success_msg = '',
+        string $success_msg = 'Form submitted successfully',
         string $submit_text = 'Submit',
-        string $reset_text = '', 
+        string $reset_text = '',
         string $submit_url = '',
-        string $user = '', 
+        string $user = '',
         string $guard = 'web',
         string $callback = '',
         string $uploading_message = '',
@@ -95,8 +95,8 @@ class BaseForm
     }
 
     public function from_model(
-        string $model_class, 
-        array $fields, 
+        string $model_class,
+        array $fields,
     ){
         $this->model_class = $model_class;
         $model = new $model_class();
@@ -178,7 +178,7 @@ class BaseForm
 
     public function prosses(Request $request)
     {
-        
+
         $error_messages = $this->get_error_messages();
         $data = $request->validate($this->rules($request),$error_messages);
         foreach ($data as $key => $value) {
@@ -261,7 +261,7 @@ class BaseForm
                 Log::debug('debugging form: '.$this->get_id());
                 Log::debug($data);
             }
-            
+
             if(isset($data['id'])) {
                 $id = $data['id'];
                 unset($data['id']);
@@ -296,7 +296,7 @@ class BaseForm
                 else{
                     $this->fields[$key]->form->model_class::create($form_data);
                 }
-                
+
             }
             foreach ($arrays as $key => $array) {
                 foreach($array as $value){
@@ -317,7 +317,7 @@ class BaseForm
         return $this->redirect;
     }
 
-    function is_autosave(): bool { 
+    function is_autosave(): bool {
         foreach ($this->fields as $key => $field) {
             if ($field->autosave) {
                 return true;
@@ -346,6 +346,7 @@ class BaseForm
             'id' => $this->get_id(),
             'fields' => $fields,
             'submit_text' => $this->submit_text,
+            "success_msg"=> $this->success_msg
         ];
         if(!empty($this->layout)){
             $ans['layout'] = $this->layout;
