@@ -10,6 +10,7 @@ use Ro749\SharedUtils\Models\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Ro749\SharedUtils\Models\AttributeType;
+use Illuminate\Support\Facades\Validator;
 class BaseForm
 {
     public string $component = 'form';
@@ -175,12 +176,23 @@ class BaseForm
         ];
         return $request->validate($rules);
     }
+    public function attributes(){
+        $ans = [];
+        foreach($this->fields as $key=>$field){
+            $ans[$key] = $field->label;
+        }
+        return $ans;
+    }
 
     public function prosses(Request $request)
     {
+        $validator = Validator::make(
+            data: $request->all(),
+            rules: $this->rules($request),
+            attributes: $this->attributes()
+        );
 
-        $error_messages = $this->get_error_messages();
-        $data = $request->validate($this->rules($request),$error_messages);
+        $data = $validator->validated();
         foreach ($data as $key => $value) {
             if (str_ends_with($key, '_confirmation')) {
                 unset($data[$key]);
@@ -296,7 +308,6 @@ class BaseForm
                 else{
                     $this->fields[$key]->form->model_class::create($form_data);
                 }
-
             }
             foreach ($arrays as $key => $array) {
                 foreach($array as $value){
