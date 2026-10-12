@@ -41,11 +41,11 @@ class BaseTable
     public function __construct(
         BaseGetter $getter = null,
         BaseForm $form = null,
-        View $view = null, 
+        View $view = null,
         Delete $delete = null,
         View $edit_url = null,
         array $buttons = [],
-        int $page_length = 0,
+        int $page_length = 10,
         TableTexts $texts = new TableTexts(),
         string $buttons_label = '',
         bool $autoload = true,
@@ -66,14 +66,14 @@ class BaseTable
     }
 
     public function from_model(
-        string $model_class, 
-        array $columns, 
+        string $model_class,
+        array $columns,
         array $editables = [],
-        View $view = null, 
+        View $view = null,
         Delete $delete = null,
         View $edit_url = null,
         array $buttons = [],
-        int $page_length = 0,
+        int $page_length = 10,
         TableTexts $texts = new TableTexts(),
         string $buttons_label = '',
         bool $autoload = true,
@@ -96,7 +96,7 @@ class BaseTable
             $getter_colums[$column] = new Column(
                 display: $value->label,
             );
-            
+
         }
         $this->getter = new BaseGetter(
             model_class: $model_class,
@@ -144,8 +144,8 @@ class BaseTable
             $editables = array_keys($this->form->fields);
         }
         return $this->getter->get(
-            start: $start, 
-            length: $length, 
+            start: $start,
+            length: $length,
             search: $search,
             order: $order,
             filters: $filters,
@@ -223,7 +223,7 @@ class BaseTable
             if(in_array('unique:' . $this->getter->get_table() . ',' . $key, $field->rules)){
                 $field->rules = array_diff($field->rules, ['unique:' . $this->getter->get_table() . ',' . $key]);
             }
-            
+
         }
         $this->form->fields["id"] = new Field(
             type: InputType::TEXT,
