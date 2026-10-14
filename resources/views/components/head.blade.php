@@ -29,7 +29,7 @@
 </script>
 <script src="https://unpkg.com/phidget22@3.x/browser/phidget22.min.js"></script>
 <script>
-    
+
   (async () => {
 			try {
 				const conn = new phidget22.NetworkConnection(8989, 'localhost');
@@ -55,7 +55,7 @@
 @endpush
 @endif
 @push('script-includes-utils')
-    <script enum="text/javascript" src="{{ asset('js/options.js') }}"></script>
+    <script enum="text/javascript" src="{{ mixed('js/options.js') }}"></script>
 @endpush
 @push('scripts')
 <script>
